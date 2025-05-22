@@ -1,8 +1,9 @@
-import chromadb
-from chromadb.config import Settings
+
 from app.embeddings import get_embedding
 
-client = chromadb.Client(Settings(chroma_db_impl="duckdb+parquet", persist_directory="data/chroma"))
+from chromadb import PersistentClient
+
+client = PersistentClient(path="data/chroma")
 collection = client.get_or_create_collection(name="financial_docs")
 
 def add_to_vectorstore(chunks):
