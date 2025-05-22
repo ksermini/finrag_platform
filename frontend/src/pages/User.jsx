@@ -23,12 +23,50 @@ export default function User() {
   };
 
   return (
-    <div className="p-6">
-      <input type="file" onChange={e => setFile(e.target.files[0])} />
-      <button onClick={upload}>Upload</button>
-      <textarea value={query} onChange={e => setQuery(e.target.value)} />
-      <button onClick={ask}>Ask</button>
-      <pre className="mt-4 bg-gray-100 p-4">{answer}</pre>
+    <div className="min-h-screen bg-gray-100 p-6 font-sans">
+      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-semibold text-indigo-700 mb-6">FinRAG Assistant</h1>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Upload Financial Document</label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200"
+            />
+            <button
+              onClick={upload}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md"
+            >
+              Upload
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Ask a Question</label>
+          <textarea
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            rows="3"
+            placeholder="e.g. What are the key risks in this filing?"
+            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button
+            onClick={ask}
+            className="mt-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md"
+          >
+            Ask
+          </button>
+        </div>
+
+        {answer && (
+          <div className="bg-gray-50 p-4 border-l-4 border-green-500 rounded-md">
+            <p className="text-sm text-gray-800 whitespace-pre-wrap">{answer}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
