@@ -1,46 +1,51 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 const BootFeed = ({ onFinish }) => {
   const [lines, setLines] = useState([]);
-  const [displayed, setDisplayed] = useState([]);
+  const [displayedLines, setDisplayedLines] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const fetchHeadlines = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/feed/news");
-        const feedLines = res.data.map((title, i) => `> ${title}`);
-        setLines(feedLines);
-      } catch {
-        setLines(["> Failed to load headlines."]);
-      }
-    };
+    console.log("🟢 BootFeed mounted");
 
-    fetchHeadlines();
+    // Static test content
+    const bootLines = [
+      "> Initializing system...",
+      "> Loading modules...",
+      "> Connecting to FinRAG...",
+      "> FinRAG v1.0 Ready ✅",
+      "",
+      "WELCOME TO FINRAG",
+      "Launching terminal..."
+    ];
+
+    setLines(bootLines);
   }, []);
 
   useEffect(() => {
     if (lines.length === 0) return;
-    let i = 0;
 
     const interval = setInterval(() => {
-      setDisplayed((prev) => [...prev, lines[i]]);
-      i += 1;
-      if (i === lines.length) {
+      setDisplayedLines((prev) => [...prev, lines[currentIndex]]);
+      setCurrentIndex((prev) => prev + 1);
+
+      if (currentIndex + 1 >= lines.length) {
         clearInterval(interval);
-        setTimeout(onFinish, 1500);
+        setTimeout(() => {
+          console.log("✅ BootFeed complete. Calling onFinish.");
+          onFinish();
+        }, 1500);
       }
-    }, 500);
+    }, 300);
 
     return () => clearInterval(interval);
-  }, [lines]);
+  }, [lines, currentIndex]);
 
   return (
-    <div className="fixed inset-0 bg-black text-white font-mono text-sm p-6 z-50 overflow-hidden">
-      <div className="scanline flicker h-full w-full absolute top-0 left-0 pointer-events-none"></div>
-      <div className="whitespace-pre-wrap">
-        {displayed.map((line, i) => (
-          <div key={i} className="mb-1">{line}</div>
+    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50 p-6">
+      <div className="whitespace-pre-wrap leading-relaxed">
+        {displayedLines.map((line, i) => (
+          <div key={i}>{line}</div>
         ))}
         <div className="animate-blink">_</div>
       </div>

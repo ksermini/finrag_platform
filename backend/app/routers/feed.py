@@ -5,5 +5,5 @@ router = APIRouter()
 
 @router.get("/feed/news")
 def get_financial_news():
-    feed = feedparser.parse("https://www.reutersagency.com/feed/?best-sectors=business&post_type=best")
+    feed = feedparser.parse("https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines")
     return [entry.title for entry in feed.entries[:10]]

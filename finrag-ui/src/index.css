@@ -1,20 +1,32 @@
+@import 'augmented-ui/augmented-ui.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Global styles */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  display: flex;
+  place-items: center;
+  background-color: black;
+  color: white;
+  font-family: 'VT323', monospace;
 }
 
 a {
@@ -24,16 +36,6 @@ a {
 }
 a:hover {
   color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-
-
 }
 
 h1 {
@@ -60,6 +62,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light mode override */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -72,31 +75,71 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-@keyframes blink {
-  0%, 100% { opacity: 1 }
-  50% { opacity: 0 }
+
+/* Flicker animation */
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1 }
+  20%, 24%, 55% { opacity: 0.6 }
+}
+.flicker {
+  animation: flicker 2.5s infinite alternate;
 }
 
+/* Typing blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 .animate-blink {
   animation: blink 1s steps(2, start) infinite;
 }
 
-.scanline {
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+/* Scanline overlay */
+.scanline::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.02) 1px,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
     transparent 1px,
-    transparent 2px
+    transparent 3px
   );
+  pointer-events: none;
+  z-index: 1;
 }
 
-.flicker {
-  animation: flickerEffect 3s infinite alternate;
+/* Augmented UI default styling */
+.augmented-panel {
+  --aug-border-bg: rgba(255, 255, 255, 0.15);
+  --aug-border: 1px;
+  --aug-inset-bg: rgba(255, 255, 255, 0.05);
+  --aug-inset: 2px;
+  --aug-clip-size: 12px;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0 }
+}
+.animate-blink {
+  animation: blink 1s steps(2, start) infinite;
 }
 
-@keyframes flickerEffect {
-  0%   { opacity: 1; }
-  50%  { opacity: 0.8; }
-  100% { opacity: 1; }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
 }
