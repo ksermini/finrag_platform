@@ -45,4 +45,11 @@ async def process_query(query: str, user_id: str, role: str):
         session.add(metadata)
         await session.commit()
 
-    return {"answer": answer}
+    return {
+        "answer": answer,
+        "model_name": CHAT_MODEL,  # or detect dynamically
+        "tokens_input": usage.prompt_tokens,
+        "tokens_output": usage.completion_tokens,
+        "retrieved_docs_count": len(docs)
+    }
+

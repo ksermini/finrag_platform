@@ -15,6 +15,8 @@ class GenAIMetadata(Base):
     retrieved_docs_count = Column(Integer)
     source_type = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    cached = Column(String, default="false")  # store as "true"/"false"
+
 
     def to_dict(self):
         return {
@@ -24,5 +26,6 @@ class GenAIMetadata(Base):
             "tokens_output": self.tokens_output,
             "latency_ms": self.latency_ms,
             "retrieved_docs_count": self.retrieved_docs_count,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
+            "cached": self.cached
         }
