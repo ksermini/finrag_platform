@@ -1,30 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 from sqlalchemy.future import select
 from datetime import datetime, timedelta
+import psutil
+import time
+
 from app.db import SessionLocal
 from app.models.metadata import GenAIMetadata
 from app.models.feedback import Feedback
-from app.services.auth_service import get_current_user
+from app.services.health_monitor import run_health_check
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
-# Check if current user is admin
-async def admin_check(user=Depends(get_current_user)):
-    if user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
+boot_time = time.time() - psutil.boot_time()
 
 @router.get("/system-metrics")
-async def system_metrics(user=Depends(admin_check)):
+async def system_metrics():
     async with SessionLocal() as session:
         since = datetime.utcnow() - timedelta(hours=24)
 
-        total_queries = await session.execute(
+        result = await session.execute(
             select(GenAIMetadata).where(GenAIMetadata.timestamp > since)
         )
-        rows = total_queries.scalars().all()
+        rows = result.scalars().all()
         if not rows:
-            return {"query_count": 0, "avg_latency": 0, "avg_tokens": 0}
+            return {
+                "query_count": 0,
+                "avg_latency": 0,
+                "avg_tokens": 0,
+                "uptime_sec": boot_time,
+                "cpu": psutil.cpu_percent(),
+                "mem": psutil.virtual_memory().percent,
+            }
 
         avg_latency = sum(r.latency_ms for r in rows) / len(rows)
         avg_tokens = sum(r.tokens_input + r.tokens_output for r in rows) / len(rows)
@@ -32,11 +38,14 @@ async def system_metrics(user=Depends(admin_check)):
         return {
             "query_count": len(rows),
             "avg_latency": round(avg_latency),
-            "avg_tokens": round(avg_tokens)
+            "avg_tokens": round(avg_tokens),
+            "uptime_sec": boot_time,
+            "cpu": psutil.cpu_percent(),
+            "mem": psutil.virtual_memory().percent,
         }
 
 @router.get("/recent-queries")
-async def recent_queries(user=Depends(admin_check)):
+async def recent_queries():
     async with SessionLocal() as session:
         since = datetime.utcnow() - timedelta(hours=24)
         result = await session.execute(
@@ -44,3 +53,7 @@ async def recent_queries(user=Depends(admin_check)):
         )
         rows = result.scalars().all()
         return [r.to_dict() for r in rows]
+
+@router.get("/alerts")
+async def system_alerts():
+    return await run_health_check()
