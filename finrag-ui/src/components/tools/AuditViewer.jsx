@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import styles from "./tools.module.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const AuditViewer = () => {
   const [logs, setLogs] = useState([]);
-  const [expanded, setExpanded] = useState({});
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -20,48 +20,33 @@ const AuditViewer = () => {
       });
   }, []);
 
-  const toggle = (index) => {
-    setExpanded((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
-
   return (
-    <div className="text-xs space-y-4 text-cyan-100">
-      <h2 className="text-sm font-bold glow-text">[ Audit Viewer ]</h2>
-      {error && <div className="text-red-400">{error}</div>}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-1">
-        {logs.map((log, i) => {
-          const isOpen = expanded[i];
-          return (
-            <div
-              key={i}
-              className="bg-[#0f1a1a] border border-cyan-400 rounded-md shadow shadow-cyan-500/20 augmented-panel"
-              augmented-ui="tl-clip br-clip border"
-            >
-              <div
-                onClick={() => toggle(i)}
-                className="cursor-pointer p-3 flex items-center justify-between text-green-300 glow-text font-semibold"
-              >
-                <span>#{i + 1} — {log.timestamp?.split("T")[0]}</span>
-                <span className={`transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}>
-                  ▶
-                </span>
-              </div>
+    <div className={styles.auditViewer}>
+      <h2 className={styles.title}>[ Audit Logs ]</h2>
+      {error && <div className={styles.error}>{error}</div>}
 
-              <div
-                className={`px-3 pb-3 transition-all duration-300 ease-in-out overflow-hidden ${
-                  isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                }`}
-              >
-                <div><span className="text-gray-400">User:</span> {log.user_id}</div>
-                <div><span className="text-gray-400">Model:</span> {log.model}</div>
-                <div><span className="text-gray-400">Latency:</span> {log.latency_ms} ms</div>
-                <div><span className="text-gray-400">Tokens:</span> {log.tokens_input} in / {log.tokens_output} out</div>
-                <div><span className="text-gray-400">Source:</span> {log.source_type}</div>
-                <div><span className="text-gray-400">Cached:</span> {String(log.cached)}</div>
-              </div>
-            </div>
-          );
-        })}
+      <div className={styles.tableWrapper}>
+        <div className={styles.tableHead}>
+          <div>Timestamp</div>
+          <div>User</div>
+          <div>Model</div>
+          <div>Latency</div>
+          <div>Tokens</div>
+          <div>Cached</div>
+          <div>Source</div>
+        </div>
+
+        {logs.map((log, i) => (
+          <div key={i} className={styles.tableRow}>
+            <div>{log.timestamp?.split("T")[0]}</div>
+            <div>{log.user_id}</div>
+            <div>{log.model}</div>
+            <div>{log.latency_ms} ms</div>
+            <div>{log.tokens_input} / {log.tokens_output}</div>
+            <div>{log.cached ? "Yes" : "No"}</div>
+            <div>{log.source_type}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
