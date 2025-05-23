@@ -144,3 +144,39 @@ button:focus-visible {
   animation: fadeIn 1s ease-out forwards;
 }
 
+@keyframes typewriter-glow {
+  0% {
+    text-shadow: 0 0 2px #00ffcc, 0 0 10px #00ffcc;
+    opacity: 0.4;
+  }
+  100% {
+    text-shadow: 0 0 4px #00ffcc, 0 0 15px #00ffcc;
+    opacity: 1;
+  }
+}
+
+.glow-text {
+  animation: typewriter-glow 0.4s ease-in;
+}
+@keyframes crt-flicker {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 1; }
+}
+
+.scanline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 100, 0.05),
+    rgba(0, 255, 100, 0.05) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: crt-flicker 2s infinite alternate;
+  z-index: 50;
+}

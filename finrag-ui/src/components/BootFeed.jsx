@@ -16,7 +16,7 @@ const BootFeed = ({ onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-  // Mock stock chart data
+  // 📊 Mock stock chart
   const chartData = {
     labels: Array.from({ length: 50 }, (_, i) => i),
     datasets: [
@@ -97,18 +97,18 @@ const BootFeed = ({ onFinish }) => {
 
   return (
     <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50 overflow-hidden relative">
-  
-      {/* Chart on top */}
+      {/* 🟢 CRT Scanline FX */}
+      <div className="scanline-overlay" />
+
+      {/* 🟢 Chart Overlay */}
       <div className="absolute top-0 left-0 w-full h-32 z-40 pointer-events-none opacity-40">
         <Line data={chartData} options={chartOptions} />
-    </div>
-    
+      </div>
 
-
-      {/* Terminal feed below chart, scrollable */}
-      <div className="flex-1 overflow-y-auto px-6 pt-4 z-20 whitespace-pre-wrap leading-relaxed">
+      {/* 🟢 Animated Boot Feed */}
+      <div className="flex-1 overflow-y-auto px-6 pt-36 z-30 whitespace-pre-wrap leading-relaxed">
         {displayedLines.map((line, i) => (
-          <div key={i}>{line}</div>
+          <div key={i} className="glow-text">{line}</div>
         ))}
         <div className="animate-blink">_</div>
       </div>
