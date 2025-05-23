@@ -4,21 +4,33 @@ import TerminalLayout from "./components/TerminalLayout";
 
 const App = () => {
   const [bootDone, setBootDone] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   const handleFinish = () => {
-    console.log("✅ Boot finished. Switching to TerminalLayout.");
-    setBootDone(true);
+    console.log("✅ Boot finished. Starting fade out.");
+    setFadeOut(true);
+    setTimeout(() => {
+      setBootDone(true);
+    }, 800); // matches fade duration
   };
 
   return (
     <>
       {!bootDone && (
-        <>
-          {console.log("⏳ Rendering BootFeed")}
+        <div
+          className={`transition-opacity duration-700 ${
+            fadeOut ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <BootFeed onFinish={handleFinish} />
-        </>
+        </div>
       )}
-      {bootDone && <TerminalLayout />}
+
+      {bootDone && (
+        <div className="animate-fade-in opacity-0">
+          <TerminalLayout />
+        </div>
+      )}
     </>
   );
 };
