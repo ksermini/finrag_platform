@@ -9,8 +9,10 @@ import {
 } from "chart.js";
 
 Chart.register(LineElement, CategoryScale, LinearScale, PointElement);
+import { useTheme } from "../context/ThemeContext";
 
 const BootFeed = ({ onFinish }) => {
+  const { theme } = useTheme();
   const [lines, setLines] = useState([]);
   const [displayedLines, setDisplayedLines] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);

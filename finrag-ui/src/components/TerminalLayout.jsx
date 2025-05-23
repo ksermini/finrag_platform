@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import TerminalWindow from "./TerminalWindow";
-import KeyboardOverlay from "./KeyboardOverlay";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
-import UsersTab from "./tabs/UsersTab";
 import Scanlines from "./Scanlines";
+import KeyboardOverlay from "./KeyboardOverlay";
 
-// Tool panels
+// Tool Panels
 import VectorExplorer from "./tools/VectorExplorer";
 import ModelStatus from "./tools/ModelStatus";
 import AuditViewer from "./tools/AuditViewer";
@@ -25,109 +24,75 @@ const toolList = [
 const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");
   const [activeTool, setActiveTool] = useState("Vector Explorer");
+  const [clock, setClock] = useState(new Date());
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (activeTab !== "Terminal") return;
-      const index = toolList.indexOf(activeTool);
-      if (e.key === "ArrowDown") {
-        setActiveTool(toolList[(index + 1) % toolList.length]);
-      } else if (e.key === "ArrowUp") {
-        setActiveTool(toolList[(index - 1 + toolList.length) % toolList.length]);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTool, activeTab]);
+    const interval = setInterval(() => setClock(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const renderToolPanel = () => {
     switch (activeTool) {
-      case "Vector Explorer":
-        return <VectorExplorer />;
-      case "Model Status":
-        return <ModelStatus />;
-      case "Audit Viewer":
-        return <AuditViewer />;
-      case "Chroma Index":
-        return <ChromaIndex />;
-      case "API Logs":
-        return <APILogs />;
-      default:
-        return <div className="text-sm">Select a tool</div>;
-    }
-  };
-
-  const renderMainContent = () => {
-    if (activeTab === "Terminal") {
-      return (
-        <>
-          <TerminalWindow />
-          <div key={activeTool} className="mt-4 animate-fade-in">
-            {renderToolPanel()}
-          </div>
-        </>
-      );
-    }
-
-    switch (activeTab) {
-      case "Users":
-        return <UsersTab />;
-      case "Jobs":
-        return <div className="text-sm">[Jobs tab coming soon]</div>;
-      case "Logs":
-        return <div className="text-sm">[Logs tab coming soon]</div>;
-      case "Settings":
-        return <div className="text-sm">[Settings tab coming soon]</div>;
-      default:
-        return null;
+      case "Vector Explorer": return <VectorExplorer />;
+      case "Model Status": return <ModelStatus />;
+      case "Audit Viewer": return <AuditViewer />;
+      case "Chroma Index": return <ChromaIndex />;
+      case "API Logs": return <APILogs />;
+      default: return <div className="text-sm">Select a tool</div>;
     }
   };
 
   return (
-    <div className="w-screen h-screen bg-black text-white font-mono grid grid-cols-12 grid-rows-[auto_auto_1fr_auto] overflow-hidden relative">
+    <div className="w-screen h-screen font-mono text-[9px] leading-none tracking-tight bg-black text-cyan-300 grid grid-cols-[180px_1fr_260px] grid-rows-[40px_40px_1fr_40px] overflow-hidden relative">
       <Scanlines />
 
-      {/* Top Bar */}
-      <div className="col-span-12 px-4 py-2 border-b border-cyan-400 text-xs flex justify-between items-center bg-[#0d0d0d] augmented-panel" augmented-ui="tl-clip tr-clip border">
-        <span>FinRAG System Console v1.0</span>
-        <span>{new Date().toUTCString()}</span>
+      {/* Top Header */}
+      <div className="col-span-3 flex justify-between items-center px-4 border-b border-cyan-600 bg-[#0b0b0b]">
+        <span className="text-[11px] font-semibold">FinRAG System Console v1.0</span>
+        <span className="text-[11px]">{clock.toLocaleTimeString("en-GB", { hour12: false })}</span>
       </div>
 
       {/* Tabs */}
-      <div className="col-span-12 flex px-4 py-1 border-b border-cyan-400 space-x-4 text-xs bg-[#111] augmented-panel" augmented-ui="bl-clip br-clip border">
-        {tabs.map((tab) => (
+      <div className="col-span-3 flex items-center gap-[2px] border-b border-cyan-600 px-2 bg-[#0a0a0a]">
+        {tabs.map(tab => (
           <button
             key={tab}
-            className={`px-3 py-1 ${activeTab === tab ? "bg-white text-black font-bold" : "text-cyan-400"} rounded-sm hover:text-white`}
             onClick={() => setActiveTab(tab)}
+            className={`border border-cyan-600 px-2 py-[2px] ${
+              activeTab === tab ? "bg-cyan-300 text-black" : "text-cyan-300"
+            }`}
           >
             [{tab}]
           </button>
         ))}
       </div>
 
-      {/* Left Sidebar (2 cols) */}
-      <div className="col-span-2 border-r border-cyan-400 bg-[#050505] p-2">
+      {/* Left */}
+      <div className="border-r border-cyan-600 bg-black p-[4px] overflow-y-auto">
         <SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />
       </div>
 
-      {/* Main Panel (8 cols) */}
-      <div className="col-span-8 relative p-4 text-xs text-cyan-200 shadow-inner shadow-cyan-500/10 bg-[#0e0e0e] augmented-panel overflow-y-auto"
-        augmented-ui="border tl-clip tr-clip br-clip bl-clip"
-      >
-        <div className="absolute inset-0 z-0 opacity-[0.03] bg-[url('/scanlines.png')] mix-blend-soft-light pointer-events-none" />
-        <div className="relative z-10">
-          {renderMainContent()}
-        </div>
+      {/* Center */}
+      <div className="overflow-y-auto p-[4px] bg-black border-x border-cyan-600 text-cyan-100">
+        {activeTab === "Terminal" ? (
+          <>
+            <TerminalWindow />
+            <div className="mt-2 border-t border-cyan-600 pt-2">
+              {renderToolPanel()}
+            </div>
+          </>
+        ) : (
+          <div className="text-cyan-400">[{activeTab} tab coming soon]</div>
+        )}
       </div>
 
-      {/* Right Sidebar (2 cols) */}
-      <div className="col-span-2 border-l border-cyan-400 bg-[#050505] p-2">
+      {/* Right */}
+      <div className="p-[4px] bg-black">
         <SidebarRight />
       </div>
 
-      {/* Bottom Overlay */}
-      <div className="col-span-12 border-t border-cyan-400 p-3 bg-black">
+      {/* Bottom */}
+      <div className="col-span-3 border-t border-cyan-600 bg-[#0a0a0a] px-3 py-2">
         <KeyboardOverlay />
       </div>
     </div>

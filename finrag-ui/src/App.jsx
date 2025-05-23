@@ -7,11 +7,10 @@ const App = () => {
   const [fadeOut, setFadeOut] = useState(false);
 
   const handleFinish = () => {
-    console.log("✅ Boot finished. Starting fade out.");
     setFadeOut(true);
     setTimeout(() => {
       setBootDone(true);
-    }, 800); // match with CSS duration
+    }, 800); // sync with BootFeed fade duration
   };
 
   return (

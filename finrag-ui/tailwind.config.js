@@ -2,11 +2,15 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   safelist: [
-    'translate-y-0',
-    '-translate-y-[150%]',
-    'opacity-0',
-    'opacity-100'
+    'text-[var(--theme-fg)]',
+    'bg-[var(--theme-bg)]',
+    'border-[var(--theme-fg)]',
+    'text-cyan-100', 'text-cyan-300',
+    'border-cyan-700', 'bg-gray-800', 'bg-cyan-300',
+    'text-gray-400',
+    'grid-cols-20', 'gap-[1px]', 'w-[2px]', 'h-[2px]'
   ],
+  
   theme: {
     extend: {
       fontFamily: {
