@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import styles from "./tools.module.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -20,16 +21,30 @@ const APILogs = () => {
   }, []);
 
   return (
-    <div className="text-xs space-y-2">
-      <div className="font-bold">[ API Logs ]</div>
-      {error && <div className="text-red-400">{error}</div>}
-      <ul className="space-y-1 max-h-64 overflow-y-auto border border-gray-700 p-2">
-        {logs.map((log, i) => (
-          <li key={i} className="text-gray-400 border-b border-gray-800 pb-1">
-            {log}
-          </li>
-        ))}
-      </ul>
+    <div className={styles.apiLogsWrapper}>
+      <div className={styles.apiLogsTitle}>[ API Logs ]</div>
+      {error && <div className={styles.error}>{error}</div>}
+      <div className={styles.logContainer}>
+        <div className={styles.logHeader}>
+          <span>Timestamp</span>
+          <span>User</span>
+          <span>Model</span>
+          <span>Latency</span>
+          <span>Tokens</span>
+        </div>
+        {logs.map((log, i) => {
+          const [ts, user, model, latency, tokens] = log.split(" | ");
+          return (
+            <div key={i} className={styles.logRow}>
+              <span>{ts}</span>
+              <span>{user}</span>
+              <span>{model}</span>
+              <span>{latency}</span>
+              <span>{tokens}</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
