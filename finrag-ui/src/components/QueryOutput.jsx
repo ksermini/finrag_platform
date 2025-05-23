@@ -5,7 +5,7 @@ const QueryOutput = () => {
   const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/query_results/1")
+    axios.get("http://localhost:8000/api/query_results")
       .then((res) => setResponse(res.data))
       .catch(() => setResponse({ error: "Failed to fetch RAG output" }));
   }, []);

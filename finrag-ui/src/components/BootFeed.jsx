@@ -16,7 +16,6 @@ const BootFeed = ({ onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-  // 📊 Mock stock chart
   const chartData = {
     labels: Array.from({ length: 50 }, (_, i) => i),
     datasets: [
@@ -35,10 +34,7 @@ const BootFeed = ({ onFinish }) => {
   const chartOptions = {
     animation: false,
     plugins: { legend: { display: false } },
-    scales: {
-      x: { display: false },
-      y: { display: false },
-    },
+    scales: { x: { display: false }, y: { display: false } },
     maintainAspectRatio: false,
   };
 
@@ -48,6 +44,7 @@ const BootFeed = ({ onFinish }) => {
         const res = await fetch(`${API_BASE}/feed/news`);
         const data = await res.json();
         const rssLines = data.map((title) => `> [NEWS] ${title}`);
+
         const bootLogs = [
           "> Initializing FinRAG Runtime...",
           "> Loading vector memory...",
@@ -58,18 +55,24 @@ const BootFeed = ({ onFinish }) => {
           "> ✓ User profile loaded: KAYLA",
           "> ✓ System state: STABLE",
           "",
-          "WELCOME TO FINRAG",
+          "╔════════════════════════════╗",
+          "║     WELCOME TO FinRAG      ║",
+          "║        Version 1.0         ║",
+          "╚════════════════════════════╝",
           "",
           "Launching terminal..."
         ];
+
         setLines([...rssLines, ...bootLogs]);
-      } catch (err) {
-        console.error("[BootFeed] RSS fetch failed:", err);
+      } catch {
         setLines([
           "> ⚠️ Failed to fetch news feed.",
           "> Proceeding with system boot...",
           "",
-          "WELCOME TO FINRAG",
+          "╔════════════════════════════╗",
+          "║     WELCOME TO FinRAG      ║",
+          "║        Version 1.0         ║",
+          "╚════════════════════════════╝",
           "",
           "Launching terminal..."
         ]);
@@ -88,24 +91,24 @@ const BootFeed = ({ onFinish }) => {
 
       if (currentIndex + 1 >= lines.length) {
         clearInterval(interval);
-        setTimeout(onFinish, 1500);
+        setTimeout(onFinish, 1000); // shorter pause
       }
-    }, 300);
+    }, 100); // ⏩ faster typing speed
 
     return () => clearInterval(interval);
   }, [lines, currentIndex]);
 
   return (
     <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50 overflow-hidden relative">
-      {/* 🟢 CRT Scanline FX */}
-      <div className="scanline-overlay" />
+      {/* 🌐 CRT scanlines */}
+      {/* <div className="scanline-overlay" /> */}
 
-      {/* 🟢 Chart Overlay */}
+      {/* 📊 Chart */}
       <div className="absolute top-0 left-0 w-full h-32 z-40 pointer-events-none opacity-40">
         <Line data={chartData} options={chartOptions} />
       </div>
 
-      {/* 🟢 Animated Boot Feed */}
+      {/* 🟢 Terminal feed */}
       <div className="flex-1 overflow-y-auto px-6 pt-36 z-30 whitespace-pre-wrap leading-relaxed">
         {displayedLines.map((line, i) => (
           <div key={i} className="glow-text">{line}</div>
