@@ -27,5 +27,10 @@ langsmith==0.1.37
 
 # Utility
 httpx==0.27.0
-
-passlib[bcrypt]
+dependency-injector==4.41.0
+langchain
+PyPDF2
+asyncpg
+python-multipart
+psutil
+feedparser
