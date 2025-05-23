@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const CpuGraph = ({ title = "#1–2", color = "#00ffff", group = "A" }) => {
+const CpuGraph = ({ title = "#1–2", group = "A" }) => {
   const [data, setData] = useState(Array(50).fill(0));
   const requestRef = useRef();
 
@@ -15,7 +15,7 @@ const CpuGraph = ({ title = "#1–2", color = "#00ffff", group = "A" }) => {
             ? Math.round(load * 0.9)
             : Math.round(load * 1.05);
         setData(prev => [...prev.slice(1), newValue]);
-      } catch (err) {
+      } catch {
         setData(prev => [...prev.slice(1), prev[prev.length - 1] || 0]);
       }
     };
@@ -43,7 +43,7 @@ const CpuGraph = ({ title = "#1–2", color = "#00ffff", group = "A" }) => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between text-[9px] text-cyan-300 mb-[2px]">
+      <div className="flex justify-between text-[9px] text-[var(--theme-fg)] mb-[2px]">
         <span>{title}</span>
         <span>Avg: {avg}%</span>
       </div>
@@ -54,7 +54,7 @@ const CpuGraph = ({ title = "#1–2", color = "#00ffff", group = "A" }) => {
       >
         <polyline
           fill="none"
-          stroke={color}
+          stroke="var(--theme-cpu,rgb(38, 145, 145))"
           strokeWidth="1"
           points={points}
           strokeLinejoin="miter"

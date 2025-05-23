@@ -48,7 +48,7 @@ const TerminalLayout = () => {
 
       {/* Top Header */}
       <div className="col-span-3 flex justify-between items-center px-4 border-b border-cyan-600 bg-[#0b0b0b]">
-        <span className="text-[11px] font-semibold">FinRAG System Console v1.0</span>
+        <span className="text-[11px] font-semibold">FinRAG Admin Portal v1.0</span>
         <span className="text-[11px]">{clock.toLocaleTimeString("en-GB", { hour12: false })}</span>
       </div>
 

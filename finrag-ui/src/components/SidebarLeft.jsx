@@ -10,22 +10,19 @@ const tools = [
 
 const SidebarLeft = ({ activeTool, setActiveTool }) => {
   return (
-    <div className="col-span-2 border-r border-gray-600 p-2 text-[10px] space-y-2">
-      <div className="text-gray-400 uppercase tracking-widest">[ Tools ]</div>
-      {tools.map((tool) => (
-        <div
-          key={tool}
-          onClick={() => setActiveTool(tool)}
-          className={`cursor-pointer px-1 py-0.5 rounded 
-            ${
-              activeTool === tool
-                ? "bg-gray-700 text-white font-semibold"
-                : "hover:bg-gray-800 text-gray-300"
-            }`}
-        >
-          • {tool}
-        </div>
-      ))}
+    <div className="sidebar-left">
+      <div className="sidebar-title">[ Tools ]</div>
+      <div className="tool-list">
+        {tools.map((tool) => (
+          <button
+            key={tool}
+            onClick={() => setActiveTool(tool)}
+            className={`tool-card ${activeTool === tool ? "active" : ""}`}
+          >
+            {tool}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

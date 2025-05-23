@@ -10,11 +10,10 @@ module.exports = {
     'text-gray-400',
     'grid-cols-20', 'gap-[1px]', 'w-[2px]', 'h-[2px]'
   ],
-  
   theme: {
     extend: {
       fontFamily: {
-        mono: ['Fira Code', 'monospace'],
+        mono: ['VT323', 'monospace'], // 👈 this is correct
       },
       animation: {
         blink: 'blink 1s steps(2, start) infinite',
