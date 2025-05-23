@@ -1,62 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import { Chart, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
 
-Chart.register(LineElement, CategoryScale, LinearScale, PointElement);
+const lines = [
+  "[NEWS] Bank of England decision delayed...",
+  "[NEWS] Germany flash PMI drops to 9-month low",
+  "[NEWS] Fed’s Powell sees rate cuts as early as Sept",
+  "[NEWS] Housing starts rise 14.8% in January",
+  "Loading vector memory...",
+  "✔ Latency Engine Stable",
+  "✔ Compliance Core Loaded",
+  "✔ Reuters Feed Connected",
+  "✔ RAM Watcher Online",
+  "✔ User profile loaded: KAYLA"
+];
 
-const BootScreen = ({ onFinish }) => {
-  const [progress, setProgress] = useState(0);
+const BootFeed = ({ onFinish }) => {
+  const [feed, setFeed] = useState([]);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(onFinish, 800);
-          return 100;
-        }
-        return prev + 2 + Math.random() * 4;
-      });
-    }, 80);
+      setFeed(prev => [...prev, lines[index]]);
+      setIndex(i => i + 1);
+    }, 140);
+
+    if (index === lines.length) {
+      clearInterval(interval);
+      setTimeout(onFinish, 700);
+    }
+
     return () => clearInterval(interval);
-  }, []);
-
-  const chartData = {
-    labels: Array.from({ length: progress }, (_, i) => i),
-    datasets: [
-      {
-        data: Array.from({ length: progress }, (_, i) =>
-          4000 + Math.sin(i / 10) * 100 + Math.random() * 50
-        ),
-        borderColor: "var(--theme-fg)",
-        borderWidth: 1,
-        pointRadius: 0,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    animation: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { display: false },
-      y: { display: false },
-    },
-  };
+  }, [index, onFinish]);
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center font-mono z-50"
+      className="fixed inset-0 bg-black text-[#00ffff] z-50 flex items-center justify-center"
       style={{
-        backgroundColor: "var(--theme-bg)",
-        color: "var(--theme-fg)",
+        fontFamily: "VT323, monospace",
+        fontSize: "11px",
+        lineHeight: "1.35",
+        letterSpacing: "0.5px",
       }}
     >
-      <div className="text-xl mb-4">Booting FinRAG system...</div>
-      <Line data={chartData} options={chartOptions} height={100} />
-      <div className="mt-4 text-sm animate-blink">Loading modules...</div>
+      <div
+        className="w-[80%] max-w-[1000px] h-[80%] overflow-hidden text-left"
+        style={{
+          whiteSpace: "pre-wrap",
+          textShadow: "0 0 1px #0ff, 0 0 2px #0ff",
+        }}
+      >
+        {feed.map((line, i) => (
+          <div key={i} className="opacity-90 animate-fade-in">{line}</div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default BootScreen;
+export default BootFeed;

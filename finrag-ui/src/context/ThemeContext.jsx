@@ -6,7 +6,7 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(null);
 
   useEffect(() => {
-    loadThemeFromJson("/themes/navy.json"); // default
+    loadThemeFromJson("/themes/tron.json"); // default
   }, []);
 
   const loadThemeFromJson = async (path) => {

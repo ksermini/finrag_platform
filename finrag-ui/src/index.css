@@ -159,3 +159,19 @@ button:focus {
   --aug-inset-bg: #000000;
   augmented-ui: tl-clip tr-clip bl-clip br-clip border;
 }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
