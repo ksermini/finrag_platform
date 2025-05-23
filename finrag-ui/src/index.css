@@ -175,3 +175,13 @@ button:focus {
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
 }
+
+.glow-text {
+  color: var(--theme-fg);
+  text-shadow: 0 0 1px var(--theme-fg), 0 0 3px var(--theme-fg);
+}
+
+:root {
+  --theme-fg: #00ffff;
+  --theme-bg: #000000;
+}
