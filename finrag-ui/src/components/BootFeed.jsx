@@ -96,11 +96,14 @@ const BootFeed = ({ onFinish }) => {
   }, [lines, currentIndex]);
 
   return (
-    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50 overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50 overflow-hidden relative">
+  
       {/* Chart on top */}
-      <div className="h-32 w-full z-10 opacity-40">
+      <div className="absolute top-0 left-0 w-full h-32 z-40 pointer-events-none opacity-40">
         <Line data={chartData} options={chartOptions} />
-      </div>
+    </div>
+    
+
 
       {/* Terminal feed below chart, scrollable */}
       <div className="flex-1 overflow-y-auto px-6 pt-4 z-20 whitespace-pre-wrap leading-relaxed">

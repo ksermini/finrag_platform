@@ -11,7 +11,7 @@ const App = () => {
     setFadeOut(true);
     setTimeout(() => {
       setBootDone(true);
-    }, 800); // matches fade duration
+    }, 800); // match with CSS duration
   };
 
   return (
