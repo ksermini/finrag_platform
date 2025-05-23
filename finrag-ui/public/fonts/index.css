@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Fira Code';
+    src: url('/fonts/fira_code.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  body {
+    font-family: 'Fira Code', monospace;
+    background-color: #0d0d0d;
+    color: #00ffea;
+  }
+  

@@ -4,9 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global styles */
+@font-face {
+  font-family: 'Fira Code';
+  src: url('/fonts/fira_code.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'United Sans';
+  src: url('/fonts/united_sans_medium.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Fira Code', monospace;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
@@ -26,7 +39,7 @@ body {
   place-items: center;
   background-color: black;
   color: white;
-  font-family: 'VT323', monospace;
+  font-family: 'Fira Code', monospace;
 }
 
 a {
@@ -62,7 +75,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Light mode override */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -76,7 +88,6 @@ button:focus-visible {
   }
 }
 
-/* Flicker animation */
 @keyframes flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1 }
   20%, 24%, 55% { opacity: 0.6 }
@@ -85,16 +96,14 @@ button:focus-visible {
   animation: flicker 2.5s infinite alternate;
 }
 
-/* Typing blink */
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0 }
 }
 .animate-blink {
   animation: blink 1s steps(2, start) infinite;
 }
 
-/* Fade in */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -103,7 +112,6 @@ button:focus-visible {
   animation: fadeIn 1s ease-out forwards;
 }
 
-/* Scanline overlay */
 .scanline::before {
   content: "";
   position: absolute;
@@ -120,28 +128,16 @@ button:focus-visible {
   z-index: 1;
 }
 
-/* Augmented UI default styling */
 .augmented-panel {
-  --aug-border-bg: rgba(255, 255, 255, 0.15);
-  --aug-border: 1px;
-  --aug-inset-bg: rgba(255, 255, 255, 0.05);
+  --aug-border: 4px;
   --aug-inset: 2px;
-  --aug-clip-size: 12px;
-}
-@keyframes blink {
-  0%, 100% { opacity: 1 }
-  50% { opacity: 0 }
-}
-.animate-blink {
-  animation: blink 1s steps(2, start) infinite;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-fade-in {
-  animation: fadeIn 1s ease-out forwards;
+  --aug-clip-tl: 20px;
+  --aug-clip-tr: 20px;
+  --aug-clip-bl: 20px;
+  --aug-clip-br: 20px;
+  --aug-border-bg: #0ff;
+  --aug-inset-bg: #111;
+  augmented-ui: tl-clip tr-clip bl-clip br-clip border;
 }
 
 @keyframes typewriter-glow {
@@ -158,6 +154,7 @@ button:focus-visible {
 .glow-text {
   animation: typewriter-glow 0.4s ease-in;
 }
+
 @keyframes crt-flicker {
   0%, 100% { opacity: 0.95; }
   50% { opacity: 1; }

@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['VT323', 'Courier New', 'monospace'],
+        mono: ['Fira Code', 'monospace'],
       },
       animation: {
         blink: 'blink 1s steps(2, start) infinite',

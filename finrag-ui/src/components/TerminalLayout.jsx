@@ -119,11 +119,15 @@ const TerminalLayout = () => {
 
       {/* Main Panel (Terminal + Tool Panel) */}
       <div
-        className="col-span-8 p-4 overflow-y-auto augmented-panel relative"
+        className="col-span-8 p-4 overflow-y-auto relative text-xs text-cyan-200 font-mono shadow-[0_0_10px_#00fff7] rounded-lg border-[2px] border-cyan-400 bg-[#0e0e0e] augmented-panel"
         augmented-ui="border tl-clip tr-clip br-clip bl-clip"
       >
-        {renderMainContent()}
+        <div className="absolute inset-0 z-0 opacity-[0.03] bg-[url('/scanlines.png')] mix-blend-soft-light pointer-events-none" />
+        <div className="relative z-10">
+          {renderMainContent()}
+        </div>
       </div>
+
 
       {/* Right Sidebar */}
       <SidebarRight />
