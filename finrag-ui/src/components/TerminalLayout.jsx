@@ -26,7 +26,6 @@ const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");
   const [activeTool, setActiveTool] = useState("Vector Explorer");
 
-  // Keyboard navigation for tools
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (activeTab !== "Terminal") return;
@@ -41,7 +40,6 @@ const TerminalLayout = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeTool, activeTab]);
 
-  // Render the currently selected tool panel
   const renderToolPanel = () => {
     switch (activeTool) {
       case "Vector Explorer":
@@ -59,16 +57,12 @@ const TerminalLayout = () => {
     }
   };
 
-  // Handle main tab rendering
   const renderMainContent = () => {
     if (activeTab === "Terminal") {
       return (
         <>
           <TerminalWindow />
-          <div
-            key={activeTool}
-            className="transition-all duration-500 ease-in-out opacity-0 animate-fadeIn mt-4"
-          >
+          <div key={activeTool} className="mt-4 animate-fade-in">
             {renderToolPanel()}
           </div>
         </>
@@ -94,19 +88,17 @@ const TerminalLayout = () => {
       <Scanlines />
 
       {/* Top Bar */}
-      <div className="col-span-12 px-4 py-2 border-b border-gray-600 text-xs flex justify-between items-center augmented-panel" augmented-ui="tl-clip tr-clip border">
+      <div className="col-span-12 px-4 py-2 border-b border-cyan-400 text-xs flex justify-between items-center bg-[#0d0d0d] augmented-panel" augmented-ui="tl-clip tr-clip border">
         <span>FinRAG System Console v1.0</span>
         <span>{new Date().toUTCString()}</span>
       </div>
 
-      {/* Tab Bar */}
-      <div className="col-span-12 flex px-4 py-1 border-b border-gray-600 space-x-4 text-xs bg-[#101010] augmented-panel" augmented-ui="bl-clip br-clip border">
+      {/* Tabs */}
+      <div className="col-span-12 flex px-4 py-1 border-b border-cyan-400 space-x-4 text-xs bg-[#111] augmented-panel" augmented-ui="bl-clip br-clip border">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`px-3 py-1 ${
-              activeTab === tab ? "bg-white text-black font-bold" : "text-gray-400"
-            } rounded-sm hover:text-white`}
+            className={`px-3 py-1 ${activeTab === tab ? "bg-white text-black font-bold" : "text-cyan-400"} rounded-sm hover:text-white`}
             onClick={() => setActiveTab(tab)}
           >
             [{tab}]
@@ -114,12 +106,13 @@ const TerminalLayout = () => {
         ))}
       </div>
 
-      {/* Left Sidebar */}
-      <SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />
+      {/* Left Sidebar (2 cols) */}
+      <div className="col-span-2 border-r border-cyan-400 bg-[#050505] p-2">
+        <SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />
+      </div>
 
-      {/* Main Panel (Terminal + Tool Panel) */}
-      <div
-        className="col-span-8 p-4 overflow-y-auto relative text-xs text-cyan-200 font-mono shadow-[0_0_10px_#00fff7] rounded-lg border-[2px] border-cyan-400 bg-[#0e0e0e] augmented-panel"
+      {/* Main Panel (8 cols) */}
+      <div className="col-span-8 relative p-4 text-xs text-cyan-200 shadow-inner shadow-cyan-500/10 bg-[#0e0e0e] augmented-panel overflow-y-auto"
         augmented-ui="border tl-clip tr-clip br-clip bl-clip"
       >
         <div className="absolute inset-0 z-0 opacity-[0.03] bg-[url('/scanlines.png')] mix-blend-soft-light pointer-events-none" />
@@ -128,12 +121,13 @@ const TerminalLayout = () => {
         </div>
       </div>
 
-
-      {/* Right Sidebar */}
-      <SidebarRight />
+      {/* Right Sidebar (2 cols) */}
+      <div className="col-span-2 border-l border-cyan-400 bg-[#050505] p-2">
+        <SidebarRight />
+      </div>
 
       {/* Bottom Overlay */}
-      <div className="col-span-12 border-t border-gray-600 p-4">
+      <div className="col-span-12 border-t border-cyan-400 p-3 bg-black">
         <KeyboardOverlay />
       </div>
     </div>
