@@ -1,14 +1,18 @@
 from fastapi import FastAPI
-from app.routers import auth, user, admin, users
+from app.routers import auth, admin
 from fastapi.middleware.cors import CORSMiddleware
 print("✅ FastAPI is loading main.py")
+from app.routers import rag_routes
+from app.routers import admin_users, public_users
 
 app = FastAPI()
+app.include_router(rag_routes.router)
+
+app.include_router(admin_users.router)
+app.include_router(public_users.router)
 from app.routers import feed
 app.include_router(feed.router)
-app.include_router(users.router)
 app.include_router(auth.router)
-app.include_router(user.router)
 app.include_router(admin.router)
 
 app.add_middleware(

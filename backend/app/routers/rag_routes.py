@@ -1,13 +1,12 @@
 from fastapi import APIRouter, UploadFile, File, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.services.file_loader import ingest_document
 from app.services.rag_service import process_query
 from app.services.query_cache import get_cached_answer, set_cached_answer
 from app.services.metadata_tracker_db import log_query_db
 from app.database.database import get_db
 
-router = APIRouter(prefix="/user", tags=["User"])
+router = APIRouter(prefix="/rag", tags=["RAG Operations"])
 
 
 @router.post("/upload/")

@@ -1,33 +1,28 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from datetime import datetime
 from app.models.base import Base
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    role = Column(String, default="user")  # "user" or "admin"
-
-
-from sqlalchemy import Column, Integer, String, Float, DateTime, func
-from app.database.database import Base
-
-class UploadLog(Base):
-    __tablename__ = "upload_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String, nullable=False)
-    user_id = Column(String, default="default")
-    size_kb = Column(Float, nullable=False)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    email = Column(String, unique=True, nullable=False, index=True)
+    hashed_password = Column(String, nullable=False)
 
-
-class QueryLog(Base):
-    __tablename__ = "query_logs"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, nullable=False)
-    query = Column(String, nullable=False)
-    latency_ms = Column(Float, nullable=False)
-    top_k = Column(Integer, default=3)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    phone_number = Column(String, nullable=True)
+    role = Column(String, default="user")
+    is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_login = Column(DateTime, nullable=True)
+    manager_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by = Column(Integer, nullable=True)
+    department = Column(String, nullable=True)
+    permissions = Column(String, nullable=True)
+    job_title = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    account_status = Column(String, default="pending")
+    business_group = Column(String, nullable=True)
