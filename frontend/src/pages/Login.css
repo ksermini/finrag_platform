@@ -21,4 +21,35 @@
     color: white;
     text-align: center;
   }
+  .input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0 12px;
+    margin-bottom: 16px;
+    color: white;
+  }
+  
+  .input-with-icon svg {
+    margin-right: 10px;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+  
+  .input-with-icon input {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 12px 0;
+    color: white;
+    font-size: 0.9rem;
+  }
+  
+  .input-with-icon input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
   
