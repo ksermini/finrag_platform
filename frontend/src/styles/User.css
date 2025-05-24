@@ -1,5 +1,5 @@
-/* Base layout */
-.user-layout {
+/* === Bento Layout === */
+.bento-wrapper {
     display: flex;
     min-height: 100vh;
     background-color: #111;
@@ -7,8 +7,8 @@
     font-family: system-ui, sans-serif;
   }
   
-  /* Sidebar */
-  .sidebar {
+  /* === Sidebar === */
+  .bento-sidebar {
     width: 80px;
     padding: 2rem 0.5rem;
     background-color: #111;
@@ -28,36 +28,38 @@
     align-items: center;
   }
   
-  /* Override to keep icons the same color */
+  /* Uniform icon color override */
   .icon-btn__back {
     background: linear-gradient(180deg, #00eaff, #00bcd4) !important;
   }
   
-  /* Main content */
-  .main-content {
-    flex-grow: 1;
-    max-width: 800px;
-    margin-left: 100px;
-    padding: 4rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
+  /* === Bento Grid === */
+  .bento-main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 3rem 2rem;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
   }
   
-  /* Card wrapper (soft spotlight effect) */
-  .card {
-    background-color: rgba(255, 255, 255, 0.03);
+  .bento-box {
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 1rem;
     padding: 2rem;
     backdrop-filter: blur(10px);
   }
   
-  /* Ask box */
-  .ask-section {
-    margin-bottom: 2rem;
+  /* Emphasis zones */
+  .bento-box.ask,
+  .bento-box.answer,
+  .bento-box.upload {
+    grid-column: span 2;
   }
   
+  /* === Ask Box === */
   .query-box {
     width: 100%;
     min-height: 120px;
@@ -70,65 +72,8 @@
     outline: none;
     margin-bottom: 1rem;
   }
-  
   .query-box:focus {
     border-color: #00eaff;
-  }
-  
-  /* Answer */
-  .user-question {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #00ffa0;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.3rem;
-  }
-  
-  .answer-card {
-    animation: fadeSlideIn 0.4s ease-out forwards;
-  }
-  
-  .answer-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #00ffa0;
-    margin-bottom: 0.5rem;
-  }
-  
-  .answer-text {
-    font-size: 0.95rem;
-    color: #eee;
-    white-space: pre-wrap;
-  }
-  
-  @keyframes fadeSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* File uploader */
-  .dropzone {
-    border: 2px dashed rgba(255, 255, 255, 0.15);
-    padding: 2rem;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  
-  .dropzone:hover {
-    border-color: #00eaff;
-  }
-  
-  .file-button {
-    margin-bottom: 1rem;
-    color: white;
   }
   
   .neutral-button {
@@ -139,8 +84,70 @@
     border-radius: 10px;
     transition: background 0.2s ease;
   }
-  
   .neutral-button:hover {
     background-color: #222;
+  }
+  
+  /* === Answer Fade In === */
+  .fade-in {
+    animation: fadeSlideIn 0.4s ease-out forwards;
+  }
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .question-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #00ffa0;
+  }
+  .answer-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00ffa0;
+    margin-bottom: 0.5rem;
+  }
+  .answer-text {
+    font-size: 0.95rem;
+    color: #eee;
+    white-space: pre-wrap;
+  }
+  
+  /* === File Upload === */
+  .dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  .dropzone:hover {
+    border-color: #00eaff;
+  }
+  .file-button {
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  /* === Responsive === */
+  @media (max-width: 768px) {
+    .bento-main-grid {
+      grid-template-columns: 1fr;
+      padding: 2rem 1rem;
+    }
+  
+    .bento-box.ask,
+    .bento-box.answer,
+    .bento-box.upload {
+      grid-column: span 1;
+    }
   }
   
