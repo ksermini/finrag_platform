@@ -4,6 +4,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import Register from './pages/Register'
+
 // Import your route pages
 import Login from './pages/Login'
 import User from './pages/User'
@@ -19,6 +21,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/user" element={<User />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/register" element={<Register />} />
+
 
         {/* Optional demo homepage route */}
         <Route
