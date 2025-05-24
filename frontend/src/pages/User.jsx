@@ -1,39 +1,35 @@
+// File: src/pages/User.jsx
 import { useState } from "react";
-import api from "../api/client";
-
 import { FiUpload, FiSearch, FiBarChart2 } from "react-icons/fi";
 import GlassIcons from "../reactbits/glass/GlassIcons";
-import SpotlightCard from "../reactbits/spotlight/SpotlightCard";
 import "../reactbits/glass/GlassIcons.css";
-import "../reactbits/spotlight/SpotlightCard.css";
-
-import "../styles/User.css"; // Custom layout styles
+import "../styles/User.css";
+import FileUpload from "../components/FileUpload";
+import AskBox from "../components/AskBox";
+import AnswerCard from "../components/AnswerCard";
 
 export default function User() {
-  const [file, setFile] = useState(null);
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
+  const [previousQuery, setPreviousQuery] = useState("");
 
-  const upload = async () => {
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("file", file);
-    await api.post("/user/upload/", formData);
-  };
-
-  const ask = async () => {
-    const res = await api.post("/user/query/", {
-      query,
-      user_id: "user123",
-      role: "analyst",
+  const handleAsk = async () => {
+    if (!query.trim()) return;
+    setPreviousQuery(query);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/user/query/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, user_id: "user123", role: "analyst" }),
     });
-    setAnswer(res.data.answer);
+    const data = await res.json();
+    setAnswer(data.answer);
+    setQuery("");
   };
 
   const sidebarItems = [
-    { icon: <FiUpload />, color: "blue", label: "Upload" },
-    { icon: <FiSearch />, color: "purple", label: "Ask" },
-    { icon: <FiBarChart2 />, color: "green", label: "Insights" },
+    { icon: <FiSearch />, color: "cyan", label: "Ask" },
+    { icon: <FiBarChart2 />, color: "cyan", label: "Insights" },
+    { icon: <FiUpload />, color: "cyan", label: "Upload" },
   ];
 
   return (
@@ -43,54 +39,20 @@ export default function User() {
       </aside>
 
       <main className="main-content">
-        <SpotlightCard spotlightColor="rgba(255,255,255,0.04)">
-          <h2 className="section-title">Upload Financial Document</h2>
-
-          <div
-            className="dropzone"
-            onDrop={(e) => {
-              e.preventDefault();
-              setFile(e.dataTransfer.files[0]);
-            }}
-            onDragOver={(e) => e.preventDefault()}
-          >
-            {file ? (
-              <p className="text-highlight">{file.name}</p>
-            ) : (
-              <p>Drag and drop a file here</p>
-            )}
-          </div>
-
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="file-button"
-          />
-
-          <button className="neutral-button" onClick={upload}>
-            Upload
-          </button>
-        </SpotlightCard>
-
-        <SpotlightCard spotlightColor="rgba(255,255,255,0.02)">
-          <h2 className="section-title">Ask a Question</h2>
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="e.g. What are the key risks in this filing?"
-            className="query-box"
-          />
-          <button className="neutral-button" onClick={ask}>
-            Ask
-          </button>
-        </SpotlightCard>
+        <div className="card ask-section">
+          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
+        </div>
 
         {answer && (
-          <div className="fade-in answer-card">
-            <h3 className="answer-title">Answer</h3>
-            <p className="answer-text">{answer}</p>
-          </div>
+          <>
+            <div className="card user-question">{previousQuery}</div>
+            <AnswerCard answer={answer} />
+          </>
         )}
+
+        <div className="card">
+          <FileUpload />
+        </div>
       </main>
     </div>
   );

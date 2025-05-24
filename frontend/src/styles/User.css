@@ -1,4 +1,4 @@
-/* Layout fix */
+/* Base layout */
 .user-layout {
     display: flex;
     min-height: 100vh;
@@ -7,16 +7,18 @@
     font-family: system-ui, sans-serif;
   }
   
-  /* Sidebar layout */
+  /* Sidebar */
   .sidebar {
-    width: 100px;
-    padding: 2rem 1rem;
+    width: 80px;
+    padding: 2rem 0.5rem;
     background-color: #111;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    height: 100vh;
   }
   
   .sidebar-icons .icon-btns {
@@ -26,12 +28,12 @@
     align-items: center;
   }
   
-  /* Override GlassIcons color gradient to be unified */
+  /* Override to keep icons the same color */
   .icon-btn__back {
-    background: linear-gradient(180deg, #00ffff, #0099ff) !important;
+    background: linear-gradient(180deg, #00eaff, #00bcd4) !important;
   }
   
-  /* Main content with margin */
+  /* Main content */
   .main-content {
     flex-grow: 1;
     max-width: 800px;
@@ -42,91 +44,48 @@
     gap: 3rem;
   }
   
-  /* Section headers */
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #e0e0e0;
-  }
-  
-  /* Dropzone */
-  .dropzone {
-    border: 2px dashed rgba(255, 255, 255, 0.15);
-    padding: 2rem;
-    border-radius: 12px;
-    text-align: center;
-    margin-bottom: 1rem;
+  /* Card wrapper (soft spotlight effect) */
+  .card {
     background-color: rgba(255, 255, 255, 0.03);
-    transition: border-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
   }
   
-  .dropzone:hover {
-    border-color: #00ffff;
+  /* Ask box */
+  .ask-section {
+    margin-bottom: 2rem;
   }
   
-  .text-highlight {
-    color: #00ffff;
-    font-weight: 500;
-  }
-  
-  /* File input */
-  .file-button {
-    margin-bottom: 1rem;
-    color: white;
-  }
-  
-  /* Query box */
   .query-box {
     width: 100%;
-    min-height: 100px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 120px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
     padding: 1rem;
-    font-size: 0.9rem;
     color: white;
+    font-size: 0.95rem;
     outline: none;
     margin-bottom: 1rem;
   }
   
   .query-box:focus {
-    border-color: #00ffff;
+    border-color: #00eaff;
   }
   
-  /* Button */
-  .neutral-button {
-    background-color: #1a1a1a;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    transition: background 0.2s ease;
+  /* Answer */
+  .user-question {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #00ffa0;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
   }
   
-  .neutral-button:hover {
-    background-color: #222;
-  }
-  
-  /* Answer animation */
-  .fade-in {
-    animation: fadeSlideIn 0.6s ease-out forwards;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-  }
-  
-  @keyframes fadeSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .answer-card {
+    animation: fadeSlideIn 0.4s ease-out forwards;
   }
   
   .answer-title {
@@ -140,5 +99,48 @@
     font-size: 0.95rem;
     color: #eee;
     white-space: pre-wrap;
+  }
+  
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* File uploader */
+  .dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  .dropzone:hover {
+    border-color: #00eaff;
+  }
+  
+  .file-button {
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .neutral-button {
+    background-color: #1a1a1a;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+  
+  .neutral-button:hover {
+    background-color: #222;
   }
   
