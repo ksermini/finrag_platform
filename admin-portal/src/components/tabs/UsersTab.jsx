@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EditUserModal from "../modals/EditUserModal";
-import PanelBox from "../PanelBox";
+import PanelBox from "../ui/PanelBox";
 
 const columnHeaders = [
   "ID", "Email", "First", "Last", "Role", "Group", "Status",
@@ -24,7 +24,7 @@ const UsersTab = () => {
   }, []);
 
   return (
-    <PanelBox title="User Management">
+    <PanelBox title="User Management" variant="bento" gradient>
       <div className="flex justify-between items-center mb-4">
         <button className="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700 transition">
           + New User

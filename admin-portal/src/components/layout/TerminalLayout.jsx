@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import LayoutWrapper from "./LayoutWrapper";
-import TerminalWindow from "./TerminalWindow";
+import TerminalWindow from "../shared/TerminalWindow";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
-import KeyboardOverlay from "./KeyboardOverlay";
-import UsersTab from "./tabs/UsersTab";
+import KeyboardOverlay from "../tools/KeyboardOverlay";
+import UsersTab from "../tabs/UsersTab";
 
 // Tool Panels
-import VectorExplorer from "./tools/VectorExplorer";
-import ModelStatus from "./tools/ModelStatus";
-import AuditViewer from "./tools/AuditViewer";
-import ChromaIndex from "./tools/ChromaIndex";
-import APILogs from "./tools/APILogs";
+import VectorExplorer from "../tools/VectorExplorer";
+import ModelStatus from "../tools/ModelStatus";
+import AuditViewer from "../tools/AuditViewer";
+import ChromaIndex from "../tools/ChromaIndex";
+import APILogs from "../tools/APILogs";
 
 const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");

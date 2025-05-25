@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import BootScreen from "./components/Boot/BootScreen";
-import TerminalLayout from "./components/TerminalLayout";
+import TerminalLayout from "./components/layout/TerminalLayout";
 
 const App = () => {
   const [bootDone, setBootDone] = useState(false);
