@@ -15,7 +15,7 @@
   src: url('/fonts/united_sans_medium.woff2') format('woff2');
 }
 
-:root {
+/* :root {
   --theme-fg: #00ffff;
   --theme-bg: #000000;
   --color_r: 0;
@@ -33,7 +33,7 @@
   background-color: var(--theme-bg);
   font-synthesis: none;
   text-rendering: geometricPrecision;
-}
+} */
 
 body {
   margin: 0;
@@ -345,4 +345,23 @@ button:focus {
   color: black;
   font-weight: bold;
   box-shadow: 0 0 4px rgba(var(--color_r), var(--color_g), var(--color_b), 0.6);
+}
+.all-letters {
+  display: inline-block;
+  font-family: 'VT323', monospace;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+}
+
+.encrypted {
+  opacity: 0.2;
+  color: #00ffcc;
+  transition: all 0.2s ease-in;
+}
+
+.revealed {
+  opacity: 1;
+  color: #ffffff;
+  transition: all 0.2s ease-in;
 }

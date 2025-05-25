@@ -1,0 +1,169 @@
+.apiLogsWrapper {
+    font-family: var(--font_mono, monospace);
+    font-size: 10px;
+    color: var(--theme-fg);
+  }
+  
+  .apiLogsTitle {
+    font-weight: bold;
+    font-family: var(--font_mono, monospace);
+    color: var(--theme-fg);
+    /* text-shadow: 0 0 1px var(--theme-fg); */
+    margin-bottom: 0.5rem;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 0.5rem;
+  }
+  
+  .logContainer {
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid var(--color_grey);
+    background-color: var(--theme-bg);
+  }
+  
+  .logHeader {
+    display: grid;
+    grid-template-columns: 170px 100px 100px 80px 1fr;
+    border-bottom: 1px solid var(--theme-fg);
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: var(--theme-fg);
+  }
+  
+  .logRow {
+    display: grid;
+    grid-template-columns: 170px 100px 100px 80px 1fr;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid var(--color_grey);
+    font-family: var(--font_mono, monospace);
+  }
+  .auditViewer {
+    padding: 1rem;
+    color: var(--theme-fg);
+    font-family: var(--font_main, monospace);
+  }
+  
+  .title {
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    font-size: 11px;
+    color: var(--theme-fg);
+    font-family: var(--font_mono, monospace);
+  }
+  
+  .error {
+    color: #ff4c4c;
+    margin-bottom: 1rem;
+    font-family: var(--font_mono, monospace);
+  }
+  
+  .tableWrapper {
+    font-family: var(--font_mono, monospace);
+    display: grid;
+    grid-auto-rows: auto;
+    border: 1px solid var(--theme-fg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .tableHead {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr 1fr 0.8fr 1.2fr;
+    background-color: #0e1616;
+    padding: 0.5rem;
+    font-weight: bold;
+    font-size: 10px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--theme-fg);
+    color: var(--theme-fg);
+  }
+  
+  .tableRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr 1fr 0.8fr 1.2fr;
+    padding: 0.4rem 0.5rem;
+    font-size: 10px;
+    background-color: #0b1212;
+    border-bottom: 1px solid #1a1a1a;
+    transition: background 0.2s ease;
+  }
+  
+  .tableRow:hover {
+    background-color: #111e1e;
+  }
+  .modelStatus {
+    font-family: var(--font_main, monospace);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .sectionTitle {
+    font-family: var(--font_main, monospace);
+    font-weight: bold;
+    font-size: 12px;
+    color: var(--theme-fg);
+    text-shadow: 0 0 1px var(--theme-fg);
+  }
+  
+  .metricGrid {
+    font-family: var(--font_main, monospace);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px;
+  }
+  
+  .metricCard {
+    font-family: var(--font_main, monospace);
+    background-color: #0c1414;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--theme-fg);
+    text-align: left;
+    box-shadow: 0 0 4px rgba(0, 255, 255, 0.1);
+  }
+  
+  .metricLabel {
+    font-family: var(--font_main, monospace);
+    font-size: 9px;
+    color: #888;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .metricValue {
+    font-family: var(--font_main, monospace);
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--theme-fg);
+  }
+  
+  .metricUnit {
+    font-size: 10px;
+    margin-left: 4px;
+    color: #aaa;
+  }
+  
+  .error {
+    color: red;
+    font-size: 11px;
+  }
+  
+  .loading {
+    color: #888;
+    font-size: 10px;
+  }
+  
+  /* Optional color variants */
+  .metricCard__cyan { border-color: #00ffff; }
+  .metricCard__blue { border-color: #3dbbff; }
+  .metricCard__green { border-color: #50fa7b; }
+  .metricCard__purple { border-color: #bd93f9; }
+  .metricCard__orange { border-color: #fca311; }
+  

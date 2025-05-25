@@ -1,0 +1,64 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const TerminalWindow = () => {
+  const [logs, setLogs] = useState([]);
+
+  const playSound = (src, volume = 1) => {
+    const audio = new Audio(src);
+    audio.volume = volume;
+    audio.play();
+  };
+
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/admin/recent-queries", {
+          withCredentials: true, // optional: if auth cookies or headers are required
+        });
+        const [latest] = res.data;
+
+        if (!latest) {
+          setLogs(["> no recent queries found"]);
+          return;
+        }
+
+        const output = [
+          `> query("${latest.query}")`,
+          `[✓] Retrieved ${latest.retrieved_docs_count} documents`,
+          `[✓] Model: ${latest.model_name} | Latency: ${latest.latency_ms}ms`,
+          `[✓] Tokens: ${latest.tokens_input} in / ${latest.tokens_output} out`,
+          `[✓] Cached: ${latest.cached}`,
+          `[✓] Source: ${latest.source_type}`,
+          `[✓] Timestamp: ${latest.timestamp}`,
+        ];
+
+        output.forEach((line, i) => {
+          setTimeout(() => {
+            setLogs((prev) => [...prev, line]);
+            playSound("/sounds/key-click.mp3", 0.2);
+          }, i * 500);
+        });
+
+        setTimeout(() => playSound("/sounds/beep.mp3", 0.3), output.length * 500);
+
+      } catch (err) {
+        console.error("Metadata fetch error:", err);
+        setLogs(["> error: could not fetch metadata"]);
+      }
+    };
+
+    fetchMetadata();
+  }, []);
+
+  return (
+    <div className="text-sm whitespace-pre-wrap leading-relaxed">
+      {logs.map((line, i) => (
+        <div key={i} className="mb-1">{line}</div>
+      ))}
+      <div className="animate-blink">_</div>
+    </div>
+  );
+};
+
+export default TerminalWindow;
