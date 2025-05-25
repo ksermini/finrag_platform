@@ -1,16 +1,48 @@
 import { useState } from "react";
 
-export default function FileUpload() {
+export default function FileUpload({ onUploadSuccess }) {
   const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const upload = async () => {
     if (!file) return;
+    setUploading(true);
+    setMessage("");
+
     const formData = new FormData();
     formData.append("file", file);
-    await fetch(`${import.meta.env.VITE_API_URL}/user/upload/`, {
-      method: "POST",
-      body: formData,
-    });
+
+    try {
+      const token = localStorage.getItem("token"); // ✅ Get JWT from storage
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/rag/upload/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Pass token here
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Upload failed:", errorText);
+        setMessage("Upload failed. Check backend or endpoint.");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Upload succeeded:", data);
+      setMessage("✅ Upload successful!");
+
+      if (onUploadSuccess) onUploadSuccess(data);
+
+    } catch (err) {
+      console.error("Upload error:", err);
+      setMessage("❌ Upload error.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -36,9 +68,15 @@ export default function FileUpload() {
         className="file-button"
       />
 
-      <button className="neutral-button" onClick={upload}>
-        Upload
+      <button
+        className="neutral-button"
+        onClick={upload}
+        disabled={uploading}
+      >
+        {uploading ? "Uploading..." : "Upload"}
       </button>
+
+      {message && <p className="upload-status">{message}</p>}
     </div>
   );
 }

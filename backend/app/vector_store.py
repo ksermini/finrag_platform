@@ -6,59 +6,57 @@ Summary:
 | `add_to_vectorstore` | Embeds each chunk of text and stores it with an ID in Chroma               |
 | `query_vectorstore`  | Embeds the user’s query and returns the 3 most similar text chunks         |
 | `PersistentClient`   | Ensures data is saved to disk (you can shut down and still retain vectors) |
-
 """
 
-from app.embeddings import get_embedding
-# persistin client uses persistent on-disk storage, saves data even after it shuts down
 from chromadb import PersistentClient
+from app.embeddings import get_embedding
 
-# Chroma will use the path to write and read the persisted data
-# Mini vector database on disk
+# Use on-disk storage so vectors persist even after shutdown
 client = PersistentClient(path="data/chroma")
-# Retrieves or creates a vector collection named "financial_docs"
-# Collection (table) - holds vectors, doc, and metadata
 collection = client.get_or_create_collection(name="financial_docs")
 
-def add_to_vectorstore(chunks):
+def add_to_vectorstore(chunks: list[str], filename: str = "file", user_id: str = None, group_id: str = None):
     """
-        Take a list of text (chunks) and store them in the chrom vector store
+    Store a list of chunks in the Chroma vector store, with optional metadata.
     """
-    # loop through each chunk of text, assigning a unique index i
+    documents = []
+    ids = []
+    embeddings = []
+    metadatas = []
+
     for i, chunk in enumerate(chunks):
-        collection.add(
-            # Raw test
-            documents=[chunk],
-            # unique id per chunk
-            ids=[f"chunk_{i}"],
-            # Embeds the chunk into a high dim using the embedding func
-            embeddings=[get_embedding(chunk)]
-        )
+        documents.append(chunk)
+        ids.append(f"{filename}_chunk_{i}")
+        embeddings.append(get_embedding(chunk))  # Should be list[float]
+        metadatas.append({
+            "filename": filename,
+            "user_id": user_id,
+            "group_id": group_id
+        })
 
-def query_vectorstore(query: str):
+    collection.add(
+        documents=documents,
+        ids=ids,
+        embeddings=embeddings,
+        metadatas=metadatas
+    )
+
+def query_vectorstore(query: str, n_results: int = 3) -> list[str]:
     """
-        Takes the users query and return the most relevant documents
+    Takes the user’s query, returns top-matching documents using vector similarity.
     """
-    # Converts the query into an embedding vector using the same model as the chunks
     embedding = get_embedding(query)
-    # Searches for the 3 most similar vectors in the collection using vector similarity (cosine or dot product)
-    # query_embeddings must be a list of vectors
-    results = collection.query(query_embeddings=[embedding], n_results=3)
-    # returns the first list of top_matching docs
-    return results['documents'][0]
+    results = collection.query(query_embeddings=[embedding], n_results=n_results)
+    return results['documents'][0] if results and results.get('documents') else []
 
-
-def query_vectorstore_with_group(query: str, group_id: str):
-    return collection.query(
-        query_embeddings=[get_embedding(query)],
-        n_results=5,
+def query_vectorstore_with_group(query: str, group_id: str, n_results: int = 5) -> list[str]:
+    """
+    Same as query_vectorstore but filters by group_id in metadata.
+    """
+    embedding = get_embedding(query)
+    results = collection.query(
+        query_embeddings=[embedding],
+        n_results=n_results,
         where={"group_id": group_id}
-    )["documents"][0]
-
-# EXAMPLE:
-# 3 most relevant matching docs
-# {
-#   'documents': [["doc1", "doc2", "doc3"]],
-#   'ids': [["chunk_0", "chunk_5", "chunk_8"]],
-#   'distances': [[0.14, 0.22, 0.25]]
-# }
+    )
+    return results['documents'][0] if results and results.get('documents') else []

@@ -105,9 +105,10 @@ export default function UserDashboard() {
   
         {showUpload && (
           <div className="glass-card upload">
-            <FileUpload />
+            <FileUpload onUploadSuccess={() => setShowUpload(false)} />
           </div>
         )}
+
       </div>
     </DashboardLayout>
   );
