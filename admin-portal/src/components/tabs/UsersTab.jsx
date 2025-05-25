@@ -1,88 +1,84 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EditUserModal from "../modals/EditUserModal";
+import PanelBox from "../PanelBox";
+
+const columnHeaders = [
+  "ID", "Email", "First", "Last", "Role", "Group", "Status",
+  "Phone", "Title", "Department", "Admin", "Active", "Actions"
+];
 
 const UsersTab = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [creating, setCreating] = useState(false);
 
-  const fetchUsers = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/admin/users");
-      setUsers(res.data);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-    }
+  const fetchUsers = () => {
+    axios
+      .get("http://localhost:8000/admin/users")
+      .then((res) => setUsers(res.data))
+      .catch((err) => console.error("Error fetching users:", err));
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const handleCreateNew = () => {
-    setSelectedUser({
-      id: null,
-      first_name: "",
-      last_name: "",
-      email: "",
-      role: "",
-      is_active: true,
-    });
-    setCreating(true);
-  };
-
   return (
-    <div className="panel-box">
-      <div className="panel-box-title flex justify-between items-center">
-        <span>User Management</span>
-        <button className="modal-button save" onClick={handleCreateNew}>
+    <PanelBox title="User Management">
+      <div className="flex justify-between items-center mb-4">
+        <button className="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700 transition">
           + New User
         </button>
       </div>
 
-      <div className="panel-box-content">
-        <div className="grid grid-cols-4 font-bold mb-2 text-sm text-gray-500">
-          <span>Full Name</span>
-          <span>Email</span>
-          <span>Role</span>
-          <span>Status</span>
-        </div>
-
-        {users.length === 0 && (
-          <div className="text-sm text-gray-400">No users found.</div>
-        )}
-
-        {users.map((user) => (
-          <div
-            key={user.id}
-            className="grid grid-cols-4 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-            onClick={() => {
-              setSelectedUser(user);
-              setCreating(false);
-            }}
-          >
-            <span>{user.first_name} {user.last_name}</span>
-            <span>{user.email}</span>
-            <span>{user.role}</span>
-            <span>{user.is_active ? "Active" : "Inactive"}</span>
-          </div>
-        ))}
+      <div className="overflow-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+        <table className="min-w-full text-sm">
+          <thead className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs uppercase">
+            <tr>
+              {columnHeaders.map((col, idx) => (
+                <th key={idx} className="px-4 py-3 text-left whitespace-nowrap font-semibold tracking-wide">
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
+            {users.map((user, idx) => (
+              <tr key={user.id || idx} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+                <td className="px-4 py-2">{user.id}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td className="px-4 py-2">{user.first_name}</td>
+                <td className="px-4 py-2">{user.last_name}</td>
+                <td className="px-4 py-2 capitalize">{user.role}</td>
+                <td className="px-4 py-2">{user.business_group}</td>
+                <td className="px-4 py-2">{user.account_status}</td>
+                <td className="px-4 py-2">{user.phone_number}</td>
+                <td className="px-4 py-2">{user.job_title}</td>
+                <td className="px-4 py-2">{user.department}</td>
+                <td className="px-4 py-2">{user.is_admin ? "Yes" : "No"}</td>
+                <td className="px-4 py-2">{user.is_active ? "Yes" : "No"}</td>
+                <td className="px-4 py-2">
+                  <button
+                    className="text-indigo-600 hover:underline text-xs"
+                    onClick={() => setSelectedUser(user)}
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {selectedUser && (
         <EditUserModal
           user={selectedUser}
           onClose={() => setSelectedUser(null)}
-          onSaved={() => {
-            fetchUsers();
-            setSelectedUser(null);
-            setCreating(false);
-          }}
-          isNew={creating}
+          onSaved={fetchUsers}
         />
       )}
-    </div>
+    </PanelBox>
   );
 };
 

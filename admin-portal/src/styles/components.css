@@ -153,37 +153,175 @@
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
   }
   .modal-title {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--theme-accent);
     border-bottom: 1px solid var(--theme-border);
     padding-bottom: 0.5rem;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem;
   }
+  
   .modal-input {
-    background-color: #f9fafb;
-    border: 1px solid #d1d5db;
-    padding: 0.5rem;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    padding: 0.5rem 0.75rem;
     border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--theme-fg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .modal-input:focus {
+    outline: none;
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 1px var(--theme-accent);
+  }
+  
+  .modal-button {
     font-size: 13px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .modal-button.cancel:hover {
+    background-color: var(--theme-border);
+  }
+  
+  .modal-button.save {
+    background-color: var(--theme-accent);
+    color: white;
+    border: none;
+  }
+  
+  .modal-button.save:hover {
+    background-color: #4338ca; /* darken theme accent */
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2vh 2vw;
+    overflow-y: auto; /* 👈 this allows modal itself to scroll */
+  }
+  
+  
+  .modal-form-container {
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 70vw;
+    max-width: 1000px;
+    max-height: 90vh; /* 👈 this keeps modal from overflowing */
+    overflow-y: auto;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    font-family: var(--font-ui);
+  }
+  
+  .modal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-accent);
+    border-bottom: 1px solid var(--theme-border);
+    padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    /* margin-bottom: 1rem; */
+  }
+  /* .form-section {
+    margin-bottom: 2rem;
+  } */
+  
+  .form-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-muted);
+    text-transform: uppercase;
+    /* margin-bottom: 1rem; */
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: .5rem;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    grid-column: span 6;
+  }
+  
+  .form-field.wide {
+    grid-column: span 12;
+  }
+  
+  .form-field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--theme-muted);
+    /* margin-bottom: 0.25rem; */
+  }
+  
+  .form-field input,
+  .form-field textarea {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--theme-border);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    color: var(--theme-fg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .form-field input:focus,
+  .form-field textarea:focus {
+    outline: none;
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 1px var(--theme-accent);
   }
   .modal-button {
     font-size: 13px;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
-    border: 1px solid #d1d5db;
-    background-color: white;
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
+  
   .modal-button.cancel:hover {
-    background-color: #f3f4f6;
+    background-color: var(--theme-border);
   }
+  
   .modal-button.save {
     background-color: var(--theme-accent);
     color: white;
     border: none;
   }
+  
   .modal-button.save:hover {
     background-color: #4338ca;
+  }
+  
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
   }
   
