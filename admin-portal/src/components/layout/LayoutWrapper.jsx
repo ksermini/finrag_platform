@@ -1,5 +1,5 @@
 import React from "react";
-import ThemeToggle from "../ui/ThemeToggle";
+// import ThemeToggle from "../ui/ThemeToggle";
 
 const LayoutWrapper = ({
   left,
@@ -21,7 +21,7 @@ const LayoutWrapper = ({
           <span className="layout-header-clock">
             {clock.toLocaleTimeString("en-GB", { hour12: false })}
           </span>
-          <ThemeToggle /> {/* 🔁 Add toggle here */}
+          {/* <ThemeToggle /> 🔁 Add toggle here */}
         </div>
       </div>
 

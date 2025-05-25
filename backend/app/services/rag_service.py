@@ -12,7 +12,9 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 CHAT_MODEL = "gpt-3.5-turbo"
 
 
-async def process_query(query: str, user_id: str, role: str):
+async def process_query(query: str, user_id: str, role: str, context_override: str = None):
+    docs = query_vectorstore(query) if not context_override else []
+    context = context_override or "\n\n".join(docs)
     """
         Async function that accepts a query from a user
         Gets the user_id

@@ -3,7 +3,7 @@ body {
     font-family: var(--font-ui);
     color: var(--theme-fg);
     background-color: var(--theme-bg);
-    font-size: 14px;
+    font-size: var(--font-size-md);
     line-height: 1.6;
     margin: 0;
     overflow: hidden;
@@ -21,8 +21,8 @@ body {
   
   /* === Terminal Typography === */
   .terminal-window {
-    font-family: var(--font-ui);
-    font-size: 13px;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
     white-space: pre-wrap;
     line-height: 1.4;
     color: var(--theme-fg);
@@ -33,10 +33,10 @@ body {
     margin-bottom: 0.25rem;
   }
   
-  /* === Panel Titles & Content === */
+  /* === Panel Typography === */
   .panel-box-title {
     font-family: var(--font-ui);
-    font-size: 11px;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     color: var(--theme-accent);
     text-transform: uppercase;
@@ -45,12 +45,12 @@ body {
   }
   
   .panel-box-content {
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     color: var(--theme-muted);
     line-height: 1.5;
   }
   
-  /* === Terminal Blink / Cursor Animations === */
+  /* === Blink / Cursors === */
   .animate-blink,
   .terminal-cursor,
   .decrypt-cursor {

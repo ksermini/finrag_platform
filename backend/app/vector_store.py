@@ -48,6 +48,13 @@ def query_vectorstore(query: str):
     return results['documents'][0]
 
 
+def query_vectorstore_with_group(query: str, group_id: str):
+    return collection.query(
+        query_embeddings=[get_embedding(query)],
+        n_results=5,
+        where={"group_id": group_id}
+    )["documents"][0]
+
 # EXAMPLE:
 # 3 most relevant matching docs
 # {

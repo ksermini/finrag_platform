@@ -12,7 +12,6 @@
   .panel-box:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
-  
   .panel-box-title {
     font-size: var(--font-size-sm);
     font-weight: 600;
@@ -21,7 +20,6 @@
     color: var(--theme-accent);
     margin-bottom: 0.75rem;
   }
-  
   .panel-box-content {
     font-size: var(--font-size-sm);
     line-height: 1.6;
@@ -181,7 +179,6 @@
     padding: 2vh 2vw;
     overflow-y: auto;
   }
-  
   .edit-user-modal {
     background-color: var(--theme-bg);
     color: var(--theme-fg);
@@ -194,7 +191,6 @@
     gap: 1rem;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
   }
-  
   .modal-title {
     font-size: var(--font-size-md);
     font-weight: 600;
@@ -205,7 +201,6 @@
     letter-spacing: 0.04em;
     margin-bottom: 1rem;
   }
-  
   .modal-input {
     background-color: var(--theme-bg);
     border: 1px solid var(--theme-border);
@@ -221,14 +216,12 @@
     border-color: var(--theme-accent);
     box-shadow: 0 0 0 1px var(--theme-accent);
   }
-  
   .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
     padding-top: 1rem;
   }
-  
   .modal-button {
     font-size: var(--font-size-sm);
     padding: 0.5rem 1rem;
@@ -306,7 +299,6 @@
     border-color: var(--theme-accent);
     box-shadow: 0 0 0 1px var(--theme-accent);
   }
-  
   .form-footer {
     display: flex;
     justify-content: flex-end;

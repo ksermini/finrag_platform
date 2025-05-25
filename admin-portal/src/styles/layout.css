@@ -20,13 +20,8 @@
   padding: 0 1rem;
   border-bottom: 1px solid var(--theme-border);
   background-color: var(--theme-bg);
-}
-
-.layout-header-title,
-.layout-header-clock {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--theme-fg);
 }
 
 /* === Tabs === */
@@ -45,18 +40,16 @@
   border: 1px solid var(--theme-border);
   border-radius: 6px;
   padding: 4px 10px;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--theme-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .layout-tab-btn:hover {
   background-color: var(--theme-accent-muted);
   color: var(--theme-accent);
   border-color: var(--theme-accent);
 }
-
 .layout-tab-btn.active {
   background-color: var(--theme-accent);
   color: white;
@@ -70,16 +63,14 @@
   padding: 1rem;
   overflow-y: auto;
 }
-
 .layout-left {
   border-right: 1px solid var(--theme-border);
 }
-
 .layout-right {
   border-left: 1px solid var(--theme-border);
 }
 
-/* === Center === */
+/* === Center Panel === */
 .layout-center {
   background-color: var(--theme-bg);
   padding: 1rem;
@@ -88,7 +79,7 @@
   border-right: 1px solid var(--theme-border);
 }
 
-/* === Bottom Bar === */
+/* === Footer === */
 .layout-bottom {
   grid-column: span 3;
   border-top: 1px solid var(--theme-border);
