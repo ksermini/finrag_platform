@@ -48,9 +48,9 @@ async def upload_group_document(
         title=filename,
         content=text,
         embedded=True,
-        created_by=current_user.id,
         created_at=datetime.utcnow()
     )
+
 
     async with SessionLocal() as session:
         session.add(new_doc)

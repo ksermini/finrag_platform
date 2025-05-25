@@ -1,5 +1,5 @@
 from app.db import Base
-from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -34,8 +34,7 @@ class GroupDocument(Base):
     content = Column(String)
     file_path = Column(String)
     embedded = Column(Boolean, default=False)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    created_by = Column(String, default="system")  
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Optional: enable reverse access to user.uploaded_group_docs
-    created_by_user = relationship("User", backref="uploaded_group_docs")

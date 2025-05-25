@@ -1,5 +1,5 @@
 # rag_group_service.py
-from app.rag_service import process_query
+from app.services.rag_service import process_query
 from app.vector_store import query_vectorstore_with_group
 from app.services.group_helpers import get_user_primary_group, get_group_agent_role
 

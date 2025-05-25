@@ -6,8 +6,12 @@ from app.routers import rag_routes
 from app.routers import admin_users, public_users
 
 app = FastAPI()
+from app.routers import grouped_rag_router
+app.include_router(grouped_rag_router.router)
 from app.routers import group_documents
 app.include_router(group_documents.router)
+from app.routers import group
+app.include_router(group.router)
 
 app.include_router(rag_routes.router)
 

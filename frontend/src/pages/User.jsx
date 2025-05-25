@@ -64,10 +64,18 @@ export default function User() {
       icon: <FiUpload />,
       color: "blue",
       label: "Upload",
-      onClick: () => setShowUpload((prev) => !prev), // toggle visibility
+      onClick: () => setShowUpload((prev) => !prev),
     },
-    { icon: <FiSearch />, color: "blue", label: "Ask" },
-    { icon: <FiBarChart2 />, color: "blue", label: "Insights" },
+    {
+      icon: <FiSearch />,
+      color: "blue",
+      label: "Ask",
+    },
+    {
+      icon: <FiBarChart2 />,
+      color: "blue",
+      label: "Insights",
+    },
   ];
 
   return (
@@ -76,20 +84,25 @@ export default function User() {
         <GlassIcons items={sidebarItems} />
       </aside>
 
-      <main className="bento-main-grid">
+      <main className={`bento-main-grid ${showUpload ? "blurred" : ""}`}>
         <section className="bento-box ask">
+          <header className="bento-header">💬 Ask a Question</header>
           <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
         </section>
 
         {answer && (
           <section className="bento-box answer fade-in">
-            <div className="question-label">{previousQuery}</div>
-            <AnswerCard answer={answer} />
+            <header className="bento-header">🧠 Answer</header>
+            <div className="question-label">🤔 {previousQuery}</div>
+            <div className="answer-content">
+              <AnswerCard answer={answer} />
+            </div>
           </section>
         )}
 
         {showUpload && (
           <section className="bento-box upload">
+            <header className="bento-header">📂 Upload Files</header>
             <FileUpload />
           </section>
         )}

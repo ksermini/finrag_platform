@@ -1,7 +1,7 @@
 import "./GlassIcons.css";
 
 const gradientMapping = {
-  blue: "linear-gradient(hsl(223, 90%, 50%), hsl(208, 90%, 50%))",
+  blue: "linear-gradient(hsl(223, 95.50%, 8.60%), hsl(208, 97.90%, 19.00%))",
   purple: "linear-gradient(hsl(283, 90%, 50%), hsl(268, 90%, 50%))",
   red: "linear-gradient(hsl(3, 90%, 50%), hsl(348, 90%, 50%))",
   indigo: "linear-gradient(hsl(253, 90%, 50%), hsl(238, 90%, 50%))",
@@ -14,24 +14,27 @@ const GlassIcons = ({ items, className }) => {
     if (gradientMapping[color]) {
       return { background: gradientMapping[color] };
     }
-    return { background: color };
+    return { background: color || "rgba(255, 255, 255, 0.08)" };
   };
 
   return (
-    <div className={`icon-btns ${className || ""}`}>
+    <div className={`icon-sidebar ${className || ""}`}>
       {items.map((item, index) => (
         <button
           key={index}
           className={`icon-btn ${item.customClass || ""}`}
           aria-label={item.label}
           type="button"
+          onClick={item.onClick}
         >
           <span
             className="icon-btn__back"
             style={getBackgroundStyle(item.color)}
           ></span>
           <span className="icon-btn__front">
-            <span className="icon-btn__icon" aria-hidden="true">{item.icon}</span>
+            <span className="icon-btn__icon" aria-hidden="true">
+              {item.icon}
+            </span>
           </span>
           <span className="icon-btn__label">{item.label}</span>
         </button>
