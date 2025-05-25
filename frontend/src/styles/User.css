@@ -1,8 +1,6 @@
-.ask {
-    max-width: 600px;
-    margin: auto;
-  }
-  .glow {
+/* Layout-independent animations and effects */
+
+.glow {
     background: radial-gradient(circle, rgba(0, 4, 255, 0.1), transparent 70%);
     filter: blur(20px);
     width: 200px;
@@ -11,9 +9,8 @@
     z-index: -1;
   }
   
-
-/* 👇 3D Hover Effect for Sidebar Icons */
-.icon-wrapper {
+  /* 3D Hover Effect for Sidebar Icons */
+  .icon-wrapper {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
   }
@@ -22,22 +19,7 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   }
   
-  /* 👇 Shimmer for AI-Generated Answers */
-  .answer-content {
-    background: linear-gradient(90deg, #f9fafb, #eef2ff, #f9fafb);
-    background-size: 200% 100%;
-    animation: shimmer 2.5s infinite;
-  }
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-  
-  /* 👇 Text Fade + Slide */
+  /* Text Fade + Slide Animation */
   .fade-in {
     animation: fadeSlide 0.6s ease-in-out;
   }
@@ -52,77 +34,121 @@
     }
   }
   
-  /* 👇 Progressive Blur Effect for Main Grid */
-  .bento-main-grid.blurred {
-    filter: blur(6px);
-    transition: filter 0.3s ease;
-  }
-  
-  /* 👇 Bento Box Modern Skeuomorphism */
-  .bento-box {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 1rem;
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      0 8px 24px hsl(208, 97.90%, 19.00%); /* softer, not too neon */
+  /* Glass card panel styling */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
     padding: 1.5rem;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 0 1rem rgba(0, 191, 255, 0.05);
+    transition: transform 0.25s ease;
   }
   
   
-  /* 👇 Optional: Illustration Scaling */
+  .glass-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .glass-card-header {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+  }
+  
+  .question-label {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 0.5rem;
+  }
+  
+  .answer-content {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Optional image or upload illustrations */
   .illustration {
     max-width: 100%;
     height: auto;
     margin-bottom: 1rem;
   }
-  .bento-header {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--theme-fg);
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+  .ask textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    resize: none;
   }
-  
-  .bento-main-grid {
-    margin-left: 80px; /* To account for the sidebar */
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    min-height: 100vh;
-    background-color: #1a1a1a;
-  }
-  
-  @media (min-width: 768px) {
-    .bento-main-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  
-  .question-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-    color: var(--theme-muted);
-  }
-  .bento-sidebar {
+  .chat-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    height: calc(100vh - 2rem);
+    position: relative;
+    padding-bottom: 5rem; /* room for input */
+  }
+  
+  .chat-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .chat-bubble {
+    max-width: 80%;
     padding: 1rem;
-    height: 100vh;
-    width: 80px;
-    background-color: #121212;
-    position: fixed;
-    top: 0;
-    left: 0;
+    border-radius: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  
+  .chat-bubble.user {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: white;
+  }
+  
+  .chat-bubble.ai {
+    align-self: flex-start;
+    background: rgba(0, 191, 255, 0.08);
+    border: 1px solid rgba(0, 191, 255, 0.12);
+    color: white;
+  }
+  
+  .chat-input-wrapper {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
     z-index: 10;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      0 0 8px rgba(0, 191, 255, 0.08);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .chat-input-wrapper:focus-within {
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.6),
+      0 0 8px rgba(59, 130, 246, 0.4);
   }
   

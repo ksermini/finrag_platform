@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { FiUpload, FiSearch, FiBarChart2 } from "react-icons/fi";
 
-import GlassIcons from "../reactbits/glass/GlassIcons";
-import "../reactbits/glass/GlassIcons.css";
-import "../styles/User.css";
-
+import DashboardLayout from "../layouts/DashboardLayout";
 import AskBox from "../components/AskBox";
 import AnswerCard from "../components/AnswerCard";
 import FileUpload from "../components/FileUpload";
 
-export default function User() {
+export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
   const [previousQuery, setPreviousQuery] = useState("");
@@ -66,47 +63,34 @@ export default function User() {
       label: "Upload",
       onClick: () => setShowUpload((prev) => !prev),
     },
-    {
-      icon: <FiSearch />,
-      color: "blue",
-      label: "Ask",
-    },
-    {
-      icon: <FiBarChart2 />,
-      color: "blue",
-      label: "Insights",
-    },
+    { icon: <FiSearch />, color: "blue", label: "Ask" },
+    { icon: <FiBarChart2 />, color: "blue", label: "Insights" },
   ];
 
   return (
-    <div className="bento-wrapper">
-      <aside className="bento-sidebar">
-        <GlassIcons items={sidebarItems} />
-      </aside>
-
-      <main className={`bento-main-grid ${showUpload ? "blurred" : ""}`}>
-        <section className="bento-box ask">
-          <header className="bento-header">💬 Ask a Question</header>
-          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
-        </section>
-
-        {answer && (
-          <section className="bento-box answer fade-in">
-            <header className="bento-header">🧠 Answer</header>
-            <div className="question-label">🤔 {previousQuery}</div>
-            <div className="answer-content">
+    <DashboardLayout sidebarItems={sidebarItems}>
+      <div className="chat-container">
+        <div className="chat-scroll">
+          {previousQuery && (
+            <div className="chat-bubble user">🤔 {previousQuery}</div>
+          )}
+          {answer && (
+            <div className="chat-bubble ai">
               <AnswerCard answer={answer} />
             </div>
-          </section>
-        )}
-
-        {showUpload && (
-          <section className="bento-box upload">
-            <header className="bento-header">📂 Upload Files</header>
-            <FileUpload />
-          </section>
-        )}
-      </main>
-    </div>
+          )}
+          {showUpload && (
+            <div className="chat-bubble system">
+              <FileUpload />
+            </div>
+          )}
+        </div>
+  
+        <div className="chat-input-wrapper">
+          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
+        </div>
+      </div>
+    </DashboardLayout>
   );
+  
 }
