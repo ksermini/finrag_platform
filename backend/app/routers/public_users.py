@@ -30,3 +30,18 @@ async def update_my_profile(
     await db.commit()
     await db.refresh(current_user)
     return current_user
+
+
+# ✅ NEW: Get user by email (for UI welcome banner)
+@router.get("/email/{email}", response_model=UserRead)
+async def get_user_by_email(
+    email: str,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(User).filter(User.email == email))
+    user = result.scalars().first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user

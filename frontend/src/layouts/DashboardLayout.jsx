@@ -1,4 +1,3 @@
-
 import React from "react";
 import GlassIcons from "../reactbits/glass/GlassIcons";
 import "../styles/DashboardLayout.css";
@@ -12,7 +11,11 @@ const DashboardLayout = ({ sidebarItems, children, topbar }) => {
 
       <div className="dashboard-content">
         {topbar && <div className="dashboard-topbar">{topbar}</div>}
-        <main className="dashboard-main-grid">{children}</main>
+
+        {/* 👇 Use a full flex column layout for the chat area */}
+        <div className="dashboard-chat-area">
+          {children}
+        </div>
       </div>
     </div>
   );

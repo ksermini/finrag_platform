@@ -13,20 +13,43 @@ export default function UserDashboard() {
   const [showUpload, setShowUpload] = useState(false);
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState(null);
+  const [firstName, setFirstName] = useState("there");
 
-  // 🔐 Decode token to get user_id + role
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
-        setUserId(payload.sub);
+        const email = payload.sub;
+        setUserId(email);
         setRole(payload.role);
+  
+        fetch(`${import.meta.env.VITE_API_URL}/me/email/${email}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("User not found");
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Fetched user:", data); // optional for debug
+            setFirstName(data.first_name || "there");
+          })
+          
+          .catch((err) => {
+            console.error("Failed to fetch user profile:", err);
+          });
+  
       } catch (e) {
         console.error("Invalid token:", e);
       }
     }
   }, []);
+  
+  
+  
 
   // 🧠 Ask the LLM
   const handleAsk = async () => {
@@ -69,6 +92,8 @@ export default function UserDashboard() {
 
   return (
     <DashboardLayout sidebarItems={sidebarItems}>
+      <div className="chat-banner">👋 Welcome, {firstName} — Ask away</div>
+
       <div className="chat-container">
         <div className="chat-scroll">
           {previousQuery && (
@@ -79,18 +104,18 @@ export default function UserDashboard() {
               <AnswerCard answer={answer} />
             </div>
           )}
-          {showUpload && (
-            <div className="chat-bubble system">
-              <FileUpload />
-            </div>
-          )}
         </div>
-  
+
         <div className="chat-input-wrapper">
           <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
         </div>
+
+        {showUpload && (
+          <div className="glass-card upload">
+            <FileUpload />
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
-  
 }
