@@ -8,16 +8,19 @@ const SidebarLeft = ({ activeTab, setActiveTab }) => {
   ];
 
   return (
-    <div className="tool-panel">
-      {tabs.map((tab) => (
-        <button
-          key={tab.key}
-          className={`tool-button ${activeTab === tab.key ? "active" : ""}`}
-          onClick={() => setActiveTab(tab.key)}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div className="sidebar-left">
+      <div className="sidebar-title">Sections</div>
+      <div className="tool-list">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            className={`tool-card ${activeTab === tab.key ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

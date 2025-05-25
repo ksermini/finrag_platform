@@ -1,0 +1,40 @@
+body {
+    font-family: var(--font-ui);
+    color: var(--theme-fg);
+    background-color: var(--theme-bg);
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  h1, h2, h3, h4 {
+    font-family: var(--font-ui);
+    color: var(--theme-fg);
+  }
+  
+  .panel-box-title {
+    font-family: var(--font-mono);
+  }
+  
+  .terminal-window {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    white-space: pre-wrap;
+    line-height: 1.4;
+    color: var(--theme-fg);
+  }
+  
+  .terminal-line {
+    margin-bottom: 0.25rem;
+  }
+  
+  .animate-blink,
+  .terminal-cursor,
+  .decrypt-cursor {
+    animation: blink 1s steps(2, start) infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  

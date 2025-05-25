@@ -10,7 +10,7 @@ const BootScreen = ({ onComplete }) => {
   };
 
   return (
-    <div className="h-screen w-screen bg-black text-green-400 font-mono flex flex-col justify-center items-start">
+    <div className="boot-screen">
       {!bootComplete && <DecryptLoader onComplete={handleFinish} />}
     </div>
   );

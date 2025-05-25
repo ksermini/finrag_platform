@@ -36,16 +36,12 @@ const CpuGraph = ({ title, group, color = "#00ffff" }) => {
   const avg = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
 
   return (
-    <div className="w-full mb-2">
-      <div className="flex justify-between text-[9px] text-cyan-300 mb-[1px]">
+    <div className="cpu-graph">
+      <div className="cpu-graph-header">
         <span>{title}</span>
         <span>Avg: {avg}%</span>
       </div>
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        preserveAspectRatio="none"
-        className="w-full h-6"
-      >
+      <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="cpu-graph-svg">
         <polyline
           fill="none"
           stroke={color}
@@ -96,83 +92,68 @@ const SidebarRight = () => {
   const year = clock.getFullYear();
   const month = clock.toLocaleString("en-US", { month: "short" }).toUpperCase();
   const day = clock.getDate();
-
   const memBlocks = Math.min(200, Math.round((stats?.mem ?? 60 * 2)));
 
   return (
-    <div className="text-[9px] leading-tight tracking-tight text-cyan-100 space-y-[6px]">
-      {/* Clock */}
-      <div className="text-center text-[16px] font-bold tracking-widest text-cyan-300 border-b border-cyan-700 pb-1">
-        {clock.toLocaleTimeString("en-GB", { hour12: false })}
-      </div>
+    <div className="sidebar-right">
+      <div className="clock-display">{clock.toLocaleTimeString("en-GB", { hour12: false })}</div>
 
-      {/* Date + Uptime + Type + Power */}
-      <div className="grid grid-cols-2 gap-x-2 border-b border-cyan-700 pb-1">
+      <div className="right-grid-section">
         <div>
-          <div className="text-cyan-300 text-[10px]">YEAR</div>
+          <div className="section-label">YEAR</div>
           <div>{year}</div>
           <div>{month} {day}</div>
         </div>
         <div>
-          <div className="text-cyan-300 text-[10px]">UPTIME</div>
+          <div className="section-label">UPTIME</div>
           <div>{stats?.uptime_sec ? formatUptime(stats.uptime_sec) : "--"}</div>
         </div>
         <div>
-          <div className="text-cyan-300 text-[10px]">TYPE</div>
+          <div className="section-label">TYPE</div>
           <div>LINUX</div>
         </div>
         <div>
-          <div className="text-cyan-300 text-[10px]">POWER</div>
+          <div className="section-label">POWER</div>
           <div>ON</div>
         </div>
       </div>
 
-      {/* System Metrics */}
-      <div className="space-y-[2px] border-b border-cyan-700 pb-1">
-        <div className="flex justify-between"><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
-        <div className="flex justify-between"><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"} ms</span></div>
-        <div className="flex justify-between"><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
+      <div className="right-metrics-section">
+        <div><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
+        <div><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"} ms</span></div>
+        <div><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
       </div>
 
-      {/* CPU Usage */}
-      <div className="border-b border-cyan-700 pb-1">
-        <div className="text-gray-400 text-[9px] mb-[2px]">CPU USAGE</div>
+      <div className="right-graph-section">
+        <div className="section-label">CPU USAGE</div>
         <CpuGraph title="#1–2" group="A" />
         <CpuGraph title="#3–4" group="B" />
       </div>
 
-      {/* CPU Stats */}
-      <div className="grid grid-cols-4 gap-x-2 border-b border-cyan-700 pb-1">
-        <div><div className="text-gray-400">TEMP</div><div>62°C</div></div>
-        <div><div className="text-gray-400">MIN</div><div>2.94GHz</div></div>
-        <div><div className="text-gray-400">MAX</div><div>2.99GHz</div></div>
-        <div><div className="text-gray-400">TASKS</div><div>257</div></div>
+      <div className="right-grid-section">
+        <div><div className="section-label">TEMP</div><div>62°C</div></div>
+        <div><div className="section-label">MIN</div><div>2.94GHz</div></div>
+        <div><div className="section-label">MAX</div><div>2.99GHz</div></div>
+        <div><div className="section-label">TASKS</div><div>257</div></div>
       </div>
 
-      {/* Memory Usage Grid */}
-      <div className="border-b border-cyan-700 pb-1">
-        <div className="text-gray-400 text-[9px] mb-[2px]">MEMORY</div>
-        <div className="grid grid-cols-20 gap-[1px]">
+      <div className="right-memory-section">
+        <div className="section-label">MEMORY</div>
+        <div className="memory-grid">
           {Array.from({ length: 200 }).map((_, i) => (
-            <div
-              key={i}
-              className={`w-[2px] h-[2px] ${
-                i < memBlocks ? "bg-cyan-300" : "bg-gray-800"
-              }`}
-            />
+            <div key={i} className={`memory-dot ${i < memBlocks ? "active" : ""}`} />
           ))}
         </div>
       </div>
 
-      {/* Alerts */}
-      <div className="border-b border-cyan-700 pb-1">
-        <div className="text-[9px] text-gray-400 mb-[1px]">ALERTS</div>
+      <div className="right-alerts-section">
+        <div className="section-label">ALERTS</div>
         {alerts.length === 0 ? (
-          <div className="text-green-400">✔ System healthy</div>
+          <div className="alert-ok">✔ System healthy</div>
         ) : (
-          <ul className="space-y-1">
+          <ul className="alert-list">
             {alerts.map((alert, i) => (
-              <li key={i} className="text-red-400">⚠ {alert}</li>
+              <li key={i} className="alert-warning">⚠ {alert}</li>
             ))}
           </ul>
         )}

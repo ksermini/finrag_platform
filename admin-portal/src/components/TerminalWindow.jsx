@@ -14,7 +14,7 @@ const TerminalWindow = () => {
     const fetchMetadata = async () => {
       try {
         const res = await axios.get("http://localhost:8000/admin/recent-queries", {
-          withCredentials: true, // optional: if auth cookies or headers are required
+          withCredentials: true,
         });
         const [latest] = res.data;
 
@@ -52,11 +52,11 @@ const TerminalWindow = () => {
   }, []);
 
   return (
-    <div className="text-sm whitespace-pre-wrap leading-relaxed">
+    <div className="terminal-window">
       {logs.map((line, i) => (
-        <div key={i} className="mb-1">{line}</div>
+        <div key={i} className="terminal-line">{line}</div>
       ))}
-      <div className="animate-blink">_</div>
+      <div className="terminal-cursor">_</div>
     </div>
   );
 };

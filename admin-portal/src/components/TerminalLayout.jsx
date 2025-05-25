@@ -38,61 +38,61 @@ const TerminalLayout = () => {
       case "Audit Viewer": return <AuditViewer />;
       case "Chroma Index": return <ChromaIndex />;
       case "API Logs": return <APILogs />;
-      default: return <div className="text-sm">Select a tool</div>;
+      default: return <div className="tool-placeholder">Select a tool</div>;
     }
   };
 
   return (
-    <div className="w-screen h-screen font-mono text-[9px] leading-none tracking-tight bg-black text-cyan-300 grid grid-cols-[180px_1fr_260px] grid-rows-[40px_40px_1fr_40px] overflow-hidden relative">
+    <div className="terminal-layout">
       <Scanlines />
 
-      {/* Top Header */}
-      <div className="col-span-3 flex justify-between items-center px-4 border-b border-cyan-600 bg-[#0b0b0b]">
-        <span className="text-[11px] font-semibold">FinRAG Admin Portal v1.0</span>
-        <span className="text-[11px]">{clock.toLocaleTimeString("en-GB", { hour12: false })}</span>
+      {/* Header */}
+      <div className="layout-header">
+        <span className="layout-header-title">FinRAG Admin Portal v1.0</span>
+        <span className="layout-header-clock">
+          {clock.toLocaleTimeString("en-GB", { hour12: false })}
+        </span>
       </div>
 
       {/* Tabs */}
-      <div className="col-span-3 flex items-center gap-[2px] border-b border-cyan-600 px-2 bg-[#0a0a0a]">
+      <div className="layout-tabs">
         {tabs.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`border border-cyan-600 px-2 py-[2px] ${
-              activeTab === tab ? "bg-cyan-300 text-black" : "text-cyan-300"
-            }`}
+            className={`layout-tab-btn ${activeTab === tab ? "active" : ""}`}
           >
             [{tab}]
           </button>
         ))}
       </div>
 
-      {/* Left */}
-      <div className="border-r border-cyan-600 bg-black p-[4px] overflow-y-auto">
+      {/* Left Sidebar */}
+      <div className="layout-left">
         <SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />
       </div>
 
-      {/* Center */}
-      <div className="overflow-y-auto p-[4px] bg-black border-x border-cyan-600 text-cyan-100">
+      {/* Center Content */}
+      <div className="layout-center">
         {activeTab === "Terminal" ? (
           <>
             <TerminalWindow />
-            <div className="mt-2 border-t border-cyan-600 pt-2">
+            <div className="query-output-wrapper">
               {renderToolPanel()}
             </div>
           </>
         ) : (
-          <div className="text-cyan-400">[{activeTab} tab coming soon]</div>
+          <div className="tab-placeholder">[{activeTab} tab coming soon]</div>
         )}
       </div>
 
-      {/* Right */}
-      <div className="p-[4px] bg-black">
+      {/* Right Sidebar */}
+      <div className="layout-right">
         <SidebarRight />
       </div>
 
-      {/* Bottom */}
-      <div className="col-span-3 border-t border-cyan-600 bg-[#0a0a0a] px-3 py-2">
+      {/* Bottom Footer */}
+      <div className="layout-bottom">
         <KeyboardOverlay />
       </div>
     </div>

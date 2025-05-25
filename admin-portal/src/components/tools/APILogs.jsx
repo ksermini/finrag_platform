@@ -21,11 +21,11 @@ const APILogs = () => {
   }, []);
 
   return (
-    <div className={styles.apiLogsWrapper}>
-      <div className={styles.apiLogsTitle}>[ API Logs ]</div>
-      {error && <div className={styles.error}>{error}</div>}
-      <div className={styles.logContainer}>
-        <div className={styles.logHeader}>
+    <div className="api-logs-wrapper">
+      <div className="api-logs-title">[ API Logs ]</div>
+      {error && <div className="api-logs-error">{error}</div>}
+      <div className="api-logs-table">
+        <div className="api-logs-header">
           <span>Timestamp</span>
           <span>User</span>
           <span>Model</span>
@@ -35,7 +35,7 @@ const APILogs = () => {
         {logs.map((log, i) => {
           const [ts, user, model, latency, tokens] = log.split(" | ");
           return (
-            <div key={i} className={styles.logRow}>
+            <div key={i} className="api-logs-row">
               <span>{ts}</span>
               <span>{user}</span>
               <span>{model}</span>

@@ -1,0 +1,22 @@
+@import './variables.css';
+@import './layout.css';
+@import './components.css';
+@import './typography.css';
+
+body.light {
+  --theme-bg: #f9fafb;
+  --theme-fg: #111827;
+  --theme-accent: #4f46e5;
+  --theme-accent-muted: #dbeafe;
+  --theme-border: #e5e7eb;
+  --theme-muted: #6b7280;
+}
+
+body.dark {
+  --theme-bg: #111827;
+  --theme-fg: #f9fafb;
+  --theme-accent: #60a5fa;
+  --theme-accent-muted: #1e3a8a;
+  --theme-border: #374151;
+  --theme-muted: #9ca3af;
+}

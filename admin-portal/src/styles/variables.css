@@ -1,0 +1,16 @@
+:root {
+    --theme-bg: #f9fafb;
+    --theme-fg: #111827;
+    --theme-accent: #4f46e5;
+    --theme-accent-muted: #dbeafe;
+    --theme-border: #e5e7eb;
+    --theme-muted: #6b7280;
+  
+    --color_r: 0;
+    --color_g: 255;
+    --color_b: 255;
+  
+    --font-mono: 'VT323', monospace;
+    --font-ui: 'Inter', sans-serif;
+  }
+  

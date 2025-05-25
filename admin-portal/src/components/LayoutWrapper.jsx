@@ -21,13 +21,13 @@ const LayoutWrapper = ({ left, center, right, bottom }) => {
       {/* Left Sidebar */}
       <div className="layout-left">{left}</div>
 
-      {/* Main Center Panel */}
+      {/* Center Panel */}
       <div className="layout-center">{center}</div>
 
       {/* Right Sidebar */}
       <div className="layout-right">{right}</div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Footer */}
       <div className="layout-bottom">{bottom}</div>
     </div>
   );

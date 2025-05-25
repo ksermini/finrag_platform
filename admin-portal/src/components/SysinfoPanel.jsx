@@ -13,7 +13,6 @@ const SysinfoPanel = () => {
   }, []);
 
   useEffect(() => {
-    // Date block will rerender from `now`
     updateUptime();
     updateOSType();
     updateBattery();
@@ -26,7 +25,7 @@ const SysinfoPanel = () => {
   }, []);
 
   const updateUptime = () => {
-    const seconds = Math.floor(performance.now() / 1000); // or use uptime API
+    const seconds = Math.floor(performance.now() / 1000);
     const days = Math.floor(seconds / 86400);
     const hours = String(Math.floor((seconds % 86400) / 3600)).padStart(2, "0");
     const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
@@ -57,22 +56,22 @@ const SysinfoPanel = () => {
   const day = now.getDate();
 
   return (
-    <div className="grid grid-cols-2 text-[9px] gap-y-[6px] gap-x-[12px] border-b border-cyan-700 pb-1">
-      <div>
-        <div className="text-cyan-300 text-[10px]">YEAR</div>
+    <div className="sysinfo-panel">
+      <div className="sysinfo-block">
+        <div className="sysinfo-label">YEAR</div>
         <div>{year}</div>
         <div>{month} {day}</div>
       </div>
-      <div>
-        <div className="text-cyan-300 text-[10px]">UPTIME</div>
-        <div className="whitespace-nowrap">{uptime.replace(/(\d+)d/, (_, d) => `${d}<span class='text-gray-400'>d</span>`)}</div>
+      <div className="sysinfo-block">
+        <div className="sysinfo-label">UPTIME</div>
+        <div className="sysinfo-value">{uptime}</div>
       </div>
-      <div>
-        <div className="text-cyan-300 text-[10px]">TYPE</div>
+      <div className="sysinfo-block">
+        <div className="sysinfo-label">TYPE</div>
         <div>{osType}</div>
       </div>
-      <div>
-        <div className="text-cyan-300 text-[10px]">POWER</div>
+      <div className="sysinfo-block">
+        <div className="sysinfo-label">POWER</div>
         <div>{battery}</div>
       </div>
     </div>

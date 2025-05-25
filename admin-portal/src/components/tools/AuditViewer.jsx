@@ -21,12 +21,12 @@ const AuditViewer = () => {
   }, []);
 
   return (
-    <div className={styles.auditViewer}>
-      <h2 className={styles.title}>[ Audit Logs ]</h2>
-      {error && <div className={styles.error}>{error}</div>}
+    <div className="audit-viewer">
+      <h2 className="audit-title">[ Audit Logs ]</h2>
+      {error && <div className="audit-error">{error}</div>}
 
-      <div className={styles.tableWrapper}>
-        <div className={styles.tableHead}>
+      <div className="audit-table-wrapper">
+        <div className="audit-table-head">
           <div>Timestamp</div>
           <div>User</div>
           <div>Model</div>
@@ -37,7 +37,7 @@ const AuditViewer = () => {
         </div>
 
         {logs.map((log, i) => (
-          <div key={i} className={styles.tableRow}>
+          <div key={i} className="audit-table-row">
             <div>{log.timestamp?.split("T")[0]}</div>
             <div>{log.user_id}</div>
             <div>{log.model}</div>

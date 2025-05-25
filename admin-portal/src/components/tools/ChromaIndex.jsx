@@ -20,15 +20,16 @@ const ChromaIndex = () => {
   }, []);
 
   return (
-    <div className="text-xs space-y-2">
-      <div className="font-bold">[ Chroma Index Stats ]</div>
-      {error && <div className="text-red-400">{error}</div>}
+    <div className="chroma-index">
+      <h2 className="chroma-index-title">[ Chroma Index Stats ]</h2>
+      {error && <div className="chroma-index-error">{error}</div>}
+
       {info ? (
-        <pre className="bg-black border border-gray-600 p-2 text-yellow-300">
+        <pre className="chroma-index-json">
           {JSON.stringify(info, null, 2)}
         </pre>
       ) : !error ? (
-        <div className="text-gray-500">Loading index metadata...</div>
+        <div className="chroma-index-loading">Loading index metadata...</div>
       ) : null}
     </div>
   );

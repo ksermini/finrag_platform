@@ -1,0 +1,82 @@
+.panel-box {
+    --aug-border: 3px;
+    --aug-inset: 1px;
+    --aug-border-bg: var(--theme-fg);
+    --aug-inset-bg: var(--theme-bg);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(var(--color_r), var(--color_g), var(--color_b), 0.25);
+  }
+  
+  .panel-box-title {
+    font-weight: 600;
+    font-size: 11px;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    color: var(--theme-accent);
+    letter-spacing: 0.5px;
+  }
+  
+  .panel-box-content {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  
+  .tool-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tool-button {
+    all: unset;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(var(--color_r), var(--color_g), var(--color_b), 0.05);
+    border: 1px solid transparent;
+    color: var(--theme-fg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .tool-button:hover {
+    background-color: rgba(var(--color_r), var(--color_g), var(--color_b), 0.08);
+    border-color: var(--theme-fg);
+  }
+  
+  .tool-button.active {
+    background-color: var(--theme-fg);
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 0 4px rgba(var(--color_r), var(--color_g), var(--color_b), 0.6);
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .edit-user-modal {
+    background-color: #0e0e0e;
+    border: 1px solid var(--theme-border);
+    color: var(--theme-fg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 400px;
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
