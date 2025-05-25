@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import LayoutWrapper from "./LayoutWrapper";
 import TerminalWindow from "./TerminalWindow";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
-import Scanlines from "./Scanlines";
 import KeyboardOverlay from "./KeyboardOverlay";
+import UsersTab from "./tabs/UsersTab";
 
 // Tool Panels
 import VectorExplorer from "./tools/VectorExplorer";
@@ -11,15 +12,6 @@ import ModelStatus from "./tools/ModelStatus";
 import AuditViewer from "./tools/AuditViewer";
 import ChromaIndex from "./tools/ChromaIndex";
 import APILogs from "./tools/APILogs";
-
-const tabs = ["Terminal", "Users", "Jobs", "Logs", "Settings"];
-const toolList = [
-  "Vector Explorer",
-  "Model Status",
-  "Audit Viewer",
-  "Chroma Index",
-  "API Logs",
-];
 
 const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");
@@ -43,59 +35,26 @@ const TerminalLayout = () => {
   };
 
   return (
-    <div className="terminal-layout">
-      <Scanlines />
-
-      {/* Header */}
-      <div className="layout-header">
-        <span className="layout-header-title">FinRAG Admin Portal v1.0</span>
-        <span className="layout-header-clock">
-          {clock.toLocaleTimeString("en-GB", { hour12: false })}
-        </span>
-      </div>
-
-      {/* Tabs */}
-      <div className="layout-tabs">
-        {tabs.map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`layout-tab-btn ${activeTab === tab ? "active" : ""}`}
-          >
-            [{tab}]
-          </button>
-        ))}
-      </div>
-
-      {/* Left Sidebar */}
-      <div className="layout-left">
-        <SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />
-      </div>
-
-      {/* Center Content */}
-      <div className="layout-center">
-        {activeTab === "Terminal" ? (
+    <LayoutWrapper
+      left={<SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />}
+      center={
+        activeTab === "Terminal" ? (
           <>
             <TerminalWindow />
-            <div className="query-output-wrapper">
-              {renderToolPanel()}
-            </div>
+            <div className="query-output-wrapper">{renderToolPanel()}</div>
           </>
+        ) : activeTab === "Users" ? (
+          <UsersTab />
         ) : (
           <div className="tab-placeholder">[{activeTab} tab coming soon]</div>
-        )}
-      </div>
-
-      {/* Right Sidebar */}
-      <div className="layout-right">
-        <SidebarRight />
-      </div>
-
-      {/* Bottom Footer */}
-      <div className="layout-bottom">
-        <KeyboardOverlay />
-      </div>
-    </div>
+        )
+      }
+      right={<SidebarRight />}
+      bottom={<KeyboardOverlay />}
+      activeTab={activeTab}
+      onTabClick={setActiveTab}
+      clock={clock}
+    />
   );
 };
 

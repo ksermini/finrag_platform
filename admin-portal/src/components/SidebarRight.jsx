@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import LetterGlitch from "/lib/LetterGlitch/LetterGlitch";
 
-const CpuGraph = ({ title, group, color = "#00ffff" }) => {
+
+const CpuGraph = ({ title, group, color = "#4f46e5" }) => {
   const [data, setData] = useState(Array(50).fill(0));
   const requestRef = useRef();
 
@@ -45,11 +47,10 @@ const CpuGraph = ({ title, group, color = "#00ffff" }) => {
         <polyline
           fill="none"
           stroke={color}
-          strokeWidth="1"
+          strokeWidth="1.5"
           points={points}
-          strokeLinejoin="miter"
-          strokeLinecap="square"
-          shapeRendering="crispEdges"
+          strokeLinejoin="round"
+          strokeLinecap="round"
         />
       </svg>
     </div>
@@ -96,67 +97,79 @@ const SidebarRight = () => {
 
   return (
     <div className="sidebar-right">
-      <div className="clock-display">{clock.toLocaleTimeString("en-GB", { hour12: false })}</div>
-
-      <div className="right-grid-section">
-        <div>
-          <div className="section-label">YEAR</div>
-          <div>{year}</div>
-          <div>{month} {day}</div>
-        </div>
-        <div>
-          <div className="section-label">UPTIME</div>
-          <div>{stats?.uptime_sec ? formatUptime(stats.uptime_sec) : "--"}</div>
-        </div>
-        <div>
-          <div className="section-label">TYPE</div>
-          <div>LINUX</div>
-        </div>
-        <div>
-          <div className="section-label">POWER</div>
-          <div>ON</div>
-        </div>
+      <div className="clock-display">
+        {clock.toLocaleTimeString("en-GB", { hour12: false })}
       </div>
 
-      <div className="right-metrics-section">
-        <div><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
-        <div><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"} ms</span></div>
-        <div><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
-      </div>
-
-      <div className="right-graph-section">
-        <div className="section-label">CPU USAGE</div>
-        <CpuGraph title="#1–2" group="A" />
-        <CpuGraph title="#3–4" group="B" />
-      </div>
-
-      <div className="right-grid-section">
-        <div><div className="section-label">TEMP</div><div>62°C</div></div>
-        <div><div className="section-label">MIN</div><div>2.94GHz</div></div>
-        <div><div className="section-label">MAX</div><div>2.99GHz</div></div>
-        <div><div className="section-label">TASKS</div><div>257</div></div>
-      </div>
-
-      <div className="right-memory-section">
-        <div className="section-label">MEMORY</div>
-        <div className="memory-grid">
-          {Array.from({ length: 200 }).map((_, i) => (
-            <div key={i} className={`memory-dot ${i < memBlocks ? "active" : ""}`} />
-          ))}
+      <div className="panel-box">
+        <div className="panel-box-title">System</div>
+        <div className="panel-box-content">
+          <div className="right-grid-section">
+            <div>
+              <div className="section-label">Year</div>
+              <div>{year}</div>
+              <div>{month} {day}</div>
+            </div>
+            <div>
+              <div className="section-label">Uptime</div>
+              <div>{stats?.uptime_sec ? formatUptime(stats.uptime_sec) : "--"}</div>
+            </div>
+            <div>
+              <div className="section-label">Type</div>
+              <div>LINUX</div>
+            </div>
+            <div>
+              <div className="section-label">Power</div>
+              <div>ON</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="right-alerts-section">
-        <div className="section-label">ALERTS</div>
-        {alerts.length === 0 ? (
-          <div className="alert-ok">✔ System healthy</div>
-        ) : (
-          <ul className="alert-list">
-            {alerts.map((alert, i) => (
-              <li key={i} className="alert-warning">⚠ {alert}</li>
-            ))}
-          </ul>
-        )}
+      <div className="panel-box">
+        <div className="panel-box-title">Performance</div>
+        <div className="panel-box-content right-metrics-section">
+          <div><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
+          <div><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"} ms</span></div>
+          <div><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
+        </div>
+      </div>
+
+      <div className="panel-box">
+        <div className="panel-box-title">CPU Usage</div>
+        <div className="panel-box-content">
+          <CpuGraph title="#1–2" group="A" />
+          <CpuGraph title="#3–4" group="B" />
+        </div>
+      </div>
+
+      <div className="panel-box">
+        <div className="panel-box-title">Memory</div>
+        <div className="panel-box-content">
+        <LetterGlitch
+          glitchSpeed={50}
+          centerVignette={true}
+          outerVignette={false}
+          smooth={true}
+          text="MEMORY BLOCK OK"
+        />
+
+        </div>
+      </div>
+
+      <div className="panel-box">
+        <div className="panel-box-title">Alerts</div>
+        <div className="panel-box-content">
+          {alerts.length === 0 ? (
+            <div className="alert-ok">✔ System healthy</div>
+          ) : (
+            <ul className="alert-list">
+              {alerts.map((alert, i) => (
+                <li key={i} className="alert-warning">⚠ {alert}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

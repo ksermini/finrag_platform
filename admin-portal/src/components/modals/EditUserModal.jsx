@@ -19,24 +19,24 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="edit-user-modal">
-        <h2 className="modal-title">Edit User</h2>
-        <div className="modal-body">
+    <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+      <div className="bg-gray-900 border border-gray-600 p-6 rounded-lg w-96 text-white space-y-4">
+        <h2 className="text-lg font-bold border-b border-gray-600 pb-2">Edit User</h2>
+        <div className="space-y-2">
           <input
-            className="modal-input"
+            className="w-full bg-gray-800 p-2 rounded"
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
             placeholder="Username"
           />
           <input
-            className="modal-input"
+            className="w-full bg-gray-800 p-2 rounded"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             placeholder="Email"
           />
           <select
-            className="modal-input"
+            className="w-full bg-gray-800 p-2 rounded"
             value={form.role}
             onChange={(e) => setForm({ ...form, role: e.target.value })}
           >
@@ -45,13 +45,9 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
             <option>Admin</option>
           </select>
         </div>
-        <div className="modal-footer">
-          <button onClick={onClose} className="modal-button cancel">
-            Cancel
-          </button>
-          <button onClick={saveUser} className="modal-button save">
-            Save
-          </button>
+        <div className="flex justify-end space-x-3 pt-4">
+          <button onClick={onClose} className="px-3 py-1 border border-gray-500">Cancel</button>
+          <button onClick={saveUser} className="px-3 py-1 bg-green-600">Save</button>
         </div>
       </div>
     </div>

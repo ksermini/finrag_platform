@@ -1,33 +1,46 @@
 import React from "react";
+import ThemeToggle from "./ThemeToggle";
 
-const LayoutWrapper = ({ left, center, right, bottom }) => {
+const LayoutWrapper = ({
+  left,
+  center,
+  right,
+  bottom,
+  activeTab,
+  onTabClick,
+  clock,
+}) => {
+  const tabs = ["Terminal", "Users", "Jobs", "Logs", "Settings"];
+
   return (
     <div className="layout-wrapper">
-      {/* Top Header Bar */}
+      {/* Header */}
       <div className="layout-header">
-        <span className="layout-header-title">FinRAG System Console v1.0</span>
-        <span className="layout-header-clock">{new Date().toUTCString()}</span>
+        <span className="layout-header-title">FinRAG Admin Portal v1.0</span>
+        <div className="flex items-center gap-3">
+          <span className="layout-header-clock">
+            {clock.toLocaleTimeString("en-GB", { hour12: false })}
+          </span>
+          <ThemeToggle /> {/* 🔁 Add toggle here */}
+        </div>
       </div>
 
-      {/* Tabs Row */}
+      {/* Tabs */}
       <div className="layout-tabs">
-        {["Terminal", "Users", "Jobs", "Logs", "Settings"].map((tab) => (
-          <button key={tab} className="layout-tab-btn">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => onTabClick(tab)}
+            className={`layout-tab-btn ${activeTab === tab ? "active" : ""}`}
+          >
             [{tab}]
           </button>
         ))}
       </div>
 
-      {/* Left Sidebar */}
       <div className="layout-left">{left}</div>
-
-      {/* Center Panel */}
       <div className="layout-center">{center}</div>
-
-      {/* Right Sidebar */}
       <div className="layout-right">{right}</div>
-
-      {/* Bottom Footer */}
       <div className="layout-bottom">{bottom}</div>
     </div>
   );

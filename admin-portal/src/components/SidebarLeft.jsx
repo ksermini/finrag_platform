@@ -1,23 +1,25 @@
 import React from "react";
 
-const SidebarLeft = ({ activeTab, setActiveTab }) => {
-  const tabs = [
-    { key: "logs", label: "Logs" },
-    { key: "query", label: "Query" },
-    { key: "metadata", label: "Metadata" }
-  ];
+const tools = [
+  "Vector Explorer",
+  "Model Status",
+  "Audit Viewer",
+  "Chroma Index",
+  "API Logs",
+];
 
+const SidebarLeft = ({ activeTool, setActiveTool }) => {
   return (
     <div className="sidebar-left">
-      <div className="sidebar-title">Sections</div>
-      <div className="tool-list">
-        {tabs.map((tab) => (
+      <div className="sidebar-title">[ Tools ]</div>
+      <div className="tool-panel">
+        {tools.map((tool) => (
           <button
-            key={tab.key}
-            className={`tool-card ${activeTab === tab.key ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.key)}
+            key={tool}
+            className={`tool-button ${activeTool === tool ? "active" : ""}`}
+            onClick={() => setActiveTool(tool)}
           >
-            {tab.label}
+            {tool}
           </button>
         ))}
       </div>

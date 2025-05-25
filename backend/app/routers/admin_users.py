@@ -6,25 +6,20 @@ from typing import List
 from app.db import get_db
 from app.models.user import User
 from app.schemas.users import UserRead, UserUpdate, UserCreate
-from app.dependencies import get_current_admin_user
 
 router = APIRouter(prefix="/admin/users", tags=["Admin Users"])
 
-
 @router.get("/", response_model=List[UserRead])
 async def get_all_users(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
+    db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(select(User))
     return result.scalars().all()
 
-
 @router.post("/", response_model=UserRead)
 async def create_user(
     user: UserCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
+    db: AsyncSession = Depends(get_db)
 ):
     new_user = User(**user.dict())
     db.add(new_user)
@@ -32,13 +27,11 @@ async def create_user(
     await db.refresh(new_user)
     return new_user
 
-
 @router.put("/{user_id}", response_model=UserRead)
 async def update_user(
     user_id: int,
     user: UserUpdate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
+    db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(select(User).where(User.id == user_id))
     db_user = result.scalar_one_or_none()
