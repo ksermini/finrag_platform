@@ -2,20 +2,19 @@ import React from "react";
 import GlassIcons from "../reactbits/glass/GlassIcons";
 import "../styles/DashboardLayout.css";
 
-const DashboardLayout = ({ sidebarItems, children, topbar }) => {
+const DashboardLayout = ({ sidebarItems, children, banner }) => {
   return (
-    <div className="dashboard-wrapper">
-      <aside className="dashboard-sidebar">
-        <GlassIcons items={sidebarItems} />
-      </aside>
+    <div className="dashboard-root">
+      <header className="dashboard-banner">{banner}</header>
 
-      <div className="dashboard-content">
-        {topbar && <div className="dashboard-topbar">{topbar}</div>}
+      <div className="dashboard-body">
+        <aside className="dashboard-sidebar">
+          <GlassIcons items={sidebarItems} />
+        </aside>
 
-        {/* 👇 Use a full flex column layout for the chat area */}
-        <div className="dashboard-chat-area">
+        <main className="dashboard-main">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import AskBox from "../components/AskBox";
 import AnswerCard from "../components/AnswerCard";
 import FileUpload from "../components/FileUpload";
 
+import "../styles/User.css";
+
 export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
@@ -23,7 +25,7 @@ export default function UserDashboard() {
         const email = payload.sub;
         setUserId(email);
         setRole(payload.role);
-  
+
         fetch(`${import.meta.env.VITE_API_URL}/me/email/${email}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,24 +36,17 @@ export default function UserDashboard() {
             return res.json();
           })
           .then((data) => {
-            console.log("Fetched user:", data); // optional for debug
             setFirstName(data.first_name || "there");
           })
-          
           .catch((err) => {
             console.error("Failed to fetch user profile:", err);
           });
-  
       } catch (e) {
         console.error("Invalid token:", e);
       }
     }
   }, []);
-  
-  
-  
 
-  // 🧠 Ask the LLM
   const handleAsk = async () => {
     if (!query.trim() || !userId) return;
 
@@ -81,9 +76,7 @@ export default function UserDashboard() {
 
   const sidebarItems = [
     {
-      icon: <FiUpload />,
-      color: "blue",
-      label: "Upload",
+      icon: <FiUpload />, color: "blue", label: "Upload",
       onClick: () => setShowUpload((prev) => !prev),
     },
     { icon: <FiSearch />, color: "blue", label: "Ask" },
@@ -91,25 +84,25 @@ export default function UserDashboard() {
   ];
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems}>
-      <div className="chat-banner">👋 Welcome, {firstName} — Ask away</div>
-
-      <div className="chat-container">
+    <DashboardLayout
+      sidebarItems={sidebarItems}
+      banner={<div className="banner-text">👋 Welcome, {firstName}</div>}
+    >
+      <div className="chat-main">
         <div className="chat-scroll">
-          {previousQuery && (
-            <div className="chat-bubble user">🤔 {previousQuery}</div>
-          )}
+          {previousQuery && <div className="chat-bubble user">🤔 {previousQuery}</div>}
           {answer && (
             <div className="chat-bubble ai">
+              <div className="bubble-label">Answer</div>
               <AnswerCard answer={answer} />
             </div>
           )}
         </div>
-
+  
         <div className="chat-input-wrapper">
           <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
         </div>
-
+  
         {showUpload && (
           <div className="glass-card upload">
             <FileUpload />
@@ -118,4 +111,5 @@ export default function UserDashboard() {
       </div>
     </DashboardLayout>
   );
+  
 }

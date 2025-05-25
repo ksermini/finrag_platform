@@ -14,10 +14,11 @@ from app.routers import group
 app.include_router(group.router)
 
 app.include_router(rag_routes.router)
-
+from app.routers import user
 app.include_router(admin_users.router)
 app.include_router(public_users.router)
 from app.routers import feed
+app.include_router(user.router)
 app.include_router(feed.router)
 app.include_router(auth.router)
 app.include_router(admin.router)

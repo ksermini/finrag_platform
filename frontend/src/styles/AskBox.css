@@ -37,6 +37,13 @@
     transition: background 0.2s ease;
     backdrop-filter: blur(10px);
   }
+  .ask-box {
+    align-items: flex-end;
+  }
+  .query-box {
+    max-height: 160px;
+    overflow-y: auto;
+  }
   
   .neutral-button:hover {
     background: rgba(59, 130, 246, 0.4);

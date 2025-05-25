@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "../styles/AskBox.css"; // ✅ make sure this is imported
-
+import ShinyText from "../../lib/ShinyText/ShinyText"
 export default function AskBox({ query, setQuery, onSubmit }) {
   useEffect(() => {
     const textarea = document.querySelector(".query-box");
@@ -19,7 +19,7 @@ export default function AskBox({ query, setQuery, onSubmit }) {
         rows={1} // optional, start with one line
       />
       <button className="neutral-button" onClick={onSubmit}>
-        Ask
+      <ShinyText text="Ask" disabled={false} speed={3} className='custom-class' />
       </button>
     </div>
   );

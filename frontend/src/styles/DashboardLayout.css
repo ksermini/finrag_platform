@@ -1,5 +1,46 @@
-/* DashboardLayout.css */
-
+  .dashboard-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .dashboard-banner {
+    height: 60px;
+    background-color: #0f0f0f;
+    padding-left: 2vw;
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dashboard-body {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 60px);
+  }
+  
+  .dashboard-sidebar {
+    width: 80px;
+    background-color: #121212;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .dashboard-main {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
 .dashboard-wrapper {
     display: flex;
     min-height: 100vh;
@@ -7,7 +48,7 @@
     color: white;
   }
   
-  .dashboard-sidebar {
+  /* .dashboard-sidebar {
     width: 80px;
     background-color: #0c0c0c;
     padding: 2rem 0.5rem;
@@ -20,7 +61,7 @@
     left: 0;
     height: 100%;
     z-index: 10;
-  }
+  } */
   
   .dashboard-content {
     margin-left: 80px;
@@ -54,6 +95,12 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
+  }
+  .dashboard-chat-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
     overflow: hidden;
   }
   
