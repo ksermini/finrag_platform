@@ -1,3 +1,4 @@
+/* === Panel Boxes === */
 .panel-box {
     background-color: var(--theme-bg);
     color: var(--theme-fg);
@@ -12,6 +13,7 @@
   .panel-box:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
+  
   .panel-box-title {
     font-size: 12px;
     font-weight: 600;
@@ -20,12 +22,27 @@
     color: var(--theme-accent);
     margin-bottom: 0.75rem;
   }
+  
   .panel-box-content {
     font-size: 13px;
     line-height: 1.6;
     color: #374151;
   }
   
+  /* === Bento Card Style === */
+  .panel-box.bento {
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .panel-box.bento:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* === UI Elements === */
   .clock-display {
     text-align: center;
     font-size: 20px;
@@ -41,6 +58,7 @@
     gap: 1rem;
     margin-bottom: 1rem;
   }
+  
   .section-label {
     font-size: 11px;
     font-weight: 500;
@@ -60,6 +78,7 @@
     width: 100%;
     margin-bottom: 1.25rem;
   }
+  
   .cpu-graph-header {
     display: flex;
     justify-content: space-between;
@@ -67,6 +86,7 @@
     color: var(--theme-muted);
     margin-bottom: 4px;
   }
+  
   .cpu-graph-svg {
     width: 100%;
     height: 30px;
@@ -78,36 +98,43 @@
     gap: 1px;
     margin-top: 6px;
   }
+  
   .memory-dot {
     width: 4px;
     height: 4px;
     background-color: #e5e7eb;
     border-radius: 1px;
   }
+  
   .memory-dot.active {
     background-color: var(--theme-accent);
   }
   
+  /* === Alerts === */
   .alert-ok {
     color: #10b981;
     font-size: 13px;
   }
+  
   .alert-warning {
     color: #ef4444;
     font-size: 13px;
     font-weight: 600;
   }
+  
   .alert-list {
     list-style: none;
     padding-left: 0;
     margin-top: 0.5rem;
   }
   
+  /* === Tool Panel === */
   .tool-panel {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
+  
   .tool-button {
     all: unset;
     padding: 0.5rem 0.75rem;
@@ -120,10 +147,12 @@
     transition: background-color 0.2s ease;
     cursor: pointer;
   }
+  
   .tool-button:hover {
     background-color: #e0e7ff;
     border-color: var(--theme-accent);
   }
+  
   .tool-button.active {
     background-color: var(--theme-accent);
     color: white;
@@ -214,9 +243,8 @@
     justify-content: center;
     align-items: center;
     padding: 2vh 2vw;
-    overflow-y: auto; /* 👈 this allows modal itself to scroll */
+    overflow-y: auto;
   }
-  
   
   .modal-form-container {
     background-color: var(--theme-bg);
@@ -225,12 +253,13 @@
     border-radius: 12px;
     width: 70vw;
     max-width: 1000px;
-    max-height: 90vh; /* 👈 this keeps modal from overflowing */
+    max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
     font-family: var(--font-ui);
   }
   
+  /* Modal Title */
   .modal-title {
     font-size: 14px;
     font-weight: 600;
@@ -239,24 +268,20 @@
     padding-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    /* margin-bottom: 1rem; */
   }
-  /* .form-section {
-    margin-bottom: 2rem;
-  } */
+  
+  /* Form Grid Layout */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0.5rem;
+  }
   
   .form-section h3 {
     font-size: 13px;
     font-weight: 600;
     color: var(--theme-muted);
     text-transform: uppercase;
-    /* margin-bottom: 1rem; */
-  }
-  
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: .5rem;
   }
   
   .form-field {
@@ -273,7 +298,6 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--theme-muted);
-    /* margin-bottom: 0.25rem; */
   }
   
   .form-field input,
@@ -293,6 +317,15 @@
     border-color: var(--theme-accent);
     box-shadow: 0 0 0 1px var(--theme-accent);
   }
+  
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  
+  /* Modal Buttons */
   .modal-button {
     font-size: 13px;
     padding: 0.5rem 1rem;
@@ -316,12 +349,5 @@
   
   .modal-button.save:hover {
     background-color: #4338ca;
-  }
-  
-  .form-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    margin-top: 2rem;
   }
   

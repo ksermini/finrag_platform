@@ -12,12 +12,12 @@ const SidebarLeft = ({ activeTool, setActiveTool }) => {
   return (
     <div className="sidebar-left">
       <div className="sidebar-title">[ Tools ]</div>
-      <div className="tool-panel">
+      <div className="tool-list">
         {tools.map((tool) => (
           <button
             key={tool}
-            className={`tool-button ${activeTool === tool ? "active" : ""}`}
             onClick={() => setActiveTool(tool)}
+            className={`tool-card ${activeTool === tool ? "active" : ""}`}
           >
             {tool}
           </button>
