@@ -1,0 +1,43 @@
+body {
+    font-family: var(--font-ui);
+    color: var(--theme-fg);
+    background-color: var(--theme-bg);
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--theme-fg);
+    line-height: 1.3;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  /* === Terminal Text === */
+  .terminal-window {
+    font-family: var(--font-mono, monospace);
+    font-size: var(--font-size-sm);
+    white-space: pre-wrap;
+    line-height: 1.4;
+    color: var(--theme-fg);
+  }
+  
+  .terminal-line {
+    margin-bottom: 0.25rem;
+  }
+  
+  /* === Blink Animations === */
+  .animate-blink,
+  .terminal-cursor,
+  .decrypt-cursor {
+    animation: blink 1s steps(2, start) infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  

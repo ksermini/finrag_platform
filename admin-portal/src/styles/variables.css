@@ -1,0 +1,29 @@
+:root {
+    --theme-bg: #000000;
+    --theme-surface: #1a1c1e;
+    --theme-elevated: #232629;
+    --theme-surface-muted: #2d3033;
+  
+    --theme-fg: #f5f6f7;
+    --theme-muted: #9ca3af;
+  
+    --theme-accent: #3b3f44;
+    --theme-accent-muted: #2e3237;
+  
+    --theme-border: rgba(255, 255, 255, 0.05);
+    --theme-glass-border: rgba(255, 255, 255, 0.06);
+    --theme-glow-shadow: none;
+    --theme-glow-outline: none;
+  
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+  
+    --font-ui: 'Inter', sans-serif;
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+  }
+  

@@ -9,4 +9,4 @@ class Feedback(Base):
     query_id = Column(Integer, ForeignKey("audit_logs.id"))
     rating = Column(String)
     comments = Column(Text, nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now)

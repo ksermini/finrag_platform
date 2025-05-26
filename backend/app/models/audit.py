@@ -11,7 +11,7 @@ class AuditLog(Base):
     answer = Column(Text)
     source_docs = Column(JSON)
     role = Column(String)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now)
 
     def to_dict(self):
         return {

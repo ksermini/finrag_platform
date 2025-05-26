@@ -6,7 +6,7 @@ from app.models.feedback import Feedback
 
 async def run_health_check():
     async with SessionLocal() as session:
-        since = datetime.utcnow() - timedelta(minutes=30)
+        since = datetime.now() - timedelta(minutes=30)
 
         result = await session.execute(select(GenAIMetadata).where(GenAIMetadata.timestamp > since))
         rows = result.scalars().all()

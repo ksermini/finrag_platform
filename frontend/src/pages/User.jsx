@@ -1,72 +1,142 @@
-import { useState } from "react";
-import api from "../api/client";
+import { useState, useEffect } from "react";
+import { FiUpload, FiSearch, FiBarChart2 } from "react-icons/fi";
 
-export default function User() {
-  const [file, setFile] = useState(null);
+import DashboardLayout from "../layouts/DashboardLayout";
+import AskBox from "../components/AskBox";
+import AnswerCard from "../components/AnswerCard";
+import FileUpload from "../components/FileUpload";
+
+import "../styles/User.css";
+
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
+  const [previousQuery, setPreviousQuery] = useState("");
+  const [showUpload, setShowUpload] = useState(false);
 
-  const upload = async () => {
-    const formData = new FormData();
-    formData.append("file", file);
-    await api.post("/user/upload/", formData);
-    alert("File uploaded.");
+  const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState(null);
+  const [firstName, setFirstName] = useState("there");
+
+  // Group metadata
+  const [groupName, setGroupName] = useState("Your business group");
+  const [groupRole, setGroupRole] = useState("domain expert");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const email = payload.sub;
+      setRole(payload.role || "user");
+
+      // First: fetch user
+      fetch(`${API_BASE}/me/email/${email}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((user) => {
+          setFirstName(user.first_name || "there");
+          setUserId(user.id);
+          localStorage.setItem("user_id", user.id);
+
+          // Now fetch group info
+          return fetch(`${API_BASE}/me/users/${user.id}/group`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        })
+        .then((res) => res.json())
+        .then((group) => {
+          setGroupName(group.group_name || "your business group");
+          setGroupRole(group.default_agent_role || "domain expert");
+
+          // Store in localStorage
+          localStorage.setItem("group_id", group.group_id);
+          localStorage.setItem("group_name", group.group_name);
+          localStorage.setItem("agent_role", group.default_agent_role);
+        })
+        .catch((err) => {
+          console.error("Failed to load profile or group info:", err);
+        });
+    } catch (e) {
+      console.error("Invalid token:", e);
+    }
+  }, []);
+
+  const handleAsk = async () => {
+    if (!query.trim()) return;
+    setPreviousQuery(query);
+
+    try {
+      const res = await fetch(`${API_BASE}/rag/grouped-query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          query,
+          user_id: localStorage.getItem("user_id"),
+          group_id: localStorage.getItem("group_id"),
+          role: localStorage.getItem("agent_role") || "domain expert"
+        }),
+      });
+
+      const data = await res.json();
+      setAnswer(data.answer);
+      setQuery("");
+    } catch (err) {
+      console.error("Error fetching answer:", err);
+    }
   };
 
-  const ask = async () => {
-    const res = await api.post("/user/query/", {
-      query,
-      user_id: "user123",
-      role: "analyst"
-    });
-    setAnswer(res.data.answer);
-  };
+  const sidebarItems = [
+    {
+      icon: <FiUpload />,
+      color: "blue",
+      label: "Upload",
+      onClick: () => setShowUpload((prev) => !prev),
+    },
+    { icon: <FiSearch />, color: "blue", label: "Ask" },
+    { icon: <FiBarChart2 />, color: "blue", label: "Insights" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 font-sans">
-      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-semibold text-indigo-700 mb-6">FinRAG Assistant</h1>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Upload Financial Document</label>
-          <div className="flex items-center space-x-2">
-            <input
-              type="file"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200"
-            />
-            <button
-              onClick={upload}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md"
-            >
-              Upload
-            </button>
-          </div>
+    <DashboardLayout
+      sidebarItems={sidebarItems}
+      banner={
+        <div className="banner-text space-y-1">
+          {groupName} RAG — Welcome, {firstName}
+          <p className="text-xs text-muted">
+            You're chatting with a <strong>{groupRole}</strong>
+          </p>
+        </div>
+      }
+    >
+      <div className="chat-main">
+        <div className="chat-scroll">
+          {previousQuery && <div className="chat-bubble user"> {previousQuery}</div>}
+          {answer && (
+            <div className="chat-bubble ai">
+              <div className="bubble-label">Answer</div>
+              <AnswerCard answer={answer} />
+            </div>
+          )}
         </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Ask a Question</label>
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            rows="3"
-            placeholder="e.g. What are the key risks in this filing?"
-            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <button
-            onClick={ask}
-            className="mt-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md"
-          >
-            Ask
-          </button>
+        <div className="chat-input-wrapper">
+          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
         </div>
 
-        {answer && (
-          <div className="bg-gray-50 p-4 border-l-4 border-green-500 rounded-md">
-            <p className="text-sm text-gray-800 whitespace-pre-wrap">{answer}</p>
+        {showUpload && (
+          <div className="glass-card upload">
+            <FileUpload onUploadSuccess={() => setShowUpload(false)} />
           </div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

@@ -1,0 +1,48 @@
+.bento-card {
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .bento-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* === Optional Glass Blur Variant === */
+  .bento-blur {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* === Optional Glowing Hover Effect === */
+  .bento-glow:hover {
+    box-shadow:
+      0 0 0 1px var(--theme-accent),
+      0 4px 12px rgba(var(--color_r), var(--color_g), var(--color_b), 0.4);
+  }
+  
+  /* === Title + Content === */
+  .bento-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-muted);
+  }
+  
+  .bento-card-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--theme-fg);
+  }
+  
