@@ -20,7 +20,8 @@ router = APIRouter(prefix="/groups", tags=["Group Documents"])
 async def upload_group_document(
     group_id: UUID,
     file: UploadFile,
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(lambda: User(id=0, email="mock@dev.com", is_admin=True, is_active=True))
+
 ):
     filename = file.filename
     contents = await file.read()
@@ -41,7 +42,12 @@ async def upload_group_document(
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     chunks = splitter.split_text(text)
 
-    await add_to_vectorstore(chunks, metadata={"group_id": str(group_id), "title": filename})
+    add_to_vectorstore(
+        chunks,
+        filename=filename,
+        user_id=str(current_user.id),
+        group_id=str(group_id)
+    )
 
     new_doc = GroupDocument(
         group_id=group_id,
