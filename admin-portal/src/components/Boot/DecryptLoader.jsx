@@ -3,14 +3,14 @@ import DecryptedText from "../../../lib/DecryptedText/DecryptedText";
 
 const mockLines = [
   // You can uncomment more lines if needed
-  // "> Initializing FinRAG Runtime...",
-  // "> Loading vector memory...",
-  // "> ✓ Latency Engine Stable",
-  // "> ✓ Compliance Core Loaded",
-  // "> [✓] Reuters Feed Connected",
-  // "> [✓] RAM Watcher Online",
+  "> Initializing FinRAG Runtime...",
+  "> Loading vector memory...",
+  "> ✓ Latency Engine Stable",
+  "> ✓ Compliance Core Loaded",
+  "> [✓] Reuters Feed Connected",
+  "> [✓] RAM Watcher Online",
   // "> ✓ User profile loaded: KAYLA",
-  // "> ✓ System state: STABLE",
+  "> ✓ System state: STABLE",
   "Launching terminal..."
 ];
 

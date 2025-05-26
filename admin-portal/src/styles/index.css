@@ -1,9 +1,27 @@
+
+
 /* === Modular Imports === */
 @import './variables.css';
 @import './layout.css';
 @import './components.css';
 @import './typography.css';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --theme-bg: #0f1117;
+    --theme-surface: #1b1d25;
+    --theme-border: #2b2d3a;
+    --theme-glow: rgba(104, 108, 255, 0.6);
+    --theme-accent: #646cff;
+    --theme-muted: #a1a1aa;
+    --success: #10b981;
+    --danger: #ef4444;
+    --font-display: "Inter", sans-serif;
+  }
+  
 /* ===================== */
 /* 🌗 Theme Base (Handled in variables.css) */
 /* ===================== */
@@ -12,12 +30,15 @@
 /* ✨ Global Body Style  */
 /* ===================== */
 /* Force dark mode */
+
 body {
     background-color: var(--theme-bg);
     color: var(--theme-fg);
     font-family: var(--font-ui);
     margin: 0;
-    overflow: hidden;
+    height: 100vh;
+    overflow: auto;
+
   }
   
   body.light {
