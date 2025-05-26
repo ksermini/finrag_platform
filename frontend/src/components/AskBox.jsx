@@ -14,7 +14,7 @@ export default function AskBox({ query, setQuery, onSubmit }) {
       <textarea
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask a financial question..."
+        placeholder="Ask a question..."
         className="query-box"
         rows={1} // optional, start with one line
       />

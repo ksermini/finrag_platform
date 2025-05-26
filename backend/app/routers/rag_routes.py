@@ -5,6 +5,9 @@ from app.services.rag_service import process_query
 from app.services.query_cache import get_cached_answer, set_cached_answer
 from app.services.metadata_tracker_db import log_query_db
 from app.database.database import get_db
+from app.dependencies import get_current_user
+from app.services.group_helpers import get_user_primary_group
+from app.models.user import User
 
 router = APIRouter(prefix="/rag", tags=["RAG Operations"])
 
@@ -62,21 +65,20 @@ async def query_rag(
         # Cache it for next time
         set_cached_answer(user_id, query, result)
 
-        # Log the metadata
-        await log_query_db(
-            db,
-            query_id=None,
-            user_id=user_id,
-            model_name=result.get("model_name", "unknown"),
-            tokens_input=result.get("tokens_input", 0),
-            tokens_output=result.get("tokens_output", 0),
-            latency_ms=latency,
-            retrieved_docs_count=result.get("retrieved_docs_count", 0),
-            source_type="vector",
-            cached=False
-        )
-
         return {"answer": result["answer"], "cached": False}
 
     except Exception as e:
         return {"error": f"Query failed: {str(e)}"}
+    
+@router.get("/group-info")
+async def get_group_info(user: User = Depends(get_current_user)):
+    group = await get_user_primary_group(user.id)
+    return {
+        "group_id": str(group.id),
+        "group_name": group.name,
+        "default_agent_role": group.default_agent_role or "domain expert",
+        "user_name": user.first_name or "there"
+    }
+@router.get("/test-token")
+async def test_token(user: User = Depends(get_current_user)):
+    return {"email": user.email}

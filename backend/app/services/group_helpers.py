@@ -10,12 +10,13 @@ client = PersistentClient(path="data/chroma")
 collection = client.get_or_create_collection(name="financial_docs")
 from app.embeddings import get_embedding
 
-async def get_user_primary_group(user_id: UUID) -> Group:
+def get_user_primary_group(user_id: UUID) -> Group:
     """Return the user's first assigned group (can add active group selection later)."""
-    async with SessionLocal() as session:
-        result = await session.execute(
+    with SessionLocal() as session:
+        result = session.execute(
             select(Group).join(UserGroup).where(UserGroup.user_id == user_id)
         )
+        print(Group)
         group = result.scalars().first()
         if not group:
             raise Exception("User is not part of any group.")

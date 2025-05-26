@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Text, UUID
+from sqlalchemy import Column, Float, String, Boolean, DateTime, ForeignKey, Text, UUID
 from datetime import datetime
 from app.models.base import Base
 import uuid
@@ -15,3 +15,12 @@ class GroupDocument(Base):
     embedded = Column(Boolean, default=False)
     created_by = Column(String, default="system")
     created_at = Column(DateTime, default=datetime.now)
+class RAGGroupConfig(Base):
+    __tablename__ = "rag_group_config"
+
+    group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), primary_key=True)
+    tone = Column(String, default="professional")
+    temperature = Column(Float, default=0.7)
+    prompt_template = Column(Text, nullable=True)
+    enabled = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

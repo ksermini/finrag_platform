@@ -5,7 +5,11 @@ import "../styles/DashboardLayout.css";
 const DashboardLayout = ({ sidebarItems, children, banner }) => {
   return (
     <div className="dashboard-root">
-      <header className="dashboard-banner">{banner}</header>
+      <header className="dashboard-banner">
+        <div className="banner-text">
+            {banner}
+        </div>
+        </header>
 
       <div className="dashboard-body">
         <aside className="dashboard-sidebar">

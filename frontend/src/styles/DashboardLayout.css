@@ -7,10 +7,10 @@
   .dashboard-banner {
     height: 60px;
     background-color: #0f0f0f;
-    padding-left: 2vw;
+    /* padding-left: 2vw;
     display: flex;
-    align-items: center;
-    font-size: 1.25rem;
+    align-items: center; */
+    /* font-size: 1.25rem; */
     font-weight: 600;
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -20,6 +20,14 @@
     display: flex;
     flex: 1;
     height: calc(100vh - 60px);
+  }
+  .banner-text {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
   
   .dashboard-sidebar {

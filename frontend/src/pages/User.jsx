@@ -8,62 +8,76 @@ import FileUpload from "../components/FileUpload";
 
 import "../styles/User.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export default function UserDashboard() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
   const [previousQuery, setPreviousQuery] = useState("");
   const [showUpload, setShowUpload] = useState(false);
+
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState(null);
   const [firstName, setFirstName] = useState("there");
 
+  // Group metadata
+  const [groupName, setGroupName] = useState("Your business group");
+  const [groupRole, setGroupRole] = useState("domain expert");
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const email = payload.sub;
-        setUserId(email);
-        setRole(payload.role);
+    if (!token) return;
 
-        fetch(`${import.meta.env.VITE_API_URL}/me/email/${email}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("User not found");
-            return res.json();
-          })
-          .then((data) => {
-            setFirstName(data.first_name || "there");
-          })
-          .catch((err) => {
-            console.error("Failed to fetch user profile:", err);
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const email = payload.sub;
+      setRole(payload.role || "user");
+
+      // First: fetch user
+      fetch(`${API_BASE}/me/email/${email}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((user) => {
+          setFirstName(user.first_name || "there");
+          setUserId(user.id);
+          localStorage.setItem("user_id", user.id);
+
+          // Now fetch group info
+          return fetch(`${API_BASE}/me/users/${user.id}/group`, {
+            headers: { Authorization: `Bearer ${token}` },
           });
-      } catch (e) {
-        console.error("Invalid token:", e);
-      }
+        })
+        .then((res) => res.json())
+        .then((group) => {
+          setGroupName(group.group_name || "your business group");
+          setGroupRole(group.default_agent_role || "domain expert");
+
+          // Store in localStorage
+          localStorage.setItem("group_id", group.group_id);
+          localStorage.setItem("group_name", group.group_name);
+          localStorage.setItem("agent_role", group.default_agent_role);
+        })
+        .catch((err) => {
+          console.error("Failed to load profile or group info:", err);
+        });
+    } catch (e) {
+      console.error("Invalid token:", e);
     }
   }, []);
 
   const handleAsk = async () => {
-    if (!query.trim() || !userId) return;
-
+    if (!query.trim()) return;
     setPreviousQuery(query);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/rag/query/`, {
+      const res = await fetch(`${API_BASE}/rag/grouped-query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          query,
-          user_id: userId,
-          role,
-        }),
+        body: JSON.stringify({ query }),
       });
 
       const data = await res.json();
@@ -76,7 +90,9 @@ export default function UserDashboard() {
 
   const sidebarItems = [
     {
-      icon: <FiUpload />, color: "blue", label: "Upload",
+      icon: <FiUpload />,
+      color: "blue",
+      label: "Upload",
       onClick: () => setShowUpload((prev) => !prev),
     },
     { icon: <FiSearch />, color: "blue", label: "Ask" },
@@ -86,7 +102,14 @@ export default function UserDashboard() {
   return (
     <DashboardLayout
       sidebarItems={sidebarItems}
-      banner={<div className="banner-text">👋 Welcome, {firstName}</div>}
+      banner={
+        <div className="banner-text space-y-1">
+          {groupName} RAG — Welcome, {firstName}
+          <p className="text-xs text-muted">
+            You're chatting with a <strong>{groupRole}</strong>
+          </p>
+        </div>
+      }
     >
       <div className="chat-main">
         <div className="chat-scroll">
@@ -98,19 +121,17 @@ export default function UserDashboard() {
             </div>
           )}
         </div>
-  
+
         <div className="chat-input-wrapper">
           <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
         </div>
-  
+
         {showUpload && (
           <div className="glass-card upload">
             <FileUpload onUploadSuccess={() => setShowUpload(false)} />
           </div>
         )}
-
       </div>
     </DashboardLayout>
   );
-  
 }
