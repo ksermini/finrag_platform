@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from sqlalchemy.future import select
+from sqlalchemy import select
 from datetime import datetime, timedelta
 import psutil
 import time
@@ -102,11 +103,22 @@ async def recent_queries():
     async with SessionLocal() as session:
         since = datetime.utcnow() - timedelta(hours=24)
         result = await session.execute(
-            select(GenAIMetadata).where(GenAIMetadata.timestamp > since).order_by(GenAIMetadata.timestamp.desc())
+            select(GenAIMetadata)
+            .where(GenAIMetadata.timestamp > since)
+            .order_by(GenAIMetadata.timestamp.desc())
         )
         rows = result.scalars().all()
-        return [r.to_dict() for r in rows]
 
+        # Deduplicate based on (user_id, tokens_input, tokens_output, timestamp)
+        seen = set()
+        unique = []
+        for r in rows:
+            key = (r.user_id, r.tokens_input, r.tokens_output)
+            if key not in seen:
+                seen.add(key)
+                unique.append(r)
+
+        return [r.to_dict() for r in unique]
 @router.get("/alerts")
 async def system_alerts():
     return await run_health_check()

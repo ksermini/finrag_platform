@@ -58,119 +58,116 @@ const CpuGraph = ({ title, group, color = "#4f46e5" }) => {
 };
 
 const SidebarRight = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({});
   const [alerts, setAlerts] = useState([]);
   const [clock, setClock] = useState(new Date());
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetch = async () => {
       try {
-        const s = await axios.get("http://localhost:8000/admin/system-metrics");
-        const a = await axios.get("http://localhost:8000/admin/alerts");
-        setStats(s.data);
-        setAlerts(a.data || []);
+        const [sys, alert] = await Promise.all([
+          axios.get("http://localhost:8000/admin/system-metrics"),
+          axios.get("http://localhost:8000/admin/alerts"),
+        ]);
+        setStats(sys.data);
+        setAlerts(alert.data || []);
       } catch {
-        setStats({ error: true });
-        setAlerts(["Failed to fetch alerts"]);
+        setStats({});
+        setAlerts(["⚠ Unable to fetch system metrics."]);
       }
     };
-    fetchStats();
-    const timer = setInterval(() => setClock(new Date()), 1000);
-    const poll = setInterval(fetchStats, 30000);
-    return () => {
-      clearInterval(timer);
-      clearInterval(poll);
-    };
+    fetch();
+    const interval = setInterval(() => {
+      setClock(new Date());
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-  const formatUptime = (s) => {
+  const time = clock.toLocaleTimeString("en-GB", { hour12: false });
+  const formatUptime = (s = 0) => {
     const d = Math.floor(s / 86400);
     const h = Math.floor((s % 86400) / 3600).toString().padStart(2, "0");
     const m = Math.floor((s % 3600) / 60).toString().padStart(2, "0");
     return `${d}d${h}:${m}`;
   };
 
-  const year = clock.getFullYear();
-  const month = clock.toLocaleString("en-US", { month: "short" }).toUpperCase();
-  const day = clock.getDate();
-  const memBlocks = Math.min(200, Math.round((stats?.mem ?? 60 * 2)));
-
   return (
-    <div className="sidebar-right">
-      <div className="clock-display">
-        {clock.toLocaleTimeString("en-GB", { hour12: false })}
+    <div className="sidebar-right p-2 text-[11px] text-theme-fg space-y-3 font-ui bg-black/80 backdrop-blur-md shadow-inner border-l border-theme-border">
+
+      <div className="text-center text-[16px] font-semibold tracking-widest text-theme-accent">
+        {time}
       </div>
 
-      <div className="panel-box">
-        <div className="panel-box-title">System</div>
-        <div className="panel-box-content">
-          <div className="right-grid-section">
-            <div>
-              <div className="section-label">Year</div>
-              <div>{year}</div>
-              <div>{month} {day}</div>
-            </div>
-            <div>
-              <div className="section-label">Uptime</div>
-              <div>{stats?.uptime_sec ? formatUptime(stats.uptime_sec) : "--"}</div>
-            </div>
-            <div>
-              <div className="section-label">Type</div>
-              <div>LINUX</div>
-            </div>
-            <div>
-              <div className="section-label">Power</div>
-              <div>ON</div>
-            </div>
+      {/* SYSTEM BLOCK */}
+      <div className="panel-box bento glass-style">
+        <div className="text-theme-muted uppercase text-[10px] mb-1">System</div>
+        <div className="grid grid-cols-2 gap-x-2 leading-4">
+          <div>
+            <div className="section-label">Year</div>
+            <div>{clock.getFullYear()}</div>
+            <div>{clock.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase()}</div>
+          </div>
+          <div>
+            <div className="section-label">Uptime</div>
+            <div>{formatUptime(stats?.uptime_sec)}</div>
+          </div>
+          <div>
+            <div className="section-label">Type</div>
+            <div>LINUX</div>
+          </div>
+          <div>
+            <div className="section-label">Power</div>
+            <div>ON</div>
           </div>
         </div>
       </div>
 
-      <div className="panel-box">
-        <div className="panel-box-title">Performance</div>
-        <div className="panel-box-content right-metrics-section">
-          <div><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
-          <div><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"} ms</span></div>
-          <div><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
+      {/* PERFORMANCE */}
+      <div className="panel-box bento glass-style">
+        <div className="text-theme-muted uppercase text-[10px] mb-1">Performance</div>
+        <div className="space-y-1">
+          <div className="flex justify-between"><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
+          <div className="flex justify-between"><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"}ms</span></div>
+          <div className="flex justify-between"><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
         </div>
       </div>
 
-      <div className="panel-box">
-        <div className="panel-box-title">CPU Usage</div>
-        <div className="panel-box-content">
-          <CpuGraph title="#1–2" group="A" />
-          <CpuGraph title="#3–4" group="B" />
+      {/* CPU */}
+      <div className="panel-box bento glass-style">
+        <div className="text-theme-muted uppercase text-[10px] mb-1">CPU Usage</div>
+        <CpuGraph title="#1–2" group="A" />
+        <CpuGraph title="#3–4" group="B" />
+      </div>
+
+      {/* MEMORY */}
+      <div className="panel-box bento glass-style">
+        <div className="text-theme-muted uppercase text-[10px] mb-1">Memory</div>
+        <div className="h-12 overflow-hidden">
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth={true}
+            text="MEMORY BLOCK OK"
+          />
         </div>
       </div>
 
-      <div className="panel-box">
-        <div className="panel-box-title">Memory</div>
-        <div className="panel-box-content">
-        <LetterGlitch
-          glitchSpeed={50}
-          centerVignette={true}
-          outerVignette={false}
-          smooth={true}
-          text="MEMORY BLOCK OK"
-        />
-
-        </div>
+      {/* ALERTS */}
+      <div className="panel-box bento glass-style">
+        <div className="text-theme-muted uppercase text-[10px] mb-1">Alerts</div>
+        {alerts.length ? (
+          <ul className="space-y-1">
+            {alerts.map((a, i) => (
+              <li key={i} className="text-red-500">⚠ {a}</li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-green-500">✔ System healthy</div>
+        )}
       </div>
 
-      <div className="panel-box">
-        <div className="panel-box-title">Alerts</div>
-        <div className="panel-box-content">
-          {alerts.length === 0 ? (
-            <div className="alert-ok">✔ System healthy</div>
-          ) : (
-            <ul className="alert-list">
-              {alerts.map((alert, i) => (
-                <li key={i} className="alert-warning">⚠ {alert}</li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
     </div>
   );
 };

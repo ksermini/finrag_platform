@@ -18,11 +18,17 @@ const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");
   const [activeTool, setActiveTool] = useState("Vector Explorer");
   const [clock, setClock] = useState(new Date());
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+
 
   useEffect(() => {
     const interval = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const toggleSidebar = () => setIsSidebarOpen(prev => !prev); // ⬅️ added
+
 
   const renderToolPanel = () => {
     switch (activeTool) {
@@ -94,14 +100,34 @@ const TerminalLayout = () => {
 
   return (
     <LayoutWrapper
-      left={<SidebarLeft activeTool={activeTool} setActiveTool={setActiveTool} />}
-      center={renderCenterContent()}
+      left={
+        <SidebarLeft
+          activeTab={activeTab}
+          onTabClick={setActiveTab}
+          isOpen={isSidebarOpen}
+        />
+      }
+      center={
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-white font-bold text-lg">FinRAG Admin Portal v1.0</h2>
+            <button
+              onClick={toggleSidebar}
+              className="text-sm px-3 py-1 rounded bg-white/10 text-white hover:bg-white/20 transition"
+            >
+              {isSidebarOpen ? "Hide Panel" : "Show Panel"}
+            </button>
+          </div>
+          {renderCenterContent()}
+        </div>
+      }
       right={<SidebarRight />}
-      bottom={<KeyboardOverlay />}
       activeTab={activeTab}
       onTabClick={setActiveTab}
       clock={clock}
     />
+
+
   );
 };
 

@@ -17,39 +17,42 @@ const TerminalWindow = () => {
           withCredentials: true,
         });
         const [latest] = res.data;
-
+  
         if (!latest) {
           setLogs(["> no recent queries found"]);
           return;
         }
-
+  
         const output = [
-          `> query("${latest.query}")`,
+          `> query("${latest.query || '---'}")`,
           `[✓] Retrieved ${latest.retrieved_docs_count} documents`,
-          `[✓] Model: ${latest.model_name} | Latency: ${latest.latency_ms}ms`,
+          `[✓] Model: ${latest.model || latest.model_name} | Latency: ${latest.latency_ms}ms`,
           `[✓] Tokens: ${latest.tokens_input} in / ${latest.tokens_output} out`,
           `[✓] Cached: ${latest.cached}`,
-          `[✓] Source: ${latest.source_type}`,
           `[✓] Timestamp: ${latest.timestamp}`,
         ];
-
+  
+        // ✅ Clear logs before appending
+        setLogs([]); 
+  
         output.forEach((line, i) => {
           setTimeout(() => {
             setLogs((prev) => [...prev, line]);
             playSound("/sounds/key-click.mp3", 0.2);
           }, i * 500);
         });
-
+  
         setTimeout(() => playSound("/sounds/beep.mp3", 0.3), output.length * 500);
-
+  
       } catch (err) {
         console.error("Metadata fetch error:", err);
         setLogs(["> error: could not fetch metadata"]);
       }
     };
-
+  
     fetchMetadata();
   }, []);
+  
 
   return (
     <div className="terminal-window">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BootScreen from "./components/Boot/BootScreen";
 import TerminalLayout from "./components/layout/TerminalLayout";
+import { SidebarProvider } from "./context/SidebarContext";
 
 const App = () => {
   const [bootDone, setBootDone] = useState(false);
@@ -15,17 +16,19 @@ const App = () => {
 
   return (
     <>
-      {!bootDone && (
+      {/* {!bootDone && (
         <div className={`transition-opacity duration-700 ${fadeOut ? "opacity-0" : "opacity-100"}`}>
           <BootScreen onComplete={handleFinish} />
         </div>
-      )}
+      )} */}
 
-      {bootDone && (
+      {/* {bootDone && ( */}
         <div className="animate-fade-in opacity-100">
+        <SidebarProvider>
           <TerminalLayout />
+        </SidebarProvider>
         </div>
-      )}
+      {/* // )} */}
     </>
   );
 };

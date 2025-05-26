@@ -1,25 +1,27 @@
 import React from "react";
 import {
-  Terminal,
-  Users,
-  Briefcase,
-  ScrollText,
-  Settings,
+  Terminal, Users, Briefcase, ScrollText, Settings,
 } from "lucide-react";
+import { useSidebar } from "../../context/SidebarContext";
 
 const icons = {
-  Terminal: Terminal,
-  Users: Users,
+  Terminal,
+  Users,
   Jobs: Briefcase,
   Logs: ScrollText,
-  Settings: Settings,
+  Settings,
 };
 
 const SidebarLeft = ({ activeTab, onTabClick }) => {
+  const { isSidebarOpen } = useSidebar();
   const tabs = Object.keys(icons);
 
   return (
-    <div className="flex flex-col items-center gap-4 bg-[var(--theme-elevated)] border-r border-[var(--theme-border)] p-3 rounded-r-2xl shadow-sm backdrop-blur h-full">
+    <div
+      className={`flex flex-col gap-3 bg-[var(--theme-elevated)] border-r border-[var(--theme-border)] 
+      p-3 shadow-md h-full transition-all duration-300
+      ${isSidebarOpen ? "w-40 items-start pl-4" : "w-14 items-center"}`}
+    >
       {tabs.map((tab) => {
         const Icon = icons[tab];
         const isActive = activeTab === tab;
@@ -28,14 +30,13 @@ const SidebarLeft = ({ activeTab, onTabClick }) => {
           <button
             key={tab}
             onClick={() => onTabClick(tab)}
-            title={tab}
-            className={`p-2 rounded-xl transition-all duration-150 ${
-              isActive
-                ? "bg-[var(--theme-accent-muted)] text-[var(--theme-accent)]"
-                : "text-[var(--theme-muted)] hover:text-[var(--theme-fg)]"
-            }`}
+            title={!isSidebarOpen ? tab : ""}
+            className={`flex items-center gap-3 px-2 py-2 w-full rounded-lg transition 
+              ${isActive ? "bg-[var(--theme-accent-muted)] text-[var(--theme-accent)]" : "text-[var(--theme-muted)] hover:text-[var(--theme-fg)]"}
+            `}
           >
             <Icon size={20} />
+            {isSidebarOpen && <span className="text-sm font-medium">{tab}</span>}
           </button>
         );
       })}
