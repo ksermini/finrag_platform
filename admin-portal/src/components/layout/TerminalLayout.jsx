@@ -12,6 +12,7 @@ import ModelStatus from "../tools/ModelStatus";
 import AuditViewer from "../tools/AuditViewer";
 import ChromaIndex from "../tools/ChromaIndex";
 import APILogs from "../tools/APILogs";
+import GroupsTab from "../tabs/GroupsTab";
 
 const TOOLS = [
   { name: "Vector Explorer", component: <VectorExplorer /> },
@@ -71,7 +72,7 @@ const TerminalLayout = () => {
     }
   
     if (activeTab === "Users") return <UsersTab />;
-    return <div className="text-theme-muted text-sm mt-10">[{activeTab} tab coming soon]</div>;
+    if (activeTab === "Groups") return <GroupsTab />;
   };
   
   return (

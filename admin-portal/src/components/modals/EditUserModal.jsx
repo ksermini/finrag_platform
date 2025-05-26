@@ -18,7 +18,7 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
 
   const saveUser = async () => {
     try {
-      await fetch(`http://localhost:8000/users/${user.id}`, {
+      await fetch(`http://localhost:8000/admin/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

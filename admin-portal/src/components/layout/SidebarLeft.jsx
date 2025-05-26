@@ -8,7 +8,7 @@ const icons = {
   Terminal,
   Users,
   Tools: Briefcase,
-  Logs: ScrollText,
+  Groups: ScrollText,
   Settings,
 };
 

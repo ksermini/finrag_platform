@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const CreateUserModal = ({ onClose, onCreated }) => {
@@ -17,6 +16,7 @@ const CreateUserModal = ({ onClose, onCreated }) => {
     department: "",
     is_admin: false,
     is_active: true,
+    password: "", // Local only
   });
 
   const [saving, setSaving] = useState(false);
@@ -32,12 +32,42 @@ const CreateUserModal = ({ onClose, onCreated }) => {
 
   const handleSubmit = async () => {
     setSaving(true);
+    setError("");
+
+    const payload = {
+      ...form,
+      hashed_password: form.password, // Backend will hash this
+    };
+
     try {
-      await axios.post(`${API_BASE}/admin/users`, form);
+      await axios.post(`${API_BASE}/admin/users`, payload);
       onCreated();
       onClose();
     } catch (err) {
-      setError("Failed to create user.");
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        if (typeof detail === "string") {
+          setError(detail);
+        } else if (Array.isArray(detail)) {
+          const duplicateEmail = detail.find((d) =>
+            d.msg?.includes("already exists")
+          );
+          const missingField = detail.find((d) =>
+            d.msg?.toLowerCase().includes("required")
+          );
+          if (duplicateEmail) {
+            setError("Email already exists. Try a different one.");
+          } else if (missingField) {
+            setError(`Missing required field: ${missingField.loc?.[1]}`);
+          } else {
+            setError("Validation error. Please check your input.");
+          }
+        } else {
+          setError("Unknown error occurred.");
+        }
+      } else {
+        setError("Failed to create user.");
+      }
     } finally {
       setSaving(false);
     }
@@ -52,6 +82,7 @@ const CreateUserModal = ({ onClose, onCreated }) => {
 
         <div className="grid grid-cols-2 gap-4 text-sm">
           <input name="email" placeholder="Email" value={form.email} onChange={handleChange} className="bg-zinc-800 rounded p-2" />
+          <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} className="bg-zinc-800 rounded p-2" />
           <input name="first_name" placeholder="First Name" value={form.first_name} onChange={handleChange} className="bg-zinc-800 rounded p-2" />
           <input name="last_name" placeholder="Last Name" value={form.last_name} onChange={handleChange} className="bg-zinc-800 rounded p-2" />
           <input name="role" placeholder="Role" value={form.role} onChange={handleChange} className="bg-zinc-800 rounded p-2" />
