@@ -14,7 +14,7 @@ class GenAIMetadata(Base):
     latency_ms = Column(Integer)
     retrieved_docs_count = Column(Integer)
     source_type = Column(String)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now)
     cached = Column(String, default="false")  # store as "true"/"false"
 
 

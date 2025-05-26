@@ -6,7 +6,6 @@ from datetime import datetime
 from uuid import uuid4
 
 # ✅ Ensure SQLAlchemy sees the users table for FK resolution
-from app.models.user import User
 
 
 class Group(Base):
@@ -15,15 +14,16 @@ class Group(Base):
     name = Column(String, unique=True)
     description = Column(String)
     default_agent_role = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
 
 
 class UserGroup(Base):
     __tablename__ = "user_groups"
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
-    group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id"), primary_key=True)
-    role = Column(String, default="member")
-    added_at = Column(DateTime, default=datetime.utcnow)
+
+    user_id = Column(Integer, primary_key=True)
+    group_id = Column(ForeignKey("groups.id"), primary_key=True)
+    role = Column(String, nullable=False)
+    added_at = Column(DateTime, default=datetime.now)
 
 
 class GroupDocument(Base):
@@ -36,5 +36,5 @@ class GroupDocument(Base):
     embedded = Column(Boolean, default=False)
     created_by = Column(String, default="system")  
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
 

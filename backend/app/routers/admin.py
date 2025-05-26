@@ -61,7 +61,7 @@ async def api_logs():
 @router.get("/system-metrics")
 async def system_metrics():
     async with SessionLocal() as session:
-        since = datetime.utcnow() - timedelta(hours=24)
+        since = datetime.now() - timedelta(hours=24)
         result = await session.execute(select(GenAIMetadata).where(GenAIMetadata.timestamp > since))
         rows = result.scalars().all()
 
@@ -90,7 +90,7 @@ async def system_metrics():
 @router.get("/recent-queries")
 async def recent_queries():
     async with SessionLocal() as session:
-        since = datetime.utcnow() - timedelta(hours=24)
+        since = datetime.now() - timedelta(hours=24)
         result = await session.execute(
             select(GenAIMetadata)
             .where(GenAIMetadata.timestamp > since)

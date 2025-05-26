@@ -29,7 +29,18 @@ Base = declarative_base()
 async def get_db():
     async with SessionLocal() as session:
         yield session
-import app.models  # ensures all models (and FK targets) are loaded
+# main.py or wherever you call create_all
+from app.db import Base, engine
+from app.models import *  # ✅ This forces all model classes to be registered
+Base.metadata.create_all(bind=engine) 
+# Only run this if you are manually creating tables (not with Alembic)
+# import asyncio
+# async def init_models():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+
+# asyncio.run(init_models())
+ # ensures all models (and FK targets) are loaded
 
 async def init_models():
     print("⏳ Initializing all database tables...")

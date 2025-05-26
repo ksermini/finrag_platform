@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PanelBox from "../ui/PanelBox";
+import AssignUserToGroupModal from "../modals/AssignUserToGroupModal";
+import CreateGroupModal from "../modals/CreateGroupModal";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -10,6 +12,8 @@ const GroupsTab = () => {
   const [documentsByGroup, setDocumentsByGroup] = useState({});
   const [usersByGroup, setUsersByGroup] = useState({});
   const [uploadingGroup, setUploadingGroup] = useState(null);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const fetchGroups = async () => {
     try {
@@ -36,13 +40,14 @@ const GroupsTab = () => {
   const handleUpload = async (e, groupId) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
     setUploadingGroup(groupId);
 
     try {
       await axios.post(`${API_BASE}/groups/${groupId}/documents`, formData);
-      fetchGroupDetails(groupId);
+      await fetchGroupDetails(groupId); // 🔁 Refresh after upload
     } catch {
       alert("Upload failed.");
     } finally {
@@ -60,14 +65,28 @@ const GroupsTab = () => {
   };
 
   const handleCreateGroup = async () => {
-    const name = prompt("Enter new group name:");
+    const name = prompt("Enter group name:");
     if (!name) return;
+  
+    const description = prompt("Enter description (optional):") || "";
+    const default_agent_role = prompt("Enter default role (optional, e.g., domain expert):") || "domain expert";
+  
     try {
-      await axios.post(`${API_BASE}/groups`, { name });
+      await axios.post(`${API_BASE}/groups`, {
+        name,
+        description,
+        default_agent_role
+      });
       fetchGroups();
     } catch (err) {
       alert("Failed to create group.");
     }
+  };
+  
+
+  const openAssignModal = (group) => {
+    setSelectedGroup(group);
+    setShowAssignModal(true);
   };
 
   useEffect(() => {
@@ -96,7 +115,6 @@ const GroupsTab = () => {
               key={group.id}
               className="bg-[var(--theme-surface-muted)] rounded-lg border border-[var(--theme-border)] shadow"
             >
-              {/* Header */}
               <div
                 className="flex justify-between items-center p-4 cursor-pointer hover:bg-[var(--theme-surface)]"
                 onClick={() => {
@@ -115,10 +133,8 @@ const GroupsTab = () => {
                 </div>
               </div>
 
-              {/* Expanded Content */}
               {isExpanded && (
                 <div className="px-4 pb-4 space-y-4">
-                  {/* Document Upload */}
                   <div>
                     <label className="block text-xs text-[var(--theme-muted)] mb-1">
                       Upload PDF
@@ -132,7 +148,6 @@ const GroupsTab = () => {
                     />
                   </div>
 
-                  {/* Documents */}
                   <div>
                     <div className="text-xs uppercase text-[var(--theme-muted)] mb-1">Documents</div>
                     <ul className="space-y-2 text-sm max-h-48 overflow-y-auto">
@@ -153,9 +168,16 @@ const GroupsTab = () => {
                     </ul>
                   </div>
 
-                  {/* Users */}
                   <div>
-                    <div className="text-xs uppercase text-[var(--theme-muted)] mb-1">Group Users</div>
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="text-xs uppercase text-[var(--theme-muted)]">Group Users</div>
+                      <button
+                        onClick={() => openAssignModal(group)}
+                        className="text-indigo-400 text-xs hover:underline"
+                      >
+                        + Add User
+                      </button>
+                    </div>
                     <ul className="space-y-1 text-sm">
                       {users.map((user) => (
                         <li key={user.id} className="flex justify-between items-center bg-zinc-800 p-2 rounded">
@@ -163,7 +185,6 @@ const GroupsTab = () => {
                             <div>{user.email}</div>
                             <div className="text-xs text-[var(--theme-muted)]">Role: {user.role}</div>
                           </div>
-                          {/* Add delete or role-edit options here */}
                           <button className="text-red-400 text-xs hover:underline">Remove</button>
                         </li>
                       ))}
@@ -175,6 +196,17 @@ const GroupsTab = () => {
           );
         })}
       </div>
+
+      {showAssignModal && selectedGroup && (
+        <AssignUserToGroupModal
+          group={selectedGroup}
+          onClose={() => {
+            setShowAssignModal(false);
+            setSelectedGroup(null);
+          }}
+          onAssigned={() => fetchGroupDetails(selectedGroup.id)}
+        />
+      )}
     </PanelBox>
   );
 };

@@ -1,18 +1,17 @@
-
-from sqlalchemy import Boolean, Column, String, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
-from uuid import uuid4
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Text, UUID
 from datetime import datetime
-from app.db import Base
+from app.models.base import Base
+import uuid
 
 class GroupDocument(Base):
     __tablename__ = "group_documents"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id"))
-    title = Column(String)
-    content = Column(String)  # extracted raw text for search
-    file_path = Column(String)  # optional: where PDF is saved
+    __table_args__ = {"extend_existing": True}  # ✅ This line resolves the error
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    file_path = Column(String, nullable=True)
     embedded = Column(Boolean, default=False)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"))
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_by = Column(String, default="system")
+    created_at = Column(DateTime, default=datetime.now)

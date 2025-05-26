@@ -10,7 +10,7 @@ def log_upload(filename: str, user: str, size_kb: float):
         "filename": filename,
         "user": user,
         "size_kb": size_kb,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now().isoformat()
     })
 
 def log_query(user_id: str, query: str, latency: float, top_k: int):
@@ -19,7 +19,7 @@ def log_query(user_id: str, query: str, latency: float, top_k: int):
         "query": query,
         "latency_ms": round(latency * 1000, 2),
         "top_k": top_k,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now().isoformat()
     })
 
 def get_recent_logs():

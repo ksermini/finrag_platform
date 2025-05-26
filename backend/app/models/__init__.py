@@ -1,5 +1,6 @@
-from app.models.user import User
-from app.models.audit import AuditLog
-from app.models.metadata import GenAIMetadata
-from app.models.feedback import Feedback
-from app.models.group import Group, UserGroup, GroupDocument
+from .user import User
+from .group import Group
+from .group import UserGroup
+from .group_document import GroupDocument
+
+__all__ = ["User", "Group", "UserGroup", "GroupDocument"]

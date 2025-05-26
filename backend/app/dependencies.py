@@ -23,8 +23,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
             role="admin",
             is_admin=True,
             is_active=True,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(),
+            updated_at=datetime.now(),
         )
 
     return user
