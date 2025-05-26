@@ -1,17 +1,16 @@
 from fastapi import APIRouter, Body, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.future import select
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime
-from uuid import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.services.auth_service import get_current_user
 from app.db import SessionLocal, get_db
-from app.db import SessionLocal
 from app.models.group import Group, UserGroup
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.groups import UserGroupAssign 
-
 from app.models.user import User
+from app.schemas.groups import UserGroupAssign
+
 router = APIRouter(prefix="/groups", tags=["Groups"])
 
 
@@ -21,6 +20,20 @@ async def create_group(
     description: str = "",
     default_agent_role: str = "domain expert"
 ):
+    """
+    Create a new user group.
+
+    Args:
+        name (str): The name of the group.
+        description (str, optional): A description of the group.
+        default_agent_role (str, optional): Default role used in prompt engineering.
+
+    Raises:
+        HTTPException: If a group with the same name already exists.
+
+    Returns:
+        dict: Details of the created group.
+    """
     async with SessionLocal() as session:
         result = await session.execute(select(Group).where(Group.name == name))
         if result.scalars().first():
@@ -45,10 +58,14 @@ async def create_group(
         }
 
 
-
-
 @router.get("/")
 async def list_all_groups():
+    """
+    List all existing user groups.
+
+    Returns:
+        List[dict]: Metadata for all user groups.
+    """
     async with SessionLocal() as session:
         result = await session.execute(select(Group))
         groups = result.scalars().all()
@@ -72,7 +89,20 @@ async def add_user_to_group(
     role: str = Body(default="member"),
     db: AsyncSession = Depends(get_db)
 ):
-    # Check if mapping already exists
+    """
+    Add a user to a group by IDs and assign a role.
+
+    Args:
+        group_id (UUID): The ID of the group.
+        user_id (UUID): The ID of the user to add.
+        role (str, optional): The user's role in the group.
+
+    Raises:
+        HTTPException: If user is already in the group.
+
+    Returns:
+        dict: Success message.
+    """
     result = await db.execute(
         select(UserGroup)
         .where(UserGroup.user_id == user_id)
@@ -91,9 +121,18 @@ async def add_user_to_group(
     await db.commit()
     return {"message": "User added to group"}
 
-    
+
 @router.get("/{group_id}/users")
 async def get_group_users(group_id: UUID):
+    """
+    Retrieve a list of users assigned to a specific group.
+
+    Args:
+        group_id (UUID): The ID of the group.
+
+    Returns:
+        List[dict]: Users with their email, role, and join timestamp.
+    """
     async with SessionLocal() as session:
         result = await session.execute(
             select(UserGroup, User).join(User, UserGroup.user_id == User.id).where(UserGroup.group_id == group_id)
@@ -109,10 +148,22 @@ async def get_group_users(group_id: UUID):
             }
             for user_group, user in rows
         ]
-    
+
 
 @router.post("/assign")
 async def add_user_to_group(data: UserGroupAssign):
+    """
+    Assign a user to a group using a structured payload.
+
+    Args:
+        data (UserGroupAssign): Includes user_id, group_id, and role.
+
+    Raises:
+        HTTPException: If the user is already in the group or role is invalid.
+
+    Returns:
+        dict: Confirmation message.
+    """
     if data.role not in {"member", "viewer", "owner"}:
         raise HTTPException(status_code=400, detail="Invalid role.")
 
