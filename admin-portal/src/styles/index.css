@@ -67,4 +67,7 @@ canvas {
     margin-bottom: 1.5rem; /* mb-4 */
     line-height: 1.625; /* relaxed */
   }
+  .modal-form-container {
+    transition: none !important;
+  }
   

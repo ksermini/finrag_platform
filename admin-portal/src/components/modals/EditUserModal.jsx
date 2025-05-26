@@ -1,12 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../styles/index.css";
 
 const EditUserModal = ({ user, onClose, onSaved }) => {
-  const [form, setForm] = useState(user);
+  const [form, setForm] = useState({});
+  const [hasAutoFocused, setHasAutoFocused] = useState(false);
+  const emailRef = useRef();
 
   useEffect(() => {
-    setForm(user);
-  }, [user]);
+    if (user?.id) {
+      setForm(user);
+      if (!hasAutoFocused) {
+        setTimeout(() => {
+          emailRef.current?.focus();
+          setHasAutoFocused(true);
+        }, 0);
+      }
+    }
+  }, [user?.id, hasAutoFocused]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
@@ -18,35 +36,40 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
 
   const saveUser = async () => {
     try {
-      await fetch(`http://localhost:8000/admin/users/${user.id}`, {
+      const res = await fetch(`http://localhost:8000/admin/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (!res.ok) throw new Error("Failed to update user.");
       onSaved();
       onClose();
     } catch (err) {
       console.error("Failed to update user:", err);
+      alert("Update failed. Please try again.");
     }
   };
 
-  const Field = ({ label, name, type = "text", span = 6 }) => (
+  const Field = ({ label, name, type = "text", span = 6, readOnly = false, inputRef = null }) => (
     <div className={`form-field col-span-${span}`}>
-      <label>{label}</label>
+      <label htmlFor={name}>{label}</label>
       <input
+        ref={inputRef}
+        id={name}
         name={name}
         type={type}
         value={form[name] || ""}
         onChange={handleChange}
         className="modal-input"
+        readOnly={readOnly}
       />
     </div>
   );
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-user-heading">
       <div className="modal-form-container">
-        <div className="text-sm font-semibold uppercase text-[var(--theme-accent)] mb-6">
+        <div className="text-sm font-semibold uppercase text-[var(--theme-accent)] mb-6" id="edit-user-heading">
           Edit User
         </div>
 
@@ -54,8 +77,8 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
         <div className="form-section">
           <h3>Identity</h3>
           <div className="form-grid">
-            <Field label="ID" name="id" span={4} />
-            <Field label="Email" name="email" span={8} />
+            <Field label="ID" name="id" span={4} readOnly />
+            <Field label="Email" name="email" span={8} inputRef={emailRef} />
             <Field label="First Name" name="first_name" />
             <Field label="Last Name" name="last_name" />
           </div>
@@ -85,7 +108,7 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
                 <input
                   type="checkbox"
                   name="is_active"
-                  checked={form.is_active}
+                  checked={!!form.is_active}
                   onChange={handleChange}
                 />
                 Active
@@ -94,7 +117,7 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
                 <input
                   type="checkbox"
                   name="is_admin"
-                  checked={form.is_admin}
+                  checked={!!form.is_admin}
                   onChange={handleChange}
                 />
                 Admin
@@ -118,8 +141,12 @@ const EditUserModal = ({ user, onClose, onSaved }) => {
 
         {/* Footer */}
         <div className="form-footer">
-          <button onClick={onClose} className="modal-button cancel">Cancel</button>
-          <button onClick={saveUser} className="modal-button save">Save</button>
+          <button onClick={onClose} className="modal-button cancel">
+            Cancel
+          </button>
+          <button onClick={saveUser} className="modal-button save">
+            Save
+          </button>
         </div>
       </div>
     </div>

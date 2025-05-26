@@ -1,118 +1,166 @@
+
 # FinRAG Platform
 
-FinRAG is a secure, full-stack Generative AI platform for financial document analysis. It uses Retrieval-Augmented Generation (RAG), operational metadata tracking, and role-based dashboards to deliver reliable, auditable insights from financial data.
+A full-stack Retrieval-Augmented Generation (RAG) system for AI engineering and internal observability in financial organizations.
 
-## Features
+**Author:** Kayla Sermini  
+**Tech Stack:** Python (FastAPI), React, PostgreSQL, ChromaDB, OpenAI API  
+**Type:** Portfolio | FinTech | Full-Stack AI Engineering | RAG System
 
-- Chat interface with Retrieval-Augmented Generation (RAG) for document QA
-- Secure document upload and embedding using OpenAI and ChromaDB
-- Role-based access with separate views for users and administrators
-- Admin dashboard for monitoring latency, token usage, and user feedback
-- Operational metadata and logging across all layers of the system
-- Feedback logging with context for continuous improvement
-- Built using FastAPI, PostgreSQL, ChromaDB, OpenAI, and React
+---
 
-## Tech Stack
+## Overview
 
-### Backend
+FinRAG enables group-aware document retrieval, real-time GenAI response generation, prompt personalization, and operational monitoring — all through a modular, production-ready architecture.
 
-- FastAPI
-- PostgreSQL with SQLAlchemy
-- ChromaDB for vector similarity search
-- OpenAI API
-- JWT authentication
-- bcrypt password hashing
-- Optional integration with LangChain and LangSmith
+Key Capabilities:
+- Group-based document retrieval and LLM responses
+- Role-based access control (RBAC)
+- Admin dashboard with user, group, and document management
+- Prompt engineering per group (tone, template, temperature)
+- Metadata logging for query performance, cache, tokens, and latency
+- Real-time system metrics and alerts
 
-### Frontend
+---
 
-- React
-- Tailwind CSS and Chakra UI
-- Axios for HTTP requests
-- Vite development server
+## System Architecture
 
-## Getting Started
+### Frontend (React + Tailwind)
+- Login + Role-based Views
+- Document Upload + Query Interface
+- Admin Dashboard
+- Audit & Metadata Panels
 
-### Prerequisites
+### Backend (FastAPI)
+- `/auth/*` – JWT authentication
+- `/query` – User queries
+- `/upload`, `/embed` – Document ingestion
+- `/admin/*` – Admin and metrics APIs
 
-- Python 3.8 or higher
-- Node.js and npm
-- PostgreSQL
-- OpenAI API key
+### Storage & Compute
+- **ChromaDB** – Persistent vector store with group-level filtering
+- **PostgreSQL** – Stores users, logs, group config, and metadata
+- **LLM** – OpenAI GPT-3.5/GPT-4
+- **Embeddings** – OpenAI
 
-### Clone the Repository
+---
 
+## Core Features
+
+###  Query Flow
+1. User submits a financial/business query
+2. Backend retrieves RAG config for the user’s group
+3. ChromaDB returns top-k context chunks (group-isolated)
+4. Prompt dynamically constructed using tone/template
+5. OpenAI GPT-4 (or Claude) returns an answer
+6. Metadata and audit logs stored in PostgreSQL
+7. Frontend displays result, metadata, and cache status
+
+### Admin Capabilities
+- Manage users, roles, and group memberships
+- Upload documents to group-specific collections
+- Monitor live system health, latency, token usage
+- View query and ingestion history with audit drill-down
+- Assign prompt strategies per group
+
+### Access Control
+- Role-Based UI (Admin, Viewer, Group Owner)
+- Frontend dynamically adjusts to permissions
+- Backend enforces access via group/user ID
+
+---
+
+## Prompt Engineering
+
+Prompts are dynamically tailored using:
+- Group tone and template (stored in DB)
+- Retrieved ChromaDB context (group-scoped)
+- Model config (temperature, retry logic, etc.)
+
+**Prompt Example:**
+```
+System: "You are a helpful {tone} assistant for the finance team. Use only the SOPs provided to answer concisely."
+User: "What are the liquidity ratios for JPMorgan in 2023?"
+Context: [chunk 1], [chunk 2], ...
+```
+
+Metadata Logged:
+- Query latency
+- Token counts (input/output)
+- Model used
+- Cache status
+- Context document count
+- Retrieval rank and source
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Prerequisites
+- Python 3.10+
+- Node.js 18+
+- PostgreSQL 15+
+- OpenAI API Key
+- ChromaDB (local)
+
+### 2. Backend Setup
 ```bash
-git clone https://github.com/ksermini/finrag_platform.git
-cd finrag_platform
-```
-
-## Backend Setup
-```cd backend
+cd backend/
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate  # or .\venv\Scripts\Activate.ps1 on Windows
 pip install -r requirements.txt
-```
-
-### Create a .env file in backend/ with the following content:
-```
-OPENAI_API_KEY=your_openai_key
-DATABASE_URL=postgresql://user:password@localhost:5432/finrag_db
-SECRET_KEY=your_secret_key
-```
-
-### Run the backend server:
-```
 uvicorn app.main:app --reload
 ```
 
-## Frontend Setup
-```
-cd frontend
+### 3. Frontend Setup
+```bash
+cd frontend/
 npm install
+npm run dev  # Starts Vite server on http://localhost:5173
 ```
-### Create a .env file in frontend/ with the following content:
-```
-REACT_APP_API_URL=http://localhost:8000
-```
-### Run the frontend server:
-```
-npm run dev
-```
-Open your browser at http://localhost:5173
 
-## Usage 
+### 4. Cleanup Tools
+```bash
+# Clear Python cache
+find . -name "__pycache__" -exec rm -r {} +
 
-- Register and log in as a user or admin
-- Upload financial documents (PDFs or text)
-- Ask questions in the chat interface and receive generated answers
-- Provide thumbs-up or thumbs-down feedback per message
-- Admins can view system usage statistics and feedback logs
-
-## Architecture Overview
-
-- FastAPI handles API requests, authentication, and document processing
-- PostgreSQL stores user data, logs, metadata, and feedback
-- ChromaDB stores vector embeddings for document retrieval
-- OpenAI API powers LLM generation
-- React frontend communicates with backend via REST API
-
-## Contributing
- 
-1. Fork the repository
-2. Create a new branch
+# Reset ChromaDB (optional)
+rm -rf backend/data/chroma
 ```
-git checkout -b feature/your-feature-name
-```
-3. Make your changes
-4. Commit and push
-```
-git commit -m "Add your feature"
-git push origin feature/your-feature-name
-```
-5. Open a pull request
 
-## Contact
-For issues or questions, please open a GitHub issue at
+---
 
-https://github.com/ksermini/finrag_platform/issues
+## Metadata & Logging
+
+| Table              | Purpose                                        |
+|--------------------|------------------------------------------------|
+| `genai_metadata`   | Stores token usage, latency, source, caching   |
+| `audit_logs`       | Stores user prompts, answers, context used     |
+| `group_documents`  | Tracks file uploads by group                   |
+| `group_rag_config` | Stores prompt tone, template, and settings     |
+
+---
+
+## Example Use Cases
+- Internal legal or financial advisors generating RAG answers scoped to group SOPs  
+- Admins reviewing high-latency queries or cache misses in real time  
+- Engineers debugging ingestion bottlenecks with metadata insight  
+- Analysts experimenting with temperature tuning and prompt design per business unit  
+
+---
+
+## Roadmap
+
+| Feature              | Description                                  |
+|----------------------|----------------------------------------------|
+| Feedback Loop        | Thumbs-up/down query scoring                 |
+| LangGraph Agent Flow | Clarifying follow-ups via multi-agent graph |
+| CI/CD Integration    | GitHub Actions and deployment scripts        |
+| Plugin Framework     | Real-time stock API, calculator plugins      |
+| Self-Healing Logs    | Sync fallback logs to main DB                |
+
+---
+
+## License & Attribution
+
+This is a personal portfolio project demonstrating real-world GenAI system architecture for financial RAG systems. All designs, prompts, and implementations reflect best practices in modular, metadata-driven, full-stack AI engineering.
