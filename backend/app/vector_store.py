@@ -30,9 +30,10 @@ def add_to_vectorstore(chunks: list[str], filename: str = "file", user_id: str =
         embeddings.append(get_embedding(chunk))  # Should be list[float]
         metadatas.append({
             "filename": filename,
-            "user_id": user_id,
-            "group_id": group_id
+            "user_id": str(user_id) if user_id else None,
+            "group_id": str(group_id) if group_id else None
         })
+
 
     collection.add(
         documents=documents,

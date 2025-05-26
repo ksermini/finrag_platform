@@ -85,7 +85,7 @@ async def add_user_to_group(
         user_id=user_id,
         group_id=group_id,
         role=role,
-        added_at=datetime.now()
+        added_at=datetime.now
     )
     db.add(user_group)
     await db.commit()
@@ -130,7 +130,7 @@ async def add_user_to_group(data: UserGroupAssign):
             user_id=data.user_id,
             group_id=str(data.group_id),
             role=data.role,
-            added_at=datetime.now()
+            added_at=datetime.now
         )
 
         session.add(user_group)

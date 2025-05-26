@@ -23,4 +23,4 @@ class RAGGroupConfig(Base):
     temperature = Column(Float, default=0.7)
     prompt_template = Column(Text, nullable=True)
     enabled = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now())

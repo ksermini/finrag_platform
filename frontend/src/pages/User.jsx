@@ -77,7 +77,12 @@ export default function UserDashboard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          query,
+          user_id: localStorage.getItem("user_id"),
+          group_id: localStorage.getItem("group_id"),
+          role: localStorage.getItem("agent_role") || "domain expert"
+        }),
       });
 
       const data = await res.json();

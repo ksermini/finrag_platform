@@ -30,11 +30,12 @@ async def get_group_agent_role(group_id: UUID) -> str:
         if not group:
             raise Exception("Group not found.")
         return group.default_agent_role or "domain expert"
-def query_vectorstore_by_group(query: str, group_id: str):
+def query_vectorstore_with_group(query: str, group_id: UUID, n_results: int = 3):
     embedding = get_embedding(query)
     results = collection.query(
         query_embeddings=[embedding],
-        n_results=5,
-        where={"group_id": group_id}
+        n_results=n_results,
+        where={"group_id": str(group_id)}
     )
     return results["documents"][0]
+
