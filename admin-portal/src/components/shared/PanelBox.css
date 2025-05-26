@@ -1,0 +1,49 @@
+.panel-box {
+    border-radius: 1rem;
+    background: var(--theme-elevated);
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+    border: 1px solid var(--theme-border);
+  }
+  
+  .panel-box-title {
+    font-size: 0.875rem;
+    color: var(--theme-accent);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  
+  .panel-box-content {
+    font-size: 0.875rem;
+    color: var(--theme-fg);
+  }
+  
+  .bento-style {
+    background: linear-gradient(145deg, #1e1e2e, #2b2b3c);
+  }
+  
+  .glass-style {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  
+  .gradient-frame {
+    border: 1px solid transparent;
+    background-image:
+      linear-gradient(var(--theme-elevated), var(--theme-elevated)),
+      linear-gradient(to right, rgba(99,102,241,0.2), rgba(139,92,246,0.2));
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+  
+  .panel-compact {
+    padding: 0.75rem !important;
+  }
+  
+  .panel-no-shadow {
+    box-shadow: none !important;
+  }
+  

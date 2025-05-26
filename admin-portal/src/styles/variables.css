@@ -1,4 +1,13 @@
 :root {
+
+    --theme-bg: #0a0a0a;
+    --theme-elevated: #111827;
+    --theme-accent: #6366f1;
+    --theme-accent-muted: #a5b4fc;
+    --theme-border: rgba(255, 255, 255, 0.08);
+    --theme-fg: #f3f4f6;
+
+      
     --theme-bg: #f10c0c;
     --theme-fg: #000000;
     --theme-accent: #051830;

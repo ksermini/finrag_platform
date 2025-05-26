@@ -1,95 +1,72 @@
 import React, { useState, useEffect } from "react";
 import LayoutWrapper from "./LayoutWrapper";
+import PanelBox from "../shared/PanelBox";
 
 import TerminalWindow from "../shared/TerminalWindow";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
-import KeyboardOverlay from "../tools/KeyboardOverlay";
 import UsersTab from "../tabs/UsersTab";
 
-// Tools
 import VectorExplorer from "../tools/VectorExplorer";
 import ModelStatus from "../tools/ModelStatus";
 import AuditViewer from "../tools/AuditViewer";
 import ChromaIndex from "../tools/ChromaIndex";
 import APILogs from "../tools/APILogs";
 
+const TOOLS = [
+  { name: "Vector Explorer", component: <VectorExplorer /> },
+  { name: "Model Status", component: <ModelStatus /> },
+  { name: "Audit Viewer", component: <AuditViewer /> },
+  { name: "Chroma Index", component: <ChromaIndex /> },
+  { name: "API Logs", component: <APILogs /> },
+];
+
 const TerminalLayout = () => {
   const [activeTab, setActiveTab] = useState("Terminal");
-  const [activeTool, setActiveTool] = useState("Vector Explorer");
+  const [activeTool, setActiveTool] = useState(TOOLS[0].name);
   const [clock, setClock] = useState(new Date());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-
 
   useEffect(() => {
     const interval = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const toggleSidebar = () => setIsSidebarOpen(prev => !prev); // ⬅️ added
-
-
   const renderToolPanel = () => {
-    switch (activeTool) {
-      case "Vector Explorer":
-        return <VectorExplorer />;
-      case "Model Status":
-        return <ModelStatus />;
-      case "Audit Viewer":
-        return <AuditViewer />;
-      case "Chroma Index":
-        return <ChromaIndex />;
-      case "API Logs":
-        return <APILogs />;
-      default:
-        return <div className="text-muted text-sm">Select a tool</div>;
-    }
+    const tool = TOOLS.find((t) => t.name === activeTool);
+    return tool?.component ?? <div className="text-muted text-sm">Select a tool</div>;
   };
 
   const renderCenterContent = () => {
     if (activeTab === "Terminal") {
       return (
-        <>
-          {/* Terminal Output Bento */}
-          <div className="rounded-xl p-5 bg-gradient-to-br from-[#13131a] to-[#0f0f17] border border-white/10 shadow-lg">
-            <div className="text-lg font-semibold mb-2 text-white/90">🖥️ Terminal Output</div>
-            <div className="h-[300px] overflow-y-auto font-mono text-sm text-blue-200">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Terminal Output */}
+          <PanelBox title="🖥️ Terminal Output" variant="bento">
+            <div className="h-72 overflow-y-auto text-[13px] text-blue-300 bg-black/20 rounded-lg p-4">
               <TerminalWindow />
             </div>
-          </div>
+          </PanelBox>
 
-          {/* Tool Viewer Bento */}
-          <div className="rounded-xl p-5 bg-gradient-to-br from-[#14141f] to-[#0d0d16] border border-white/10 shadow-lg">
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between items-center">
-                <div className="text-lg font-semibold text-white/90">🧩 Tool Panel</div>
-              </div>
-
-              {/* Pills navigation */}
-              <div className="flex flex-wrap gap-2">
-                {["Vector Explorer", "Model Status", "Audit Viewer", "Chroma Index", "API Logs"].map(
-                  (tool) => (
-                    <button
-                      key={tool}
-                      onClick={() => setActiveTool(tool)}
-                      className={`px-4 py-1.5 text-sm rounded-full transition font-medium ${
-                        activeTool === tool
-                          ? "bg-blue-500 text-white shadow"
-                          : "bg-white/10 text-white/60 hover:bg-white/20"
-                      }`}
-                    >
-                      {tool}
-                    </button>
-                  )
-                )}
-              </div>
-
-              {/* Active Tool Output */}
-              <div className="text-sm text-white/80 pt-2">{renderToolPanel()}</div>
+          {/* Tool Panel */}
+          <PanelBox title="🧩 Tool Panel" variant="bento" gradient>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {TOOLS.map(({ name }) => (
+                <button
+                  key={name}
+                  onClick={() => setActiveTool(name)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
+                    activeTool === name
+                      ? "bg-[var(--theme-accent)] text-white shadow"
+                      : "bg-white/10 text-white/60 hover:bg-white/20"
+                  }`}
+                >
+                  {name}
+                </button>
+              ))}
             </div>
-          </div>
-        </>
+            <div className="text-sm text-white/80">{renderToolPanel()}</div>
+          </PanelBox>
+        </div>
       );
     }
 
@@ -100,34 +77,13 @@ const TerminalLayout = () => {
 
   return (
     <LayoutWrapper
-      left={
-        <SidebarLeft
-          activeTab={activeTab}
-          onTabClick={setActiveTab}
-          isOpen={isSidebarOpen}
-        />
-      }
-      center={
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-white font-bold text-lg">FinRAG Admin Portal v1.0</h2>
-            <button
-              onClick={toggleSidebar}
-              className="text-sm px-3 py-1 rounded bg-white/10 text-white hover:bg-white/20 transition"
-            >
-              {isSidebarOpen ? "Hide Panel" : "Show Panel"}
-            </button>
-          </div>
-          {renderCenterContent()}
-        </div>
-      }
+      left={<SidebarLeft activeTab={activeTab} onTabClick={setActiveTab} />}
+      center={renderCenterContent()}
       right={<SidebarRight />}
       activeTab={activeTab}
       onTabClick={setActiveTab}
       clock={clock}
     />
-
-
   );
 };
 

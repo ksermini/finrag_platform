@@ -19,7 +19,25 @@
   --danger: #ef4444;
   --font-display: "Inter", "Segoe UI", sans-serif;
 }
-
+input, select, textarea {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--theme-fg);
+    border: 1px solid var(--theme-border);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    width: 100%;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: var(--theme-accent);
+    background-color: rgba(255,255,255,0.07);
+  }
+  
+  button {
+    transition: all 0.2s ease-in-out;
+  }
+  
 body {
   --theme-fg: #c9d1d9;
   --theme-muted: #6b7280;

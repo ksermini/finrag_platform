@@ -5,7 +5,7 @@
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(134, 168, 243, 0.212);
+    box-shadow:  0 0 0 1px var(--theme-border), 0 6px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
   }
   .panel-box:hover {
@@ -13,18 +13,34 @@
   }
   
   .panel-box-title {
-    font-size: var(--font-size-sm);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--theme-accent);
-    margin-bottom: 0.75rem;
+    color: white;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
   }
   
   .panel-box-content {
-    font-size: var(--font-size-md);
-    line-height: 1.6;
-    color: var(--theme-muted);
+    color: var(--theme-fg);
+    font-size: 0.875rem;
+  }
+  
+  /* Optional variants */
+  .bento-style {
+    background: linear-gradient(145deg, #1f1f2e, #2a2a3c);
+    border: 1px solid var(--theme-border);
+  }
+  
+  .glass-style {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .gradient-frame {
+    border: 1px solid transparent;
+    background-image: linear-gradient(var(--theme-elevated), var(--theme-elevated)), linear-gradient(to right, #6366f1, #8b5cf6);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
   }
   
   .section-label {
