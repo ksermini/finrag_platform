@@ -118,7 +118,7 @@ export default function UserDashboard() {
     >
       <div className="chat-main">
         <div className="chat-scroll">
-          {previousQuery && <div className="chat-bubble user">🤔 {previousQuery}</div>}
+          {previousQuery && <div className="chat-bubble user"> {previousQuery}</div>}
           {answer && (
             <div className="chat-bubble ai">
               <div className="bubble-label">Answer</div>

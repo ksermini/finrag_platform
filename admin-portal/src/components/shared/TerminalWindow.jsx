@@ -4,7 +4,7 @@ import axios from "axios";
 const TerminalWindow = () => {
   const [logs, setLogs] = useState([]);
 
-  const playSound = (src, volume = 1) => {
+  const playSound = (src, volume = 100) => {
     const audio = new Audio(src);
     audio.volume = volume;
     audio.play();
@@ -24,7 +24,7 @@ const TerminalWindow = () => {
         }
   
         const output = [
-          `> query("${latest.query || '---'}")`,
+          `> user("${latest.user_id || '---'}")`,
           `[✓] Retrieved ${latest.retrieved_docs_count} documents`,
           `[✓] Model: ${latest.model || latest.model_name} | Latency: ${latest.latency_ms}ms`,
           `[✓] Tokens: ${latest.tokens_input} in / ${latest.tokens_output} out`,

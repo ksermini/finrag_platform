@@ -51,13 +51,13 @@ def query_vectorstore(query: str, n_results: int = 3) -> list[str]:
     return results['documents'][0] if results and results.get('documents') else []
 
 def query_vectorstore_with_group(query: str, group_id: str, n_results: int = 5) -> list[str]:
-    """
-    Same as query_vectorstore but filters by group_id in metadata.
-    """
     embedding = get_embedding(query)
+    where_filter = {"group_id": str(group_id)}
+
     results = collection.query(
         query_embeddings=[embedding],
         n_results=n_results,
-        where={"group_id": group_id}
+        where=where_filter
     )
+
     return results['documents'][0] if results and results.get('documents') else []
