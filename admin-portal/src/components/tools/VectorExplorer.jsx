@@ -24,6 +24,10 @@ const VectorExplorer = () => {
   };
 
   return (
+    <>
+    <div className="tool-description">
+    Explore the content of indexed document vectors. Useful for validating chunking, embeddings, and topic coverage.
+    </div>
     <div className="text-xs space-y-2">
       <div className="font-bold">[ Vector Explorer ]</div>
       <input
@@ -44,6 +48,7 @@ const VectorExplorer = () => {
         ))}
       </ul>
     </div>
+    </>
   );
 };
 

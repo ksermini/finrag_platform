@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
+import PanelBox from "../shared/PanelBox"; // if you're using it
 import styles from "./tools.module.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const MetricCard = ({ label, value, unit, color = "cyan" }) => (
-  <div className={`metric-card metric-${color}`}>
-    <div className="metric-label">{label}</div>
-    <div className="metric-value">
+  <div
+    className={`rounded-lg p-4 bg-[var(--theme-surface)] shadow-md border border-[var(--theme-border)] hover:scale-[1.02] transition transform`}
+  >
+    <div className="text-xs uppercase text-[var(--theme-muted)] mb-1">{label}</div>
+    <div className={`text-lg font-semibold text-${color}-400`}>
       {value}
-      {unit && <span className="metric-unit">{unit}</span>}
+      {unit && <span className="text-xs text-[var(--theme-muted)] ml-1">{unit}</span>}
     </div>
   </div>
 );
@@ -31,14 +34,18 @@ const ModelStatus = () => {
   }, []);
 
   return (
-    <div className="model-status">
-      <h2 className="model-status-title">[ Model Status ]</h2>
+    <PanelBox title="Model Status">
+      <div className="tool-description">
+        Shows the LLM configuration, token limits, and latency performance for current deployments.
+      </div>
 
-      {error && <div className="model-status-error">{error}</div>}
-      {!status && !error && <div className="model-status-loading">Loading system metrics...</div>}
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      {!status && !error && (
+        <div className="text-theme-muted text-sm italic">Loading system metrics...</div>
+      )}
 
       {status && (
-        <div className="metric-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <MetricCard label="CPU Load" value={status.cpu} unit="%" color="cyan" />
           <MetricCard label="Avg Latency" value={status.avg_latency?.toFixed(1)} unit="ms" color="blue" />
           <MetricCard label="Token Usage" value={status.avg_tokens?.toFixed(1)} unit="tokens" color="green" />
@@ -46,7 +53,7 @@ const ModelStatus = () => {
           <MetricCard label="Uptime" value={Math.floor(status.uptime_sec / 3600)} unit="h" color="orange" />
         </div>
       )}
-    </div>
+    </PanelBox>
   );
 };
 

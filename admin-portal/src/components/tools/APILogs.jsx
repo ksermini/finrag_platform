@@ -38,6 +38,10 @@ const APILogs = () => {
   });
 
   return (
+    <>
+    <div className="tool-description">
+    Displays raw inference logs including user, model, latency, and token usage for each query — useful for monitoring throughput and diagnosing bottlenecks.
+    </div>
     <div className="w-full min-h-[400px]">
       <h2 className="panel-box-title text-[var(--success)] mb-4">API Logs</h2>
       {error && <div className="text-red-500 mb-3">{error}</div>}
@@ -61,6 +65,7 @@ const APILogs = () => {
         className="w-full"
       />
     </div>
+    </>
   );
 };
 

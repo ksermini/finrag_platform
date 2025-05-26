@@ -60,4 +60,11 @@ button:hover {
 canvas {
     max-height: 180px;
   }
+  .tool-description {
+    font-size: .9rem; /* text-xs */
+    color: var(--theme-muted);
+    margin-top: 0.5rem; /* mt-2 */
+    margin-bottom: 1.5rem; /* mb-4 */
+    line-height: 1.625; /* relaxed */
+  }
   

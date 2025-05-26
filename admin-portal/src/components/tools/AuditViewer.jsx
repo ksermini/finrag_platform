@@ -21,6 +21,10 @@ const AuditViewer = () => {
   }, []);
 
   return (
+    <>
+    <div className="tool-description">
+    View recent user activity, RAG queries, feedback logs, and system decisions for compliance or debugging.
+    </div>
     <div className="audit-viewer">
       <h2 className="audit-title">[ Audit Logs ]</h2>
       {error && <div className="audit-error">{error}</div>}
@@ -49,6 +53,7 @@ const AuditViewer = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 
