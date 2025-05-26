@@ -3,125 +3,64 @@
     background-color: var(--theme-surface);
     border: 1px solid var(--theme-border);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow:  0 0 0 1px var(--theme-border), 0 6px 12px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: none;
     transition: transform 0.3s ease;
   }
+  
   .panel-box:hover {
     transform: translateY(-2px);
   }
   
   .panel-box-title {
+    font-size: var(--font-size-sm);
     font-weight: 600;
-    color: white;
-    font-size: 0.875rem;
+    color: var(--theme-muted);
     margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   
   .panel-box-content {
+    font-size: var(--font-size-sm);
     color: var(--theme-fg);
-    font-size: 0.875rem;
+    line-height: 1.5;
   }
   
-  /* Optional variants */
-  .bento-style {
-    background: linear-gradient(145deg, #1f1f2e, #2a2a3c);
-    border: 1px solid var(--theme-border);
-  }
-  
-  .glass-style {
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .gradient-frame {
-    border: 1px solid transparent;
-    background-image: linear-gradient(var(--theme-elevated), var(--theme-elevated)), linear-gradient(to right, #6366f1, #8b5cf6);
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-  }
-  
+  /* === Section Labels === */
   .section-label {
-    font-size: 11px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     color: var(--theme-muted);
     margin-bottom: 0.25rem;
     text-transform: uppercase;
   }
   
-  /* === CPU Graph === */
-  .cpu-graph-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    margin-bottom: 0.25rem;
-    color: var(--theme-muted);
-  }
-  
-  /* === Clock + Labels === */
-  .clock-display {
-    font-size: 18px;
+  /* === Alerts === */
+    .alert-warning {
+    color: var(--danger);
+    font-size: 12px;
     font-weight: 600;
-    font-family: var(--font-ui);
-    color: var(--theme-accent);
-    margin-bottom: 1.5rem;
-  }
+    }
+    .alert-ok {
+    font-size: 12px;
+    color: var(--success);
+    }
+    .section-label {
+    font-size: 10px;
+    color: var(--theme-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+    }
+    
   
-  
-
-  
-  /* === Metrics Grid === */
-  /* .right-grid-section {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  } */
-  
-  .right-metrics-section > div {
-    font-size: 13px;
+  /* === Metrics Styling === */
+  .right-grid-section div div:nth-child(2),
+  .right-grid-section div div:nth-child(3) {
+    font-size: var(--font-size-sm);
     font-weight: 500;
     color: var(--theme-fg);
   }
   
-  
-  /* === Graphs === */
-  .cpu-graph {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .cpu-graph-svg {
-    width: 100%;
-    height: 30px;
-  }
-  .cpu-graph-header {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--theme-muted);
-  }
-  
-  /* === Alerts === */
-  .alert-warning {
-    color: var(--danger);
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .alert-ok {
-    font-size: 12px;
-    color: var(--success);
-  }
-  
-  .alert-list {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 0.5rem;
-  }
-  .right-grid-section div div:nth-child(2),
-  .right-grid-section div div:nth-child(3) {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--theme-fg);
-  }

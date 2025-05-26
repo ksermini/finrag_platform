@@ -1,16 +1,14 @@
-/*
-	Installed from https://reactbits.dev/default/
-*/
+/* === ReactBits Animated List Styles === */
 
 .scroll-list-container {
   position: relative;
-  width: 500px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .scroll-list {
-  max-height: 400px;
   overflow-y: auto;
-  padding: 16px;
+  padding: 1rem;
 }
 
 .scroll-list::-webkit-scrollbar {
@@ -22,7 +20,7 @@
 }
 
 .scroll-list::-webkit-scrollbar-thumb {
-  background: #222;
+  background: var(--theme-border, #333);
   border-radius: 4px;
 }
 
@@ -34,11 +32,13 @@
   scrollbar-width: none;
 }
 
+/* === Animated Item Card === */
 .item {
-  padding: 16px;
-  background-color: #111;
+  padding: 1rem;
+  background-color: var(--theme-surface-muted, #111);
   border-radius: 8px;
   margin-bottom: 1rem;
+  transition: background 0.2s ease;
 }
 
 .item.selected {
@@ -48,8 +48,12 @@
 .item-text {
   color: white;
   margin: 0;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
 }
 
+/* === Scroll Gradients === */
 .top-gradient {
   position: absolute;
   top: 0;

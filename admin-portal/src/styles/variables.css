@@ -1,44 +1,29 @@
 :root {
-
-    --theme-bg: #0a0a0a;
-    --theme-elevated: #111827;
-    --theme-accent: #6366f1;
-    --theme-accent-muted: #a5b4fc;
-    --theme-border: rgba(255, 255, 255, 0.08);
-    --theme-fg: #f3f4f6;
-
-      
-    --theme-bg: #f10c0c;
-    --theme-fg: #000000;
-    --theme-accent: #051830;
-    --theme-accent-muted: #000000;
-    --theme-border: #000000;
-    --theme-muted: #000000;
+    --theme-bg: #000000;
+    --theme-surface: #1a1c1e;
+    --theme-elevated: #232629;
+    --theme-surface-muted: #2d3033;
   
-    --theme-surface: #000000;
-    --theme-surface-muted: #374151;
-    --theme-elevated: #000000;
-    --theme-glass-border: rgba(255, 255, 255, 0.08);
+    --theme-fg: #f5f6f7;
+    --theme-muted: #9ca3af;
   
-    --success: #10b981;
-    --danger: #ef4444;
+    --theme-accent: #3b3f44;
+    --theme-accent-muted: #2e3237;
+  
+    --theme-border: rgba(255, 255, 255, 0.05);
+    --theme-glass-border: rgba(255, 255, 255, 0.06);
+    --theme-glow-shadow: none;
+    --theme-glow-outline: none;
+  
+    --success: #16a34a;
+    --danger: #dc2626;
     --warning: #f59e0b;
   
-    --color_r: 99;
-    --color_g: 102;
-    --color_b: 241;
-  
-    --theme-glow-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
-    --theme-glow-outline: 0 0 0 1px var(--theme-accent);
-  
     --font-ui: 'Inter', sans-serif;
-
-    
-    /* Revised Font Sizes for better visual hierarchy */
-    --font-size-xs: 11px;   /* Labels, timestamps */
-    --font-size-sm: 13px;   /* Memory, alerts, metrics values */
-    --font-size-md: 14px;   /* Section content */
-    --font-size-lg: 16px;   /* Panel titles */
-    --font-size-xl: 18px;   /* Clock, accent elements */
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
   }
   

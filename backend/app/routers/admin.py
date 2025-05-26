@@ -35,16 +35,16 @@ def vector_search(q: str = Query(...)):
         return {"error": str(e)}
 
 # ✅ Chroma Vector Index Metadata
-@router.get("/chroma/index")
-def chroma_index():
-    try:
-        collection = client.get_or_create_collection(name="financial_docs")
-        return {
-            "collection": collection.name,
-            "vector_count": collection.count()
-        }
-    except Exception as e:
-        return {"error": str(e)}
+# @router.get("/chroma/index")
+# def chroma_index():
+#     try:
+#         collection = client.get_or_create_collection(name="financial_docs")
+#         return {
+#             "collection": collection.name,
+#             "vector_count": collection.count()
+#         }
+#     except Exception as e:
+#         return {"error": str(e)}
 
 # ✅ Audit Logs (Last 50 Entries)
 @router.get("/audit/logs")
@@ -124,3 +124,27 @@ async def system_alerts():
     return await run_health_check()
 
 
+
+from chromadb import PersistentClient
+from collections import Counter
+
+
+@router.get("/chroma/index")
+def get_chroma_index():
+    client = PersistentClient(path="data/chroma")
+    collection = client.get_or_create_collection(name="financial_docs")
+
+    all_data = collection.get(include=["metadatas"])
+
+    chunk_counts = Counter()
+    for meta in all_data["metadatas"]:
+        if meta is None:
+            continue  # Skip missing metadata
+        chunk_id = meta.get("chunk") or meta.get("chunk_id") or meta.get("document_id") or "unknown"
+        chunk_counts[chunk_id] += 1
+
+    return {
+        "collection": "financial_docs",
+        "vector_count": len(all_data["metadatas"]),
+        "chunk_stats": [{"chunk": k, "vectors": v} for k, v in sorted(chunk_counts.items())]
+    }

@@ -7,7 +7,7 @@ import { useSidebar } from "../../context/SidebarContext";
 const icons = {
   Terminal,
   Users,
-  Jobs: Briefcase,
+  Tools: Briefcase,
   Logs: ScrollText,
   Settings,
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import LetterGlitch from "/lib/LetterGlitch/LetterGlitch";
 
-
 const CpuGraph = ({ title, group, color = "#4f46e5" }) => {
   const [data, setData] = useState(Array(50).fill(0));
   const requestRef = useRef();
@@ -39,7 +38,7 @@ const CpuGraph = ({ title, group, color = "#4f46e5" }) => {
 
   return (
     <div className="cpu-graph">
-      <div className="cpu-graph-header">
+      <div className="cpu-graph-header flex justify-between text-[11px] text-theme-muted mb-1">
         <span>{title}</span>
         <span>Avg: {avg}%</span>
       </div>
@@ -93,16 +92,17 @@ const SidebarRight = () => {
   };
 
   return (
-    <div className="sidebar-right p-2 text-[11px] text-theme-fg space-y-3 font-ui bg-black/80 backdrop-blur-md shadow-inner border-l border-theme-border">
+    <div className="sidebar-right p-2 text-[11px] text-theme-fg space-y-3 font-ui bg-[var(--theme-bg)] border-l border-theme-border">
 
-      <div className="text-center text-[16px] font-semibold tracking-widest text-theme-accent">
+      {/* Clock */}
+      <div className="text-center text-[16px] font-semibold tracking-widest text-theme-accent mb-2">
         {time}
       </div>
 
-      {/* SYSTEM BLOCK */}
+      {/* SYSTEM */}
       <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">System</div>
-        <div className="grid grid-cols-2 gap-x-2 leading-4">
+        <div className="grid grid-cols-2 gap-y-3 gap-x-4">
           <div>
             <div className="section-label">Year</div>
             <div>{clock.getFullYear()}</div>
@@ -127,23 +127,34 @@ const SidebarRight = () => {
       <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">Performance</div>
         <div className="space-y-1">
-          <div className="flex justify-between"><span>Queries</span><span>{stats?.query_count ?? "--"}</span></div>
-          <div className="flex justify-between"><span>Latency</span><span>{stats?.avg_latency?.toFixed(0) ?? "--"}ms</span></div>
-          <div className="flex justify-between"><span>Tokens</span><span>{stats?.avg_tokens?.toFixed(1) ?? "--"}</span></div>
+          <div className="flex justify-between">
+            <span>Queries</span>
+            <span className="text-right block w-12">{stats?.query_count ?? "--"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Latency</span>
+            <span className="text-right block w-12">{stats?.avg_latency?.toFixed(0) ?? "--"}ms</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Tokens</span>
+            <span className="text-right block w-12">{stats?.avg_tokens?.toFixed(1) ?? "--"}</span>
+          </div>
         </div>
       </div>
 
       {/* CPU */}
       <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">CPU Usage</div>
-        <CpuGraph title="#1–2" group="A" />
-        <CpuGraph title="#3–4" group="B" />
+        <div className="space-y-2">
+          <CpuGraph title="#1–2" group="A" />
+          <CpuGraph title="#3–4" group="B" />
+        </div>
       </div>
 
       {/* MEMORY */}
       <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">Memory</div>
-        <div className="h-12 overflow-hidden">
+        <div className="h-[60px] overflow-hidden">
           <LetterGlitch
             glitchSpeed={50}
             centerVignette={true}
@@ -158,13 +169,13 @@ const SidebarRight = () => {
       <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">Alerts</div>
         {alerts.length ? (
-          <ul className="space-y-1">
+          <ul className="alert-list space-y-1 text-[12px] leading-tight">
             {alerts.map((a, i) => (
-              <li key={i} className="text-red-500">⚠ {a}</li>
+              <li key={i} className="alert-warning">⚠ {a}</li>
             ))}
           </ul>
         ) : (
-          <div className="text-green-500">✔ System healthy</div>
+          <div className="alert-ok text-[12px]">✔ System healthy</div>
         )}
       </div>
 

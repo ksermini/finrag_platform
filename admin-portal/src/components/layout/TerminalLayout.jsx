@@ -33,53 +33,53 @@ const TerminalLayout = () => {
 
   const renderToolPanel = () => {
     const tool = TOOLS.find((t) => t.name === activeTool);
-    return tool?.component ?? <div className="text-muted text-sm">Select a tool</div>;
+    return tool?.component ?? <div className="text-theme-muted text-sm">Select a tool</div>;
   };
 
   const renderCenterContent = () => {
     if (activeTab === "Terminal") {
       return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Terminal Output */}
-          <PanelBox title="🖥️ Terminal Output" variant="bento">
-            <div className="h-72 overflow-y-auto text-[13px] text-blue-300 bg-black/20 rounded-lg p-4">
-              <TerminalWindow />
-            </div>
-          </PanelBox>
-
-          {/* Tool Panel */}
-          <PanelBox title="🧩 Tool Panel" variant="bento" gradient>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {TOOLS.map(({ name }) => (
-                <button
-                  key={name}
-                  onClick={() => setActiveTool(name)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
-                    activeTool === name
-                      ? "bg-[var(--theme-accent)] text-white shadow"
-                      : "bg-white/10 text-white/60 hover:bg-white/20"
-                  }`}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
-            <div className="text-sm text-white/80">{renderToolPanel()}</div>
-          </PanelBox>
-        </div>
+        <PanelBox title="🖥 Terminal Output">
+          <div className="terminal-window h-72 overflow-y-auto bg-[var(--theme-surface-muted)] p-4 rounded">
+            <TerminalWindow />
+          </div>
+        </PanelBox>
       );
     }
-
+  
+    if (activeTab === "Tools") {
+      return (
+        <PanelBox title="Tool Panel">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {TOOLS.map(({ name }) => (
+              <button
+                key={name}
+                onClick={() => setActiveTool(name)}
+                className={`px-4 py-1.5 rounded text-sm font-medium transition ${
+                  activeTool === name
+                    ? "bg-[var(--theme-surface-muted)] text-white border border-[var(--theme-border)]"
+                    : "bg-transparent text-[var(--theme-muted)] hover:bg-[var(--theme-surface-muted)]"
+                }`}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+          <div className="text-sm text-theme-fg">{renderToolPanel()}</div>
+        </PanelBox>
+      );
+    }
+  
     if (activeTab === "Users") return <UsersTab />;
-
-    return <div className="text-muted text-sm mt-10">[{activeTab} tab coming soon]</div>;
+    return <div className="text-theme-muted text-sm mt-10">[{activeTab} tab coming soon]</div>;
   };
-
+  
   return (
     <LayoutWrapper
       left={<SidebarLeft activeTab={activeTab} onTabClick={setActiveTab} />}
       center={renderCenterContent()}
       right={<SidebarRight />}
+      bottom={null}
       activeTab={activeTab}
       onTabClick={setActiveTab}
       clock={clock}
