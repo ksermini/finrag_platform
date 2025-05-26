@@ -34,17 +34,6 @@ def vector_search(q: str = Query(...)):
     except Exception as e:
         return {"error": str(e)}
 
-# ✅ Chroma Vector Index Metadata
-# @router.get("/chroma/index")
-# def chroma_index():
-#     try:
-#         collection = client.get_or_create_collection(name="financial_docs")
-#         return {
-#             "collection": collection.name,
-#             "vector_count": collection.count()
-#         }
-#     except Exception as e:
-#         return {"error": str(e)}
 
 # ✅ Audit Logs (Last 50 Entries)
 @router.get("/audit/logs")

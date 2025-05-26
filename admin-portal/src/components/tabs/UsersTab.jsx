@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EditUserModal from "../modals/EditUserModal";
+import CreateUserModal from "../modals/CreateUserModal";
 import PanelBox from "../ui/PanelBox";
 
 const columnHeaders = [
@@ -8,13 +9,16 @@ const columnHeaders = [
   "Phone", "Title", "Department", "Admin", "Active", "Actions"
 ];
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const UsersTab = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const fetchUsers = () => {
     axios
-      .get("http://localhost:8000/admin/users")
+      .get(`${API_BASE}/admin/users`)
       .then((res) => setUsers(res.data))
       .catch((err) => console.error("Error fetching users:", err));
   };
@@ -26,7 +30,10 @@ const UsersTab = () => {
   return (
     <PanelBox title="User Management" variant="bento" gradient>
       <div className="flex justify-between items-center mb-4">
-        <button className="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+        <button
+          className="bg-indigo-600 text-white text-sm px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+          onClick={() => setIsCreating(true)}
+        >
           + New User
         </button>
       </div>
@@ -36,7 +43,10 @@ const UsersTab = () => {
           <thead className="bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs uppercase">
             <tr>
               {columnHeaders.map((col, idx) => (
-                <th key={idx} className="px-4 py-3 text-left whitespace-nowrap font-semibold tracking-wide">
+                <th
+                  key={idx}
+                  className="px-4 py-3 text-left whitespace-nowrap font-semibold tracking-wide"
+                >
                   {col}
                 </th>
               ))}
@@ -44,7 +54,10 @@ const UsersTab = () => {
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
             {users.map((user, idx) => (
-              <tr key={user.id || idx} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <tr
+                key={user.id || idx}
+                className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+              >
                 <td className="px-4 py-2">{user.id}</td>
                 <td className="px-4 py-2">{user.email}</td>
                 <td className="px-4 py-2">{user.first_name}</td>
@@ -76,6 +89,13 @@ const UsersTab = () => {
           user={selectedUser}
           onClose={() => setSelectedUser(null)}
           onSaved={fetchUsers}
+        />
+      )}
+
+      {isCreating && (
+        <CreateUserModal
+          onClose={() => setIsCreating(false)}
+          onCreated={fetchUsers}
         />
       )}
     </PanelBox>
