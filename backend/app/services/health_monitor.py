@@ -5,6 +5,18 @@ from app.models.metadata import GenAIMetadata
 from app.models.feedback import Feedback
 
 async def run_health_check():
+    """
+    Run a real-time health check on RAG system performance and feedback quality.
+
+    This function checks for:
+    - Lack of RAG activity in the past 30 minutes
+    - High-latency queries (> 3000 ms)
+    - Queries with zero retrieved documents
+    - High ratio of negative user feedback
+
+    Returns:
+        List[str]: A list of human-readable system alerts. Empty if system is healthy.
+    """
     async with SessionLocal() as session:
         since = datetime.now() - timedelta(minutes=30)
 
