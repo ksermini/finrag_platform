@@ -1,166 +1,214 @@
 
 # FinRAG Platform
 
-A full-stack Retrieval-Augmented Generation (RAG) system for AI engineering and internal observability in financial organizations.
+**Full-Stack RAG System for Financial Workflows**  
+Built with FastAPI, React, PostgreSQL, ChromaDB, LangGraph, and OpenAI.
 
-**Author:** Kayla Sermini  
-**Tech Stack:** Python (FastAPI), React, PostgreSQL, ChromaDB, OpenAI API  
-**Type:** Portfolio | FinTech | Full-Stack AI Engineering | RAG System
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Use Cases](#use-cases)
+- [API Routes](#api-routes)
+- [Data Dictionary](#data-dictionary)
+- [Screenshots](#screenshots)
+- [License](#license)
 
 ---
 
 ## Overview
 
-FinRAG enables group-aware document retrieval, real-time GenAI response generation, prompt personalization, and operational monitoring — all through a modular, production-ready architecture.
+FinRAG is a full-stack Retrieval-Augmented Generation (RAG) platform designed for internal AI engineering in financial organizations. It supports:
 
-Key Capabilities:
-- Group-based document retrieval and LLM responses
-- Role-based access control (RBAC)
-- Admin dashboard with user, group, and document management
-- Prompt engineering per group (tone, template, temperature)
-- Metadata logging for query performance, cache, tokens, and latency
-- Real-time system metrics and alerts
+- Financial document ingestion + embedding
+- Group-aware RAG query routing
+- Role-based prompt engineering
+- Operational metadata logging (latency, token usage, caching)
+- Full admin portal with audit logs, user management, system health, and usage metrics
 
 ---
 
-## System Architecture
+## Features
 
-### Frontend (React + Tailwind)
-- Login + Role-based Views
-- Document Upload + Query Interface
-- Admin Dashboard
-- Audit & Metadata Panels
-
-### Backend (FastAPI)
-- `/auth/*` – JWT authentication
-- `/query` – User queries
-- `/upload`, `/embed` – Document ingestion
-- `/admin/*` – Admin and metrics APIs
-
-### Storage & Compute
-- **ChromaDB** – Persistent vector store with group-level filtering
-- **PostgreSQL** – Stores users, logs, group config, and metadata
-- **LLM** – OpenAI GPT-3.5/GPT-4
-- **Embeddings** – OpenAI
+- Group Vector Isolation for secure knowledge retrieval
+- Prompt configuration per group (tone, temperature, template)
+- Role-Based Access Control (RBAC)
+- Query caching and feedback loop
+- Admin dashboard for users, logs, metrics, and vectors
 
 ---
 
-## Core Features
+## Architecture
 
-###  Query Flow
-1. User submits a financial/business query
-2. Backend retrieves RAG config for the user’s group
-3. ChromaDB returns top-k context chunks (group-isolated)
-4. Prompt dynamically constructed using tone/template
-5. OpenAI GPT-4 (or Claude) returns an answer
-6. Metadata and audit logs stored in PostgreSQL
-7. Frontend displays result, metadata, and cache status
-
-### Admin Capabilities
-- Manage users, roles, and group memberships
-- Upload documents to group-specific collections
-- Monitor live system health, latency, token usage
-- View query and ingestion history with audit drill-down
-- Assign prompt strategies per group
-
-### Access Control
-- Role-Based UI (Admin, Viewer, Group Owner)
-- Frontend dynamically adjusts to permissions
-- Backend enforces access via group/user ID
-
----
-
-## Prompt Engineering
-
-Prompts are dynamically tailored using:
-- Group tone and template (stored in DB)
-- Retrieved ChromaDB context (group-scoped)
-- Model config (temperature, retry logic, etc.)
-
-**Prompt Example:**
 ```
-System: "You are a helpful {tone} assistant for the finance team. Use only the SOPs provided to answer concisely."
-User: "What are the liquidity ratios for JPMorgan in 2023?"
-Context: [chunk 1], [chunk 2], ...
+FastAPI (Backend)
+âââ Auth, RBAC, Audit Logging
+âââ RAG Query Engine
+â   âââ LangGraph + OpenAI API
+âââ Metadata Logger
+âââ Vector Store (ChromaDB)
+âââ PostgreSQL
+
+React (Frontend)
+âââ User Query Interface
+âââ Admin Portal
+    âââ User Management
+    âââ Group Prompts
+    âââ Live Metadata
+    âââ Document Management
 ```
 
-Metadata Logged:
-- Query latency
-- Token counts (input/output)
-- Model used
-- Cache status
-- Context document count
-- Retrieval rank and source
-
 ---
 
-## ⚙️ Setup Instructions
+## Getting Started
 
-### 1. Prerequisites
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL 15+
-- OpenAI API Key
-- ChromaDB (local)
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ksermini/finrag_platform.git
+cd finrag_platform
+```
 
 ### 2. Backend Setup
+
 ```bash
-cd backend/
 python -m venv venv
-source venv/bin/activate  # or .\venv\Scripts\Activate.ps1 on Windows
+source venv/bin/activate
 pip install -r requirements.txt
+```
+
+### 3. Create `.env` File
+
+```env
+OPENAI_API_KEY=your_openai_key
+DATABASE_URL=postgresql://postgres:password@localhost:5432/finrag_db
+JWT_SECRET_KEY=your_jwt_secret
+```
+
+### 4. Initialize the Database
+
+```bash
+alembic upgrade head
+```
+
+### 5. Run the Backend Server
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-### 3. Frontend Setup
+### 6. Frontend (Optional)
+
 ```bash
-cd frontend/
+cd frontend
 npm install
-npm run dev  # Starts Vite server on http://localhost:5173
-```
-
-### 4. Cleanup Tools
-```bash
-# Clear Python cache
-find . -name "__pycache__" -exec rm -r {} +
-
-# Reset ChromaDB (optional)
-rm -rf backend/data/chroma
+npm run dev
 ```
 
 ---
 
-## Metadata & Logging
+## Use Cases
 
-| Table              | Purpose                                        |
-|--------------------|------------------------------------------------|
-| `genai_metadata`   | Stores token usage, latency, source, caching   |
-| `audit_logs`       | Stores user prompts, answers, context used     |
-| `group_documents`  | Tracks file uploads by group                   |
-| `group_rag_config` | Stores prompt tone, template, and settings     |
+- **Financial Analysis**: Summarize and extract insights from uploaded earnings reports.
+- **Compliance & SOP**: Retrieve group-specific answers for internal procedures.
+- **Research Assistance**: Quickly answer user queries using internal financial documents.
+- **System Monitoring**: Admins review query performance and flag bottlenecks using metadata.
 
 ---
 
-## Example Use Cases
-- Internal legal or financial advisors generating RAG answers scoped to group SOPs  
-- Admins reviewing high-latency queries or cache misses in real time  
-- Engineers debugging ingestion bottlenecks with metadata insight  
-- Analysts experimenting with temperature tuning and prompt design per business unit  
+## API Routes
+
+### Auth
+
+| Method | Route              | Description              |
+|--------|--------------------|--------------------------|
+| POST   | `/auth/login`      | Login and get JWT token  |
+| POST   | `/auth/register`   | Register a new user      |
+
+### RAG
+
+| Method | Route            | Description                      |
+|--------|------------------|----------------------------------|
+| POST   | `/rag/query`     | Submit a query to RAG pipeline  |
+| GET    | `/rag/feedback`  | Retrieve past feedback logs     |
+
+### Admin/Users
+
+| Method | Route             | Description                   |
+|--------|-------------------|-------------------------------|
+| GET    | `/admin/users`    | List all users (admin only)   |
+| PUT    | `/admin/users/:id`| Update a user profile         |
+| DELETE | `/admin/users/:id`| Delete a user                 |
+
+### Admin/Groups
+
+| Method | Route               | Description                    |
+|--------|---------------------|--------------------------------|
+| GET    | `/admin/groups`     | Get all business groups        |
+| POST   | `/admin/groups`     | Create a new group             |
+| PUT    | `/admin/groups/:id` | Update group settings          |
+
+### Admin/Documents
+
+| Method | Route                   | Description                |
+|--------|-------------------------|----------------------------|
+| POST   | `/admin/documents/upload` | Upload financial documents |
+| GET    | `/admin/documents`     | View uploaded docs         |
 
 ---
 
-## Roadmap
+## Data Dictionary
 
-| Feature              | Description                                  |
-|----------------------|----------------------------------------------|
-| Feedback Loop        | Thumbs-up/down query scoring                 |
-| LangGraph Agent Flow | Clarifying follow-ups via multi-agent graph |
-| CI/CD Integration    | GitHub Actions and deployment scripts        |
-| Plugin Framework     | Real-time stock API, calculator plugins      |
-| Self-Healing Logs    | Sync fallback logs to main DB                |
+### Users
+
+| Column         | Type     | Description                    |
+|----------------|----------|--------------------------------|
+| id             | UUID     | Unique user ID                 |
+| email          | String   | User email                     |
+| first_name     | String   | First name                     |
+| last_name      | String   | Last name                      |
+| role           | String   | Role (admin, user, analyst)    |
+| business_group | String   | Group membership               |
+| created_at     | DateTime | Account creation timestamp     |
+| last_login     | DateTime | Last login timestamp           |
+
+### GenAI Metadata
+
+| Column            | Type     | Description                             |
+|-------------------|----------|-----------------------------------------|
+| query_id          | Integer  | Link to audit log                       |
+| user_id           | String   | User who submitted the query            |
+| model_name        | String   | LLM used (gpt-4, claude, etc.)          |
+| tokens_input      | Integer  | Input token count                       |
+| tokens_output     | Integer  | Output token count                      |
+| latency_ms        | Integer  | Response time in milliseconds           |
+| retrieved_docs    | Integer  | Docs retrieved from vectorstore         |
+| cached            | Boolean  | Whether the response came from cache    |
+| timestamp         | DateTime | ISO timestamp with timezone             |
+
+### Documents
+
+| Column       | Type     | Description              |
+|--------------|----------|--------------------------|
+| id           | UUID     | Document ID              |
+| group_id     | UUID     | Linked group             |
+| title        | String   | Document title           |
+| content      | Text     | Full text content        |
+| uploaded_by  | UUID     | User who uploaded        |
+| created_at   | DateTime | Upload timestamp         |
 
 ---
 
-## License & Attribution
+## Screenshots
 
-This is a personal portfolio project demonstrating real-world GenAI system architecture for financial RAG systems. All designs, prompts, and implementations reflect best practices in modular, metadata-driven, full-stack AI engineering.
+
+
+---
+
+## License
+
+This project is for educational and portfolio use only. Not licensed for commercial use. Contact for collaboration.
