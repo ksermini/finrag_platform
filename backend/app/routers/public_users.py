@@ -17,6 +17,16 @@ async def get_my_profile(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Retrieve the currently authenticated user's profile.
+
+    Args:
+        db (AsyncSession): The database session.
+        current_user (User): The currently authenticated user.
+
+    Returns:
+        UserRead: The user’s profile information.
+    """
     return current_user
 
 
@@ -26,6 +36,17 @@ async def update_my_profile(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Update the authenticated user's profile fields.
+
+    Args:
+        user (UserUpdate): Fields to update.
+        db (AsyncSession): The database session.
+        current_user (User): The authenticated user.
+
+    Returns:
+        UserRead: The updated user profile.
+    """
     for key, value in user.dict(exclude_unset=True).items():
         setattr(current_user, key, value)
 
@@ -34,12 +55,24 @@ async def update_my_profile(
     return current_user
 
 
-# ✅ NEW: Get user by email (for UI welcome banner)
 @router.get("/email/{email}", response_model=UserRead)
 async def get_user_by_email(
     email: str,
     db: AsyncSession = Depends(get_db)
 ):
+    """
+    Get a user’s profile by their email address.
+
+    Args:
+        email (str): The email to search for.
+        db (AsyncSession): The database session.
+
+    Raises:
+        HTTPException: If the user is not found.
+
+    Returns:
+        UserRead: The user profile matching the email.
+    """
     result = await db.execute(select(User).filter(User.email == email))
     user = result.scalars().first()
 
@@ -47,8 +80,22 @@ async def get_user_by_email(
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
+
+
 @router.get("/users/{user_id}/group")
 async def get_user_group_by_id(user_id: int):
+    """
+    Get the primary group a user belongs to, using their user ID.
+
+    Args:
+        user_id (int): The user’s ID.
+
+    Raises:
+        HTTPException: If the user is not assigned to any group.
+
+    Returns:
+        dict: Group ID, name, and default agent role.
+    """
     async with SessionLocal() as session:
         result = await session.execute(
             select(Group)
@@ -63,5 +110,3 @@ async def get_user_group_by_id(user_id: int):
             "group_name": group.name,
             "default_agent_role": group.default_agent_role,
         }
-
-

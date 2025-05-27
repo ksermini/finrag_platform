@@ -6,15 +6,35 @@ from app.services.auth_service import hash_password, verify_password, create_acc
 from pydantic import BaseModel
 from app.schemas.auth import RegisterRequest
 
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-router = APIRouter(prefix="/auth")
 
 class AuthRequest(BaseModel):
+    """
+    Schema for login authentication request.
+    
+    Attributes:
+        email (str): The user's email address.
+        password (str): The user's plain-text password.
+    """
     email: str
     password: str
 
+
 @router.post("/register")
 async def register(auth: RegisterRequest):
+    """
+    Register a new user account.
+
+    Args:
+        auth (RegisterRequest): User registration payload including email, name, and password.
+
+    Raises:
+        HTTPException: If the email is already registered.
+
+    Returns:
+        dict: Confirmation message.
+    """
     async with SessionLocal() as session:
         result = await session.execute(select(User).where(User.email == auth.email))
         if result.scalar_one_or_none():
@@ -34,8 +54,21 @@ async def register(auth: RegisterRequest):
         await session.commit()
         return {"message": "User registered."}
 
+
 @router.post("/login")
 async def login(auth: AuthRequest):
+    """
+    Authenticate a user and return an access token.
+
+    Args:
+        auth (AuthRequest): Login credentials including email and password.
+
+    Raises:
+        HTTPException: If credentials are invalid.
+
+    Returns:
+        dict: JWT access token and user role.
+    """
     async with SessionLocal() as session:
         result = await session.execute(select(User).where(User.email == auth.email))
         user = result.scalar_one_or_none()

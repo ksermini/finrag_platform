@@ -1,4 +1,3 @@
-# app/loaders/pdf_loader.py (or similar)
 from fastapi import UploadFile
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
