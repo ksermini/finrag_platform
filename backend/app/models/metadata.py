@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, Text
 from datetime import datetime
 from app.models.base import Base
 
@@ -16,7 +16,10 @@ class GenAIMetadata(Base):
     source_type = Column(String)
     timestamp = Column(DateTime, default=datetime.now)
     cached = Column(String, default="false")  # store as "true"/"false"
-
+    security_flagged = Column(Boolean, default=False)
+    feedback_rating = Column(Integer, nullable=True)
+    context_size = Column(Integer, nullable=True)
+    security_footer = Column(Text, nullable=True)  # NEW: logs actual policy footer
 
     def to_dict(self):
         return {
@@ -27,5 +30,9 @@ class GenAIMetadata(Base):
             "latency_ms": self.latency_ms,
             "retrieved_docs_count": self.retrieved_docs_count,
             "timestamp": self.timestamp.isoformat(),
-            "cached": self.cached
+            "cached": self.cached,
+            "security_flagged": self.security_flagged,
+            "feedback_rating": self.feedback_rating,
+            "context_size": self.context_size,
+            "security_footer": self.security_footer
         }

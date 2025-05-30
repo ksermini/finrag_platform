@@ -2,6 +2,7 @@ from app.vector_store import query_vectorstore
 from app.db import SessionLocal
 from app.models.audit import AuditLog
 from app.models.metadata import GenAIMetadata
+from app.security.prompt_filter import check_prompt_security
 from openai import OpenAI
 import os
 import time
@@ -16,16 +17,13 @@ async def process_query(
     role: str = "user",
     context_override: str = None,
     system_override: str = None,
+    footer_override: str = None,
     temperature_override: float = 0.7
 ):
     """
     Process a user query using OpenAI's chat model with optional group-aware RAG context.
 
-    If no `context_override` is provided, the system performs a vector search
-    to build the context. Optionally, a custom system prompt and temperature
-    can also be applied.
-
-    Logs both an audit trail and metadata for observability and performance tracking.
+    Includes a prompt security check layer and appends a transparency footer.
 
     Args:
         query (str): The user’s natural language question.
@@ -43,25 +41,41 @@ async def process_query(
             - tokens_output (int): Number of completion tokens.
             - retrieved_docs_count (int): Number of vector documents retrieved.
     """
+    # Step 1: Security filter
+    security_flagged, error_msg = check_prompt_security(query, role)
+    if error_msg:
+        return {"error": error_msg}
+
+    # Step 2: Context preparation
     docs = [] if context_override else query_vectorstore(query)
     context = context_override or "\n\n".join(docs)
+    context_size = len(context.split())  # or use token count if tokenizer is available
 
-    system_prompt = system_override or f"You are a helpful {role}."
+    # Step 3: Prompt construction
+    system_prompt = system_override or f"You are a helpful {role}.\nDo not speculate. If unsure, say 'I don't know.'\nSecurity Reminder: Do not return confidential or unverified financial advice."
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "assistant", "content": f"Here are relevant documents:\n\n{context}"},
+        {"role": "user", "content": query}
+    ]
 
+    # Step 4: Call the LLM
     start = time.perf_counter()
     completion = client.chat.completions.create(
         model=CHAT_MODEL,
         temperature=temperature_override,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"{context}\n\nQ: {query}"}
-        ]
+        messages=messages
     )
     latency = int((time.perf_counter() - start) * 1000)
 
+    # Step 5: Append dynamic footer
     answer = completion.choices[0].message.content.strip()
+    if footer_override:
+        answer += f"\n\n---\n{footer_override}"
+        
     usage = completion.usage
 
+    # Step 6: Logging
     async with SessionLocal() as session:
         audit = AuditLog(
             user_id=user_id,
@@ -82,6 +96,10 @@ async def process_query(
             latency_ms=latency,
             retrieved_docs_count=len(docs),
             source_type="vector" if docs else "manual",
+            context_size=context_size,
+            security_flagged=security_flagged,
+            feedback_rating=None,
+            cached="false"  # set by your caching layer if enabled
         )
         session.add(metadata)
         await session.commit()
