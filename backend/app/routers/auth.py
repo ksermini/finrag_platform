@@ -12,7 +12,6 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 class AuthRequest(BaseModel):
     """
     Schema for login authentication request.
-    
     Attributes:
         email (str): The user's email address.
         password (str): The user's plain-text password.
@@ -25,13 +24,10 @@ class AuthRequest(BaseModel):
 async def register(auth: RegisterRequest):
     """
     Register a new user account.
-
     Args:
         auth (RegisterRequest): User registration payload including email, name, and password.
-
     Raises:
         HTTPException: If the email is already registered.
-
     Returns:
         dict: Confirmation message.
     """
@@ -59,13 +55,10 @@ async def register(auth: RegisterRequest):
 async def login(auth: AuthRequest):
     """
     Authenticate a user and return an access token.
-
     Args:
         auth (AuthRequest): Login credentials including email and password.
-
     Raises:
         HTTPException: If credentials are invalid.
-
     Returns:
         dict: JWT access token and user role.
     """

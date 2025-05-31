@@ -6,6 +6,7 @@ from app.security.prompt_filter import check_prompt_security
 from openai import OpenAI
 import os
 import time
+import tiktoken
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 CHAT_MODEL = "gpt-3.5-turbo"
@@ -49,7 +50,8 @@ async def process_query(
     # Step 2: Context preparation
     docs = [] if context_override else query_vectorstore(query)
     context = context_override or "\n\n".join(docs)
-    context_size = len(context.split())  # or use token count if tokenizer is available
+    encoding = tiktoken.encoding_for_model(CHAT_MODEL)
+    context_size = len(encoding.encode(context))  # or use token count if tokenizer is available
 
     # Step 3: Prompt construction
     system_prompt = system_override or f"You are a helpful {role}.\nDo not speculate. If unsure, say 'I don't know.'\nSecurity Reminder: Do not return confidential or unverified financial advice."
@@ -72,7 +74,7 @@ async def process_query(
     answer = completion.choices[0].message.content.strip()
     if footer_override:
         answer += f"\n\n---\n{footer_override}"
-        
+
     usage = completion.usage
 
     # Step 6: Logging

@@ -1,7 +1,11 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
+# Defines the structure of user data
+# Starting SOC: what can be changed, added, read
+
 class UserBase(BaseModel):
+    """Optional Fields"""
     email: EmailStr
     role: Optional[str] = None
     first_name: Optional[str] = None
@@ -19,6 +23,7 @@ class UserBase(BaseModel):
     business_group: Optional[str] = None
 
 class UserCreate(BaseModel):
+    """Required fields to create a new user"""
     email: str
     first_name: str
     last_name: str
@@ -34,11 +39,13 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(UserBase):
+    """Optional for updating a user"""
     email: Optional[EmailStr] = None
     hashed_password: Optional[str] = None
 
+# What will be sent to the frontend with int attatched
 class UserRead(UserBase):
     id: int
-
+    # Serialized fields for output
     class Config:
         orm_mode = True

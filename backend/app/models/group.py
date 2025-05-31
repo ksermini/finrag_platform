@@ -5,8 +5,6 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from uuid import uuid4
 
-# ✅ Ensure SQLAlchemy sees the users table for FK resolution
-
 
 class Group(Base):
     __tablename__ = "groups"
