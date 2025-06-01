@@ -43,7 +43,7 @@ async def log_query_db(
         latency_ms=int(latency_ms),
         retrieved_docs_count=retrieved_docs_count,
         source_type=source_type,
-        cached="true" if cached else "false"
+        cached=True if cached else False
     )
     db.add(entry)
     await db.commit()

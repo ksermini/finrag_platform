@@ -18,7 +18,7 @@ engine = create_async_engine(settings.DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 Base = declarative_base()
 
-# ✅ Correctly formatted async generator for FastAPI
+#  Correctly formatted async generator for FastAPI
 async def get_db():
     async with SessionLocal() as session:
         yield session
@@ -32,7 +32,7 @@ import uuid
 
 class GroupDocument(Base):
     __tablename__ = "group_documents"
-    __table_args__ = {"extend_existing": True}  # ✅ This line resolves the error
+    __table_args__ = {"extend_existing": True}  #  This line resolves the error
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)
@@ -162,7 +162,7 @@ async def sync_group_documents():
             )
 
         await session.commit()
-        print("✅ Sync complete!")
+        print(" Sync complete!")
 
 if __name__ == "__main__":
     asyncio.run(sync_group_documents())

@@ -32,7 +32,7 @@ const TerminalWindow = () => {
           `[✓] Timestamp: ${latest.timestamp}`,
         ];
   
-        // ✅ Clear logs before appending
+        //  Clear logs before appending
         setLogs([]); 
   
         output.forEach((line, i) => {

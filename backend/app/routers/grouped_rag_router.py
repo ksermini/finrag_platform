@@ -117,7 +117,7 @@ async def grouped_query(
         latency_ms=int((end - start) * 1000),
         retrieved_docs_count=result.get("retrieved_docs_count", 0),
         source_type="vector",
-        cached="false",
+        cached=False,
         timestamp=datetime.utcnow()
     )
     db.add(metadata)

@@ -1,22 +1,20 @@
 from app.models.group import Group
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.db import SessionLocal, get_db
 from app.models.user import User
 from app.schemas.users import UserRead, UserUpdate
-from app.dependencies import get_current_user
+from app.services.auth_service import get_current_user
 from app.models.group import UserGroup
 
 router = APIRouter(prefix="/me", tags=["User"])
 
 
 @router.get("/", response_model=UserRead)
-async def get_my_profile(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
+async def get_my_profile(request: Request):
+    user = await get_current_user(request)
     """
     Retrieve the currently authenticated user's profile.
 
@@ -25,34 +23,26 @@ async def get_my_profile(
         current_user (User): The currently authenticated user.
 
     Returns:
-        UserRead: The user’s profile information.
+        UserRead: The user's profile information.
     """
-    return current_user
+    return user
 
 
 @router.put("/", response_model=UserRead)
 async def update_my_profile(
-    user: UserUpdate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    user_update: UserUpdate,
+    request: Request,
+    db: AsyncSession = Depends(get_db)
 ):
-    """
-    Update the authenticated user's profile fields.
+    current_user = await get_current_user(request)
 
-    Args:
-        user (UserUpdate): Fields to update.
-        db (AsyncSession): The database session.
-        current_user (User): The authenticated user.
-
-    Returns:
-        UserRead: The updated user profile.
-    """
-    for key, value in user.dict(exclude_unset=True).items():
+    for key, value in user_update.dict(exclude_unset=True).items():
         setattr(current_user, key, value)
 
     await db.commit()
     await db.refresh(current_user)
     return current_user
+
 
 
 @router.get("/email/{email}", response_model=UserRead)
