@@ -27,7 +27,7 @@ async def process_query(
     Includes a prompt security check layer and appends a transparency footer.
 
     Args:
-        query (str): The user’s natural language question.
+        query (str): The user's natural language question.
         user_id (str): The ID of the user submitting the query.
         role (str): Role context for the assistant (e.g., "analyst", "admin"). Default is "user".
         context_override (str, optional): Custom context text to override vector retrieval.
