@@ -15,6 +15,7 @@ class GroupDocument(Base):
     embedded = Column(Boolean, default=False)
     created_by = Column(String, default="system")
     created_at = Column(DateTime, default=datetime.now)
+
 class RAGGroupConfig(Base):
     __tablename__ = "rag_group_config"
 

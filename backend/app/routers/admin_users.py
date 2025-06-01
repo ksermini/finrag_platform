@@ -17,10 +17,8 @@ async def get_all_users(
 ):
     """
     Retrieve all users from the database.
-
     Args:
         db (AsyncSession): The SQLAlchemy session dependency.
-
     Returns:
         List[UserRead]: A list of all users.
     """
@@ -35,14 +33,11 @@ async def create_user(
 ):
     """
     Create a new user in the database.
-
     Args:
         user (UserCreate): The user creation schema including email and password.
         db (AsyncSession): The SQLAlchemy session dependency.
-
     Raises:
         HTTPException: If a user with the given email already exists.
-
     Returns:
         UserRead: The newly created user.
     """
@@ -71,15 +66,12 @@ async def update_user(
 ):
     """
     Update an existing user's information.
-
     Args:
         user_id (int): The ID of the user to update.
         user (UserUpdate): The fields to update for the user.
         db (AsyncSession): The SQLAlchemy session dependency.
-
     Raises:
         HTTPException: If the user is not found.
-
     Returns:
         UserRead: The updated user.
     """

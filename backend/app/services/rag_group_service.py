@@ -27,25 +27,33 @@ async def process_query_with_group_context(query: str, user_id: str):
     """
     Process a RAG query using group-restricted document context and prompt role.
 
-    This function:
     - Finds the user's primary group
     - Loads the group's default role
     - Queries vector documents limited to that group
-    - Delegates the final call to the core `process_query` function
-
-    Args:
-        query (str): The user's natural language input.
-        user_id (str): The ID of the user submitting the query.
-
-    Returns:
-        dict: The generated response from the model.
+    - Fetches dynamic prompt template + footer
+    - Delegates to `process_query`
     """
     group = await get_user_primary_group(user_id)
     role = await get_group_agent_role(group.id)
+    group_config = await get_rag_config_for_group(group.id)
 
-    # Restrict vector context to group
+    # Step 1: Vector context for group
     docs = query_vectorstore_with_group(query, group_id=group.id)
     context = "\n\n".join(docs)
 
-    # Wrap call to original process_query
-    return await process_query(query=query, user_id=user_id, role=role, context_override=context)
+    # Step 2: Build dynamic system prompt
+    prompt_template = group_config.prompt_template if group_config else "You are a helpful assistant."
+    security_footer = group_config.security_footer if group_config and group_config.security_footer else "Security Reminder: Do not return confidential or speculative information."
+
+    system_prompt = f"{prompt_template}\n\n{security_footer}".strip()
+
+    # Step 3: Delegate to base process_query
+    return await process_query(
+        query=query,
+        user_id=user_id,
+        role=role,
+        context_override=context,
+        system_override=system_prompt,
+        footer_override=security_footer  # <- passed in
+    )
+

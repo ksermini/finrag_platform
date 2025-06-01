@@ -82,46 +82,6 @@ async def list_all_groups():
     ]
 
 
-@router.post("/{group_id}/add-user")
-async def add_user_to_group(
-    group_id: UUID,
-    user_id: UUID = Body(...),
-    role: str = Body(default="member"),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Add a user to a group by IDs and assign a role.
-
-    Args:
-        group_id (UUID): The ID of the group.
-        user_id (UUID): The ID of the user to add.
-        role (str, optional): The user's role in the group.
-
-    Raises:
-        HTTPException: If user is already in the group.
-
-    Returns:
-        dict: Success message.
-    """
-    result = await db.execute(
-        select(UserGroup)
-        .where(UserGroup.user_id == user_id)
-        .where(UserGroup.group_id == group_id)
-    )
-    if result.scalars().first():
-        raise HTTPException(status_code=400, detail="User already in group")
-
-    user_group = UserGroup(
-        user_id=user_id,
-        group_id=group_id,
-        role=role,
-        added_at=datetime.now
-    )
-    db.add(user_group)
-    await db.commit()
-    return {"message": "User added to group"}
-
-
 @router.get("/{group_id}/users")
 async def get_group_users(group_id: UUID):
     """

@@ -171,3 +171,9 @@ def get_chroma_index():
         "vector_count": len(all_data["metadatas"]),
         "chunk_stats": [{"chunk": k, "vectors": v} for k, v in sorted(chunk_counts.items())]
     }
+
+@router.get("/logs/flagged")
+async def get_flagged_logs():
+    async with SessionLocal() as session:
+        result = await session.execute(select(GenAIMetadata).where(GenAIMetadata.security_flagged == True))
+        return [row.to_dict() for row in result.scalars().all()]
