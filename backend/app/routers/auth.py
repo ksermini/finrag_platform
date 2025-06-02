@@ -108,7 +108,7 @@ async def login(auth: AuthRequest):
         return response
 
 
-@router.post("/auth/refresh")
+@router.post("/refresh")
 async def refresh_access_token(request: Request, response: Response):
     refresh_token = request.cookies.get("refresh_token")
 

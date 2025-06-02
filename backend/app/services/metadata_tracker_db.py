@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.metadata import GenAIMetadata
-
+from app.models.audit import AuditLog
+from app.models.metadata import GenAIMetadata
+from datetime import datetime
 async def log_query_db(
     db: AsyncSession,
     *,
@@ -46,4 +48,32 @@ async def log_query_db(
         cached=True if cached else False
     )
     db.add(entry)
+    await db.commit()
+
+
+async def log_full_metadata(db, user_id, query, result, docs, role, latency):
+    audit = AuditLog(
+        user_id=user_id,
+        query=query,
+        answer=result["answer"],
+        source_docs=docs,
+        role=role,
+        timestamp=datetime.utcnow()
+    )
+    db.add(audit)
+    await db.flush()
+
+    metadata = GenAIMetadata(
+        query_id=audit.id,
+        user_id=user_id,
+        model_name=result.get("model_name", "gpt-4"),
+        tokens_input=result.get("tokens_input", 0),
+        tokens_output=result.get("tokens_output", 0),
+        latency_ms=latency,
+        retrieved_docs_count=result.get("retrieved_docs_count", 0),
+        source_type="vector",
+        cached=False,
+        timestamp=datetime.utcnow()
+    )
+    db.add(metadata)
     await db.commit()
