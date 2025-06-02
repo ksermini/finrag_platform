@@ -1,7 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
-from app.models.user import User
-from app.services.auth_service import get_current_user
-from app.services.group_helpers import get_user_primary_group
 from app.vector_store import query_vectorstore_with_group
 from app.services.rag_group_service import get_rag_config_for_group
 from app.services.rag_service import process_query

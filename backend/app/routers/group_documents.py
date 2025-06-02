@@ -3,12 +3,10 @@ from sqlalchemy.future import select
 from uuid import UUID
 from datetime import datetime
 import os
-
-from app.services.auth_service import get_current_user
 from app.db import SessionLocal
 from app.models.group import GroupDocument
 from app.models.user import User
-from app.file_loader import extract_text_from_pdf
+from app.services.file_loader import extract_text_from_pdf
 from app.vector_store import add_to_vectorstore  # Assumes Chroma integration
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
