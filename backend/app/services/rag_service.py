@@ -101,7 +101,7 @@ async def process_query(
             context_size=context_size,
             security_flagged=security_flagged,
             feedback_rating=None,
-            cached="false"  # set by your caching layer if enabled
+            cached=False  # set by your caching layer if enabled
         )
         session.add(metadata)
         await session.commit()

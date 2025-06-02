@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "../styles/AskBox.css"; // ✅ make sure this is imported
+import "../styles/AskBox.css"; //  make sure this is imported
 import ShinyText from "../../lib/ShinyText/ShinyText"
 export default function AskBox({ query, setQuery, onSubmit }) {
   useEffect(() => {

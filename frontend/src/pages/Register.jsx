@@ -11,6 +11,14 @@ const Register = () => {
     password: "",
     first_name: "",
     last_name: "",
+    role: "user",
+    business_group: "default",
+    account_status: "active",
+    phone_number: "000-000-0000",
+    job_title: "Member",
+    department: "Engineering",
+    is_admin: false,
+    is_active: true,
   });
 
   const handleChange = (e) => {
@@ -23,6 +31,7 @@ const Register = () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // allow setting secure cookie
         body: JSON.stringify(form),
       });
 
@@ -33,6 +42,7 @@ const Register = () => {
         alert(data.detail || "Registration failed.");
       }
     } catch (err) {
+      console.error("Registration error:", err);
       alert("Server error. Try again later.");
     }
   };

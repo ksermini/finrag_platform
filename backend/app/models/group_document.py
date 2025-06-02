@@ -5,7 +5,7 @@ import uuid
 
 class GroupDocument(Base):
     __tablename__ = "group_documents"
-    __table_args__ = {"extend_existing": True}  # ✅ This line resolves the error
+    __table_args__ = {"extend_existing": True}  #  This line resolves the error
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     group_id = Column(UUID(as_uuid=True), ForeignKey("groups.id", ondelete="CASCADE"), nullable=False)

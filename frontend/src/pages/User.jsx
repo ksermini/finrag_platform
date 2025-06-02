@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiUpload, FiSearch, FiBarChart2 } from "react-icons/fi";
 
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -11,6 +12,8 @@ import "../styles/User.css";
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function UserDashboard() {
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
   const [previousQuery, setPreviousQuery] = useState("");
@@ -20,50 +23,73 @@ export default function UserDashboard() {
   const [role, setRole] = useState(null);
   const [firstName, setFirstName] = useState("there");
 
-  // Group metadata
+  const [groupId, setGroupId] = useState(null);
   const [groupName, setGroupName] = useState("Your business group");
   const [groupRole, setGroupRole] = useState("domain expert");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const logout = async () => {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    navigate("/");
+  };
 
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const email = payload.sub;
-      setRole(payload.role || "user");
+  const secureFetch = async (url, options = {}) => {
+    const res = await fetch(url, {
+      ...options,
+      credentials: "include",
+    });
 
-      // First: fetch user
-      fetch(`${API_BASE}/me/email/${email}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((user) => {
-          setFirstName(user.first_name || "there");
-          setUserId(user.id);
-          localStorage.setItem("user_id", user.id);
+    if (res.status === 401) {
+      // Attempt refresh
+      const refresh = await fetch(`${API_BASE}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+      });
 
-          // Now fetch group info
-          return fetch(`${API_BASE}/me/users/${user.id}/group`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-        })
-        .then((res) => res.json())
-        .then((group) => {
-          setGroupName(group.group_name || "your business group");
-          setGroupRole(group.default_agent_role || "domain expert");
-
-          // Store in localStorage
-          localStorage.setItem("group_id", group.group_id);
-          localStorage.setItem("group_name", group.group_name);
-          localStorage.setItem("agent_role", group.default_agent_role);
-        })
-        .catch((err) => {
-          console.error("Failed to load profile or group info:", err);
+      if (refresh.ok) {
+        // Retry original request
+        return await fetch(url, {
+          ...options,
+          credentials: "include",
         });
-    } catch (e) {
-      console.error("Invalid token:", e);
+      } else {
+        logout();
+        throw new Error("Session expired");
+      }
     }
+
+    return res;
+  };
+
+  const fetchGroupInfo = async (uid) => {
+    try {
+      const res = await secureFetch(`${API_BASE}/me/users/${uid}/group`);
+      const group = await res.json();
+      setGroupId(group.group_id);
+      setGroupName(group.group_name || "your business group");
+      setGroupRole(group.default_agent_role || "domain expert");
+    } catch (err) {
+      console.error("Failed to load group info:", err);
+      logout();
+    }
+  };
+
+  useEffect(() => {
+    secureFetch(`${API_BASE}/me`)
+      .then((res) => res.json())
+      .then((user) => {
+        setFirstName(user.first_name || "there");
+        setUserId(user.id);
+        setRole(user.role || "user");
+
+        fetchGroupInfo(user.id);
+      })
+      .catch((err) => {
+        console.error("Auth or user fetch error:", err);
+        logout();
+      });
   }, []);
 
   const handleAsk = async () => {
@@ -71,17 +97,17 @@ export default function UserDashboard() {
     setPreviousQuery(query);
 
     try {
-      const res = await fetch(`${API_BASE}/rag/grouped-query`, {
+      const res = await secureFetch(`${API_BASE}/rag/grouped-query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           query,
-          user_id: localStorage.getItem("user_id"),
-          group_id: localStorage.getItem("group_id"),
-          role: localStorage.getItem("agent_role") || "domain expert"
+          user_id:String(userId),
+          group_id: groupId,
+          role: groupRole,
         }),
       });
 
@@ -118,7 +144,7 @@ export default function UserDashboard() {
     >
       <div className="chat-main">
         <div className="chat-scroll">
-          {previousQuery && <div className="chat-bubble user"> {previousQuery}</div>}
+          {previousQuery && <div className="chat-bubble user">{previousQuery}</div>}
           {answer && (
             <div className="chat-bubble ai">
               <div className="bubble-label">Answer</div>

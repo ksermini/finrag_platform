@@ -14,12 +14,12 @@ export default function FileUpload({ onUploadSuccess }) {
     formData.append("file", file);
 
     try {
-      const token = localStorage.getItem("token"); // ✅ Get JWT from storage
+      const token = localStorage.getItem("token"); //  Get JWT from storage
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/rag/upload/`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Pass token here
+          Authorization: `Bearer ${token}`, //  Pass token here
         },
         body: formData,
       });
@@ -33,13 +33,13 @@ export default function FileUpload({ onUploadSuccess }) {
 
       const data = await res.json();
       console.log("Upload succeeded:", data);
-      setMessage("✅ Upload successful!");
+      setMessage(" Upload successful!");
 
       if (onUploadSuccess) onUploadSuccess(data);
 
     } catch (err) {
       console.error("Upload error:", err);
-      setMessage("❌ Upload error.");
+      setMessage(" Upload error.");
     } finally {
       setUploading(false);
     }

@@ -15,7 +15,7 @@ class GenAIMetadata(Base):
     retrieved_docs_count = Column(Integer)
     source_type = Column(String)
     timestamp = Column(DateTime, default=datetime.now)
-    cached = Column(Boolean, default="false")  # store as "true"/"false"
+    cached = Column(Boolean, default=False)  # store as "true"/"false"
     security_flagged = Column(Boolean, default=False)
     feedback_rating = Column(Integer, nullable=True)
     context_size = Column(Integer, nullable=True)

@@ -11,18 +11,27 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
 
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem("token", data.access_token);
-      navigate("/user");
-    } else {
-      alert(data.detail || "Login failed");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Send & receive cookies
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        navigate("/user");
+      } else if (res.status === 400 || res.status === 401) {
+        alert("Invalid email or password");
+      } else {
+        alert(data.detail || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Server error. Please try again later.");
     }
   };
 

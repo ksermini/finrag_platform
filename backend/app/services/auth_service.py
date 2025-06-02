@@ -1,7 +1,6 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, Request, Depends
 from sqlalchemy.future import select
 from datetime import datetime, timedelta
 
@@ -14,61 +13,53 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    """
-    Hash a plain-text password using bcrypt.
-    Args:
-        password (str): The user's raw password.
-    Returns:
-        str: The hashed password.
-    """
+    """Hash a plain-text password using bcrypt."""
     return pwd_context.hash(password)
 
 
 def verify_password(password: str, hashed: str) -> bool:
-    """
-    Verify a plain-text password against its hashed version.
-    Args:
-        password (str): The raw password input.
-        hashed (str): The stored hashed password.
-    Returns:
-        bool: True if matched, False otherwise.
-    """
+    """Verify a plain-text password against its hashed version."""
     return pwd_context.verify(password, hashed)
 
 
-# -- OAuth2 / Token handling --
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# -- Token creation --
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    to_encode.update({"exp": expire, "type": "access"})
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
-def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
+def create_refresh_token(data: dict) -> str:
     """
-    Create a JWT access token from user data.
+    Create a longer-lived JWT refresh token (7 days).
+    
     Args:
-        data (dict): The payload to encode (e.g., {"sub": email, "role": "admin"}).
-        expires_delta (timedelta, optional): Token expiry time.
+        data (dict): Payload including user email, ID, and role.
+    
     Returns:
-        str: Encoded JWT token.
+        str: Encoded JWT string.
     """
     to_encode = data.copy()
-    expire = datetime.now() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    to_encode.update({
+        "exp": datetime.now() + timedelta(days=7),
+        "type": "refresh"
+    })
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
 
 
 def decode_token(token: str) -> dict:
     """
     Decode and validate a JWT token.
-    Args:
-        token (str): The JWT string.
-    Raises:
-        HTTPException: If decoding fails or token is invalid.
-    Returns:
-        dict: The decoded token payload.
     """
+    print("TOKEN RECEIVED:", token)
+
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        return payload
-    except JWTError:
+        decoded = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        print("DECODED PAYLOAD:", decoded)
+        return decoded
+    except JWTError as e:
+        print("JWT DECODE ERROR:", str(e))
         raise HTTPException(
             status_code=401,
             detail="Could not validate credentials",
@@ -76,18 +67,28 @@ def decode_token(token: str) -> dict:
         )
 
 
+
 # -- Dependencies --
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+async def get_current_user(request: Request) -> User:
     """
-    Retrieve the current user based on the provided JWT token.
-    Args:
-        token (str): JWT token from the Authorization header.
+    Retrieve the current user based on the access_token cookie.
+
     Raises:
-        HTTPException: If the token is invalid or the user is not found.
+        HTTPException: If token is missing, invalid, or user not found.
+
     Returns:
         User: The authenticated user from the database.
     """
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Missing access token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     payload = decode_token(token)
+    print(">> Decoded Token Payload:", payload)
     email: str = payload.get("sub")
     if not email:
         raise HTTPException(
@@ -113,10 +114,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
 async def get_current_admin_user(user: User = Depends(get_current_user)) -> User:
     """
     Ensure the current user has admin privileges.
+
     Args:
-        user (User): Injected from `get_current_user`.
+        user (User): The current authenticated user from get_current_user.
+
     Raises:
-        HTTPException: If the user is not an admin.
+        HTTPException: If user is not an admin.
+
     Returns:
         User: The validated admin user.
     """

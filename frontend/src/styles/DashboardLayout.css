@@ -7,10 +7,6 @@
   .dashboard-banner {
     height: 60px;
     background-color: #0f0f0f;
-    /* padding-left: 2vw;
-    display: flex;
-    align-items: center; */
-    /* font-size: 1.25rem; */
     font-weight: 600;
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
