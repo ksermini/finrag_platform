@@ -9,12 +9,13 @@ import time
 import tiktoken
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-CHAT_MODEL = "gpt-3.5-turbo"
 
+ALLOWED_MODELS = {"gpt-3.5-turbo", "gpt-4", "gpt-4o"}
 
 async def process_query(
     query: str,
     user_id: str,
+    model: str,
     role: str = "user",
     context_override: str = None,
     system_override: str = None,
@@ -29,19 +30,20 @@ async def process_query(
     Args:
         query (str): The user's natural language question.
         user_id (str): The ID of the user submitting the query.
-        role (str): Role context for the assistant (e.g., "analyst", "admin"). Default is "user".
+        model (str): The model to use, must be one of the allowed models.
+        role (str): Role context for the assistant (e.g., "analyst", "admin").
         context_override (str, optional): Custom context text to override vector retrieval.
         system_override (str, optional): Custom system prompt template.
-        temperature_override (float, optional): Temperature setting for the LLM. Default is 0.7.
+        footer_override (str, optional): Custom footer text to append to the answer.
+        temperature_override (float, optional): Temperature setting for the LLM.
 
     Returns:
-        dict: A dictionary containing:
-            - answer (str): The model's response.
-            - model_name (str): Name of the LLM used.
-            - tokens_input (int): Number of prompt tokens.
-            - tokens_output (int): Number of completion tokens.
-            - retrieved_docs_count (int): Number of vector documents retrieved.
+        dict: The generated answer and associated metadata.
     """
+    # Validate the model
+    if not model or model not in ALLOWED_MODELS:
+        return {"error": f"Model '{model}' is not supported. Choose from: {', '.join(ALLOWED_MODELS)}"}
+
     # Step 1: Security filter
     security_flagged, error_msg = check_prompt_security(query, role)
     if error_msg:
@@ -50,11 +52,16 @@ async def process_query(
     # Step 2: Context preparation
     docs = [] if context_override else query_vectorstore(query)
     context = context_override or "\n\n".join(docs)
-    encoding = tiktoken.encoding_for_model(CHAT_MODEL)
-    context_size = len(encoding.encode(context))  # or use token count if tokenizer is available
+    encoding = tiktoken.encoding_for_model(model)
+    context_size = len(encoding.encode(context))
 
     # Step 3: Prompt construction
-    system_prompt = system_override or f"You are a helpful {role}.\nDo not speculate. If unsure, say 'I don't know.'\nSecurity Reminder: Do not return confidential or unverified financial advice."
+    system_prompt = system_override or (
+        f"You are a helpful {role}.\n"
+        "Do not speculate. If unsure, say 'I don't know.'\n"
+        "Security Reminder: Do not return confidential or unverified financial advice."
+    )
+
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "assistant", "content": f"Here are relevant documents:\n\n{context}"},
@@ -64,7 +71,7 @@ async def process_query(
     # Step 4: Call the LLM
     start = time.perf_counter()
     completion = client.chat.completions.create(
-        model=CHAT_MODEL,
+        model=model,
         temperature=temperature_override,
         messages=messages
     )
@@ -92,7 +99,7 @@ async def process_query(
         metadata = GenAIMetadata(
             query_id=audit.id,
             user_id=user_id,
-            model_name=CHAT_MODEL,
+            model_name=model,
             tokens_input=usage.prompt_tokens,
             tokens_output=usage.completion_tokens,
             latency_ms=latency,
@@ -101,14 +108,14 @@ async def process_query(
             context_size=context_size,
             security_flagged=security_flagged,
             feedback_rating=None,
-            cached=False  # set by your caching layer if enabled
+            cached=False
         )
         session.add(metadata)
         await session.commit()
 
     return {
         "answer": answer,
-        "model_name": CHAT_MODEL,
+        "model_name": model,
         "tokens_input": usage.prompt_tokens,
         "tokens_output": usage.completion_tokens,
         "retrieved_docs_count": len(docs)

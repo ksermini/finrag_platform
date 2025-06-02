@@ -152,7 +152,7 @@ const SidebarRight = () => {
       </div>
 
       {/* MEMORY */}
-      <div className="panel-box bento glass-style">
+      {/* <div className="panel-box bento glass-style">
         <div className="text-theme-muted uppercase text-[10px] mb-1">Memory</div>
         <div className="h-[60px] overflow-hidden">
           <LetterGlitch
@@ -163,7 +163,7 @@ const SidebarRight = () => {
             text="MEMORY BLOCK OK"
           />
         </div>
-      </div>
+      </div> */}
 
       {/* ALERTS */}
       <div className="panel-box bento glass-style">
