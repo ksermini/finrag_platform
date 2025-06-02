@@ -27,6 +27,9 @@ export default function UserDashboard() {
   const [groupName, setGroupName] = useState("Your business group");
   const [groupRole, setGroupRole] = useState("domain expert");
 
+  const [model, setModel] = useState("");
+  const [availableModels, setAvailableModels] = useState([]);
+
   const logout = async () => {
     await fetch(`${API_BASE}/auth/logout`, {
       method: "POST",
@@ -42,14 +45,12 @@ export default function UserDashboard() {
     });
 
     if (res.status === 401) {
-      // Attempt refresh
       const refresh = await fetch(`${API_BASE}/auth/refresh`, {
         method: "POST",
         credentials: "include",
       });
 
       if (refresh.ok) {
-        // Retry original request
         return await fetch(url, {
           ...options,
           credentials: "include",
@@ -76,6 +77,16 @@ export default function UserDashboard() {
     }
   };
 
+  const fetchAvailableModels = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/rag/model`);
+      const data = await res.json();
+      setAvailableModels(data.models || []);
+    } catch (err) {
+      console.error("Failed to fetch model list:", err);
+    }
+  };
+
   useEffect(() => {
     secureFetch(`${API_BASE}/me`)
       .then((res) => res.json())
@@ -83,8 +94,8 @@ export default function UserDashboard() {
         setFirstName(user.first_name || "there");
         setUserId(user.id);
         setRole(user.role || "user");
-
         fetchGroupInfo(user.id);
+        fetchAvailableModels();
       })
       .catch((err) => {
         console.error("Auth or user fetch error:", err);
@@ -93,7 +104,7 @@ export default function UserDashboard() {
   }, []);
 
   const handleAsk = async () => {
-    if (!query.trim()) return;
+    if (!query.trim() || !model) return;
     setPreviousQuery(query);
 
     try {
@@ -105,9 +116,10 @@ export default function UserDashboard() {
         credentials: "include",
         body: JSON.stringify({
           query,
-          user_id:String(userId),
+          user_id: String(userId),
           group_id: groupId,
           role: groupRole,
+          model,
         }),
       });
 
@@ -154,7 +166,28 @@ export default function UserDashboard() {
         </div>
 
         <div className="chat-input-wrapper">
-          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} />
+          <div className="mb-2 text-sm text-muted">
+            <label htmlFor="model" className="mr-2 font-medium text-gray-300">
+              Choose a model:
+            </label>
+            <select
+              id="model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="rounded p-1 text-black"
+            >
+              <option value="" disabled>
+                Select model
+              </option>
+              {["gpt-3.5-turbo", "gpt-4", "gpt-4o"].map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+              ))}
+            </select>
+          </div>
+
+          <AskBox query={query} setQuery={setQuery} onSubmit={handleAsk} disabled={!model} />
         </div>
 
         {showUpload && (

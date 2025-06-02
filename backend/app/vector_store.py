@@ -71,7 +71,7 @@ def query_vectorstore(query: str, n_results: int = 3) -> list[str]:
     return results['documents'][0] if results and results.get('documents') else []
 
 
-def query_vectorstore_with_group(query: str, group_id: str, n_results: int = 5) -> list[str]:
+def query_vectorstore_with_group(query: str, group_id: str, n_results: int = 6) -> list[str]:
     """
     Query the vector store with a group filter to scope results.
 

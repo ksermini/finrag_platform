@@ -15,6 +15,7 @@ async def grouped_query(
     user_id: str = Body(...),
     group_id: str = Body(...),
     role: str = Body(default="domain expert"),
+     model: str = Body(...), 
     db: AsyncSession = Depends(get_db)
 ):
     return await run(
@@ -22,5 +23,6 @@ async def grouped_query(
         user_id=user_id,
         group_id=group_id,
         role=role,
+        model=model,
         db=db
     )
