@@ -45,33 +45,6 @@ async def update_my_profile(
 
 
 
-@router.get("/email/{email}", response_model=UserRead)
-async def get_user_by_email(
-    email: str,
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Get a user’s profile by their email address.
-
-    Args:
-        email (str): The email to search for.
-        db (AsyncSession): The database session.
-
-    Raises:
-        HTTPException: If the user is not found.
-
-    Returns:
-        UserRead: The user profile matching the email.
-    """
-    result = await db.execute(select(User).filter(User.email == email))
-    user = result.scalars().first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return user
-
-
 @router.get("/users/{user_id}/group")
 async def get_user_group_by_id(user_id: int):
     """
