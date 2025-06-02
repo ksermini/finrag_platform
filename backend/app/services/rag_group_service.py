@@ -14,7 +14,6 @@ async def run(query: str, user_id: str, group_id: str, role: str, db):
     """
     Execute a group-aware Retrieval-Augmented Generation (RAG) query with caching, 
     context filtering, prompt customization, and OpenAI integration.
-
     This function:
     - Retrieves RAG configuration for the group
     - Checks cache and returns result if available
@@ -23,21 +22,18 @@ async def run(query: str, user_id: str, group_id: str, role: str, db):
     - Executes the query with a language model (OpenAI)
     - Logs metadata and audit records
     - Caches the result for reuse
-
     Args:
         query (str): The user's input question.
         user_id (str): The ID of the user submitting the query.
         group_id (str): The ID of the group context to isolate document retrieval.
         role (str): Role context to influence prompt generation (e.g., "analyst").
         db (AsyncSession): SQLAlchemy async session for audit logging.
-
     Returns:
         dict: A dictionary with the generated answer and a cache flag:
             {
                 "answer": <str>,
                 "cached": <bool>
             }
-
     Raises:
         RuntimeError: If any error occurs during the processing pipeline.
     """
@@ -104,6 +100,13 @@ async def run(query: str, user_id: str, group_id: str, role: str, db):
         print(f"[RAG ERROR] user_id={user_id}, group_id={group_id}, error={str(e)}")
         raise RuntimeError("An internal error occurred while processing the query. Please try again.")
 async def get_rag_config_for_group(group_id: UUID) -> RAGGroupConfig | None:
+    """
+    Fetch the RAG config for a given group.
+    Args:
+        group_id (UUID): Group identifier.
+    Returns:
+        RAGGroupConfig or None: Group-specific config if it exists.
+    """
     async with SessionLocal() as session:
         result = await session.execute(
             select(RAGGroupConfig).where(RAGGroupConfig.group_id == group_id)
