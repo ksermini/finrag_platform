@@ -33,9 +33,6 @@ FinRAG is a full-stack Retrieval-Augmented Generation (RAG) platform designed fo
 - Operational metadata logging (latency, token usage, caching)
 - Full admin portal with audit logs, user management, system health, and usage metrics
 
-![image](https://github.com/user-attachments/assets/f1b8f8d9-0e5f-491f-a907-8122f15df868e1828b9d8828)
-![image](https://github.com/user-attachments/assets/bf7867a5-e16b-4ca7-a76c-baf03ad817f0)
----
 ---
 
 ## Architecture
