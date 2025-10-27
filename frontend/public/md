@@ -1,469 +1,0 @@
-Software Technical Design (STD)
-Project: AI Capability Orchestration Platform
-Division: 
-Author: Kayla Sermini
-Version: 1.0
-Date: October 2025
-
-
-
-1. Overview
-This document details the technical architecture and design specifications of a Low-Code/No-Code AI Orchestration Platform developed for enterprise-grade financial operations, including commercial lending, compliance automation, and AI-driven decision support.
-Unlike single-purpose AI solutions or chat-based copilots, this platform functions as a modular orchestration engine capable of safely executing configurable, multi-step AI workflows across departments — all while maintaining audit-grade traceability, model transparency, and vendor independence.
-It is engineered for:
-	•	Governed scalability: every workflow is policy-bound, traceable, and explainable.  
-	•	Adaptability: business logic evolves through YAML configuration, not code refactoring.  
-	•	Sustainability: multi-cloud, multi-model architecture prevents vendor lock-in and model churn.  
-
-
-
-2. Design Objectives & Principles
-
-Goal
-Description
-Value to Bank
-Auditability
-End-to-end logging, contextual metadata, versioned YAML config
-Demonstrable model governance for OCC/FFIEC compliance
-Extensibility
-Add models, tools, and workflows without changing source code
-Reduces development cycle time; non-engineer friendly
-Abstraction
-Abstract base classes & interfaces isolate business logic from vendors
-Prevents lock-in and allows competitive cloud procurement
-Governance by Design
-Interceptors enforce RLS, PII, token budgets, and cost limits
-Guarantees compliance at runtime
-Observability
-Centralized telemetry, audit, and artifact repositories
-Real-time risk and performance visibility
-SOLID Principles
-Every class has one purpose and one responsibility
-Ensures maintainability and clarity for long-term scaling
-
-
-
-3. Architectural Overview
-3.1 High-Level Architecture
-User / Business App
-    ↓
-Interpreter Layer (NL → DSL)
-    ↓
-Configuration Layer (YAML Workflow)
-    ↓
-Orchestrator Service (State Machine + Command Engine)
-    ↓
-Capability Invoker (Decorators + Factory + Strategy)
-    ↓
-Provider Adapters (Azure OpenAI / AML / HuggingFace / Local LLM)
-    ↓
-Governance Interceptors (PII, RLS, Budget, Telemetry)
-    ↓
-Persistence Layer (RunState, Audit, Artifacts)
-
-Each layer is modular, independently testable, and governed by typed interfaces and dependency injection.
-
-
-
-4. Core Design Patterns
-
-Pattern
-Applied To
-Purpose
-Abstract Factory
-CapabilityRegistry
-Create provider adapters dynamically from config
-Strategy
-ProviderStrategySelector
-Choose best-fit model based on environment, cost, or SLA
-Decorator / Proxy
-InterceptorChain
-Enforce governance, retry, and telemetry cross-cutting concerns
-Command
-StepCommand
-Encapsulate workflow steps for deterministic execution
-State Machine
-WorkflowStateMachine
-Orchestrate node progression and recover from failures
-Repository
-AuditRepository, RunStateRepository, ArtifactRepository
-Standardize persistence across PostgreSQL, Cosmos, and Blob storage
-Builder
-YamlWorkflowBuilder
-Translate DSL → YAML → Executable DAG
-Observer (Telemetry)
-Telemetry
-Stream run metrics to observability dashboards
-5. Component Architecture
-5.1 Interpreter Layer
-Purpose: Converts natural language requests or form inputs into typed workflow specifications.
-Classes:
-	•	NLInterpreter → parses utterances, produces DslSpec.  
-	•	DslSpec → typed object defining workflow type, inputs, and desired outputs.  
-	•	YamlWorkflowBuilder → constructs YAML DAGs from DslSpec.  
-Design Rationale:
-	•	The DSL layer enables safe interpretation of business intent into deterministic workflow configs.  
-	•	Prevents direct LLM invocation, avoiding “black box” behavior.  
-	•	YAML allows versioning, review, and rollback — critical for compliance validation.  
-
-
-
-5.2 Configuration Layer
-Purpose: Houses YAML workflow definitions that represent a Directed Acyclic Graph (DAG) of executable nodes.
-Example YAML:
-workflow:
-  id: covenant_breach_check
-  nodes:
-    - id: fetch_feed
-      type: tool
-      port: sql.query
-      params:
-        query: SELECT * FROM covenants WHERE breached=TRUE
-    - id: assess
-      type: capability
-      port: nlp.classify
-      params:
-        rubric: breach_severity
-    - id: approve
-      type: human_gate
-      approvers: [credit_risk_officer]
-      timeout: 24h
-
-Rationale:
-	•	YAML is human-readable, auditable, and diff-friendly for regulatory review.  
-	•	YAML also supports conditional logic, branching, and node chaining via declarative syntax.  
-
-
-
-5.3 Orchestration Service
-Purpose: Executes YAML workflows using a state machine and command pattern.
-Classes:
-	•	OrchestratorService  
-	•	WorkflowStateMachine  
-	•	Node (abstract)  
-	◦	CapabilityNode  
-	◦	WorkerNode  
-	◦	RouterNode  
-	◦	HumanGateNode  
-	◦	CriticNode  
-Execution Flow:
-	1	OrchestratorService.run() loads YAML → builds DAG.  
-	2	The state machine iterates nodes by dependency.  
-	3	Each node triggers a StepCommand.  
-	4	The command uses CapabilityInvoker to execute the node safely.  
-	5	Results are persisted and logged at each stage.  
-Rationale:
-	•	Decouples orchestration logic from execution logic.  
-	•	Enables resumable workflows and transactional rollback — critical for banking workflows like loan onboarding.  
-
-
-
-5.4 Capability Engine
-Purpose: Execute domain-specific AI/ML logic (classification, regression, forecasting).
-Interfaces:
-	•	CapabilityPort → base interface.  
-	•	TextGenPort, RegressPort, ForecastPort, etc.  
-Adapters:
-	•	AzureOpenAITextGenAdapter  
-	•	AMLSklearnAdapter  
-	•	LocalLLMAdapter  
-Design Rationale:
-	•	Abstract ports isolate business logic from model providers.  
-	•	Supports multi-model, multi-cloud deployment with no code changes.  
-	•	Each adapter is registered dynamically via YAML binding.  
-Example binding:
-bindings:
-  regress:
-    - provider: AML
-      class: AMLRegressAdapter
-      constraints:
-        env: prod
-
-5.5 Governance Layer (Interceptors)
-Purpose: Enforce compliance and operational policies transparently.
-Classes:
-	•	Interceptor (abstract)  
-	•	PiiRlsInterceptor → masks PII, enforces Row-Level Security.  
-	•	BudgetInterceptor → enforces token/$ budget limits.  
-	•	RetryInterceptor → handles transient API failures.  
-	•	TelemetryInterceptor → collects run metrics.  
-Pattern: Decorator / Proxy
-Each call passes through an interceptor chain before execution.
-Rationale:
-	•	Ensures uniform enforcement of policies across all capabilities.  
-	•	Enables runtime compliance without recompilation.  
-
-
-
-5.6 Persistence & Observability
-Repositories:
-	•	RunStateRepository — current node and state tracking (Cosmos DB).  
-	•	AuditRepository — immutable log of actor, action, latency, and cost (Postgres).  
-	•	ArtifactRepository — storage of generated outputs (Blob Storage).  
-Telemetry:
-	•	Each node emits metrics: latency, cost, model version, provider.  
-	•	Aggregated into dashboards for business insight and anomaly detection.  
-Rationale:
-	•	Unified audit schema simplifies regulatory reporting.  
-	•	Run metadata supports root cause analysis and optimization.  
-
-
-
-5.7 Registry & Strategy Layer
-Classes:
-	•	CapabilityRegistry — factory for adapter creation.  
-	•	ProviderBinding — configuration schema for adapters.  
-	•	ProviderStrategySelector — chooses best-fit provider at runtime.  
-Example:
-If Azure OpenAI is rate-limited, the selector reroutes to LocalLLM automatically.
-Rationale:
-	•	Maintains runtime continuity.  
-	•	Prevents vendor outages or pricing changes from halting workflows.  
-
-
-
-6. Compliance & Security Architecture
-
-Aspect
-Implementation
-Identity & Access
-Integrated with Microsoft Entra (role-based)
-Secrets Management
-Azure Key Vault (per-env injection)
-Data Isolation
-Azure Subscriptions per environment (Hub-Spoke VNet)
-Audit Trail
-Immutable Postgres append-only log
-Encryption
-CMK-backed encryption for all sensitive data
-Approvals
-HumanGateNode enforces four-eye rule
-Anomaly Detection
-Integrated telemetry feeding anomaly engine
-Network Control
-Private Link + no public egress in production
-7. Scalability & Multi-Cloud Strategy
-	•	Horizontal Scaling: Orchestrator and invokers deploy as containerized microservices (AKS or ECS).  
-	•	Vertical Scaling: Compute scaling tied to model inference cost per provider.  
-	•	Multi-Cloud Abstraction: Each adapter implements provider-specific credentials and endpoints.  
-	•	Failover: Registry reroutes traffic if Azure or AML becomes unavailable.  
-Business Impact:
-The design ensures continuity of operations under vendor outages, regulatory updates, or model deprecations — critical for lending and compliance workflows.
-
-
-
-8. Benefits Summary
-
-Benefit
-Business Impact
-Auditability
-Every workflow and model decision is traceable, explainable, and reviewable.
-Adaptability
-YAML workflows adapt instantly to regulatory change.
-Vendor Agility
-Swap out model providers without system rewrites.
-Compliance Assurance
-PII/RLS enforced automatically via interceptors.
-Operational Insight
-Real-time telemetry improves governance visibility.
-Future-Proof Design
-SOLID principles ensure maintainability and onboarding ease.
-
-
-
-9. Risks & Mitigation
-
-Risk
-Impact
-Mitigation
-YAML misconfiguration
-Workflow failure
-YAML schema validation and CI pre-deploy checks
-Provider API changes
-Disruption
-Versioned adapter contracts
-Policy interceptor drift
-Inconsistent governance
-Central policy registry
-Developer ramp-up
-OOP abstraction learning curve
-Training, code generators, internal wiki
-10. Future Enhancements
-	1	Visual Workflow Builder UI for business users.  
-	2	Integration with LangGraph for autonomous planning within node boundaries.  
-	3	Model Risk Dashboard for cost, accuracy, and explainability trends.  
-	4	Centralized Policy Engine (OPA-based) for declarative compliance enforcement.  
-
-
-
-11. Appendix: Class Overview
-Capability Engine
-CapabilityPort <|-- TextGenPort
-CapabilityPort <|-- RegressPort
-CapabilityPort <|-- ForecastPort
-
-ProviderAdapter <|-- AzureOpenAITextGenAdapter
-ProviderAdapter <|-- AMLRegressAdapter
-ProviderAdapter <|-- LocalLLMAdapter
-
-12. Why This Design Over Off-the-Shelf Frameworks
-Modern open-source frameworks (e.g., LangChain, HuggingFace Transformers, or LangGraph) are exceptional components, but not foundations for regulated banking environments.
-They evolve fast, but not predictably; they are optimized for innovation speed, not enterprise stability or audit readiness.
-Northern Bank’s architecture is designed as a stable operating system for AI, where these frameworks can plug in safely without compromising compliance, control, or longevity.
-
-
-
-12.1. Future-Proofing by Design
-1. 
-Stable core, replaceable edges
-Think of this system as a city grid:
-The roads (interfaces, orchestrator, governance rules) stay the same, while the buildings (models, vendors, workflows) can change.
-You don’t repave the whole city every time a new tenant moves in.
-This makes the system:
-	•	Resilient to model churn (new LLM releases, API changes)  
-	•	Portable across vendors (Azure → AWS → on-prem)  
-	•	Adaptive to regulation (new compliance logic = new interceptor)  
-When an external library or provider changes, the bank updates a single adapter — not the entire system.
-
-
-
-2. 
-Abstract Interfaces = Vendor Insurance
-Each capability (e.g., regression, summarization, forecasting) is defined by an interface (port) — not a vendor-specific API.
-For instance:
-	•	TextGenPort defines what the system expects (“generate text with input X and constraints Y”)  
-	•	AzureOpenAIAdapter defines how to do it.  
-If OpenAI or AML changes APIs, the port’s contract doesn’t break.
-This isolates vendor volatility from business logic, ensuring operations never grind to a halt because a dependency upgraded overnight.
-Analogy: The U.S. electrical standard (120V, 60Hz) doesn’t care who makes the toaster — it just works.
-Your architecture is that standard for AI tasks.
-
-
-
-3. 
-YAML Configuration = Declarative Agility
-YAML makes workflows self-describing, inspectable, and change-controlled.
-Instead of embedding logic in Python code, it’s declared as configuration — enabling:
-	•	Business-led iteration (“add this check before approvals”)  
-	•	Regulatory transparency (“show me the rules that apply”)  
-	•	Version control (“prove what changed since last quarter”)  
-Analogy: Source code is like handwritten recipes; YAML workflows are like labeled meal kits — everything portioned, reviewable, and ready to reproduce identically.
-That distinction is what gives regulators confidence and developers breathing room.
-
-
-
-4. 
-Interceptors = Embedded Compliance
-Compliance is no longer a layer around the system — it’s inside it.
-Every call to an AI capability or data tool passes through the same interceptors:
-	•	PII redaction  
-	•	Row-Level Security (RLS)  
-	•	Budget enforcement  
-	•	Telemetry capture  
-By enforcing these cross-cutting rules as Decorators, governance becomes automatic — not optional or manual.
-Analogy: Every elevator in the building has the same safety inspection switch. You don’t trust each tenant to install their own brakes.
-
-
-
-5. 
-Factory + Strategy = Growth without Refactoring
-Every new provider or capability type is introduced by:
-	1	Writing a new adapter class.  
-	2	Declaring it in YAML.   No orchestration or governance logic changes.  
-This approach follows the Open/Closed Principle:
-“Software entities should be open for extension, but closed for modification.”
-It’s how the platform keeps adding power without increasing fragility.
-
-
-
-12.2. Why Extensibility = Risk Control
-In finance, agility is only safe if it’s auditable.
-Traditional frameworks optimize for developer velocity — not for long-term operational risk.
-Northern Bank’s architecture flips that equation:
-	•	Fewer moving parts per change: all workflows share the same state machine, governance, and audit backbone.  
-	•	Config-driven extensibility: business analysts can add steps or new checks via YAML, with zero code deployment risk.  
-	•	Regulatory readiness: every configuration change is versioned, reviewable, and tied to its execution logs.  
-This creates a controlled innovation surface:
-You get the creativity of open-source with the discipline of financial compliance.
-
-
-Theme
-Technical Mechanism
-Business Value
-Auditability
-Immutable audit repositories tied to YAML workflows
-Full lineage and explainability for OCC/FFIEC validation
-Agility
-YAML-driven, no-code updates to logic and flow
-Rapid adaptation to new products or rules
-Vendor Agility
-Abstract interfaces, dynamic registry
-No dependency on any single AI vendor
-Governance
-Interceptor-based compliance enforcement
-Reduces regulatory and reputational risk
-Cost Efficiency
-Strategy pattern chooses optimal provider
-Lowers AI usage and inference costs
-Longevity
-SOLID, framework-agnostic design
-System stays relevant across AI generations
-13. Technical Glossary & Design Pattern Definitions
-
-Term / Pattern
-Definition (Plain English)
-Why It Matters Here
-Abstract Base Class (ABC)
-A class that defines what must be implemented, not how. Like a job description for subclasses.
-All AI capabilities (regress, classify, forecast) follow the same template, ensuring uniformity and extensibility.
-Interface / Port
-A contract defining allowed actions and data types.
-Decouples the system from specific model or vendor APIs.
-Adapter
-A wrapper that translates a specific model or API to match a common interface.
-Allows switching from Azure OpenAI to AWS Bedrock or Local LLM without breaking logic.
-Factory Pattern
-Centralized class that creates objects based on configuration.
-Enables dynamic creation of model providers at runtime (e.g., via YAML bindings).
-Strategy Pattern
-Lets the system choose an algorithm or provider dynamically.
-Automatically selects the optimal AI vendor per context (cost, latency, region).
-Decorator / Proxy Pattern
-Wraps functions with added behavior without altering core logic.
-Used in interceptors for enforcing RLS, PII masking, and telemetry.
-Command Pattern
-Encapsulates each workflow step as an executable command.
-Ensures deterministic, resumable orchestration of multi-step workflows.
-State Machine Pattern
-Manages workflow progression across nodes (start, pause, fail, resume).
-Ensures consistent execution and recovery — critical for compliance and reliability.
-Repository Pattern
-Standardized data access layer separating logic from storage.
-Centralizes audit, telemetry, and state management for transparency.
-Builder Pattern
-Step-by-step creation of complex objects (here, YAML workflows).
-Allows dynamic construction of executable workflows from DSL or user input.
-DAG (Directed Acyclic Graph)
-A network of connected workflow steps with no loops.
-Ensures predictable, auditable task flow — no infinite loops or uncontrolled recursion.
-Interceptor
-Middleware that applies rules to every operation before it executes.
-Enforces compliance policies universally across the system.
-YAML (YAML Ain’t Markup Language)
-Human-readable configuration format used for declarative control.
-Lets non-engineers safely modify workflows and governance settings.
-SOLID Principles
-Software design philosophy emphasizing maintainability and clarity.
-Ensures extensibility, prevents code rot, and keeps system logic reusable.
-Port & Adapter Architecture (Hexagonal)
-Separates business logic (core) from external dependencies.
-Makes the platform adaptable to new tools, APIs, or data sources.
-Config-as-Code
-Managing logic and policies through configuration files.
-Enables safe, versioned change management with full audit trail.
-Executive Close
-The bank isn’t just deploying AI — it’s building an AI control plane that can evolve faster than the industry changes.
-
-By separating configuration, governance, and orchestration, this architecture ensures Northern Bank’s AI capabilities remain auditable, adaptable, and cloud-agnostic for the next decade — no matter how quickly the AI landscape shifts.
-
-
